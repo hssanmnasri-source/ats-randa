@@ -12,33 +12,32 @@ import enum
 
 # ── Enums ─────────────────────────────────────────
 class UserRole(str, enum.Enum):
-    VISITOR   = "visitor"
-    CANDIDATE = "candidate"
-    AGENT     = "agent"
-    RH        = "rh"
-    ADMIN     = "admin"
+    VISITOR   = "VISITOR"
+    CANDIDATE = "CANDIDATE"
+    AGENT     = "AGENT"
+    RH        = "RH"
+    ADMIN     = "ADMIN"
 
 class CVStatus(str, enum.Enum):
-    UPLOADED  = "uploaded"
-    PARSING   = "parsing"
-    INDEXED   = "indexed"
-    ERROR     = "error"
+    UPLOADED  = "UPLOADED"
+    PARSING   = "PARSING"
+    INDEXED   = "INDEXED"
+    ERROR     = "ERROR"
 
 class OfferStatus(str, enum.Enum):
-    ACTIVE    = "active"
-    INACTIVE  = "inactive"
-    ARCHIVED  = "archived"
+    ACTIVE    = "ACTIVE"
+    INACTIVE  = "INACTIVE"
+    ARCHIVED  = "ARCHIVED"
 
 class Decision(str, enum.Enum):
-    RETAINED  = "retenu"
-    PENDING   = "en_attente"
-    REFUSED   = "refuse"
+    RETAINED  = "RETAINED"
+    PENDING   = "PENDING"
+    REFUSED   = "REFUSED"
 
 class SkillLevel(str, enum.Enum):
-    BEGINNER      = "debutant"
-    INTERMEDIATE  = "intermediaire"
-    EXPERT        = "expert"
-
+    BEGINNER      = "BEGINNER"
+    INTERMEDIATE  = "INTERMEDIATE"
+    EXPERT        = "EXPERT"
 # ── Filiale ───────────────────────────────────────
 class Filiale(Base):
     __tablename__ = "filiates"

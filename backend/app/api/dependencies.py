@@ -39,8 +39,8 @@ def require_role(*roles):
     return checker
 
 # ── Shortcuts par acteur ──────────────────────────
-require_candidate = require_role("candidate")
-require_agent     = require_role("agent")
-require_rh        = require_role("rh")
-require_admin     = require_role("admin")
-require_rh_or_admin = require_role("rh", "admin")
+require_candidate   = require_role("CANDIDATE")
+require_agent       = require_role("AGENT")
+require_rh          = require_role("RH")
+require_admin       = require_role("ADMIN")
+require_rh_or_admin = require_role("RH", "ADMIN")
