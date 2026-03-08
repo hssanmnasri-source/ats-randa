@@ -1,0 +1,131 @@
+name: CI — ATS RANDA
+
+on:
+  push:
+    branches: [ develop, main ]
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+
+  # ── Job 1 : Tests Backend ──────────────
+  test-backend:
+    name: 🧪 Tests Python
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: ats_user
+          POSTGRES_PASSWORD: ats_password123
+          POSTGRES_DB: ats_db_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Install dependencies
+        run: |
+          cd backend
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio pytest-cov flake8 black
+
+      - name: 🔍 Lint — flake8
+        run: |
+          cd backend
+          flake8 app/ --max-line-length=100 --exclude=migrations/
+
+      - name: 🎨 Format check — black
+        run: |
+          cd backend
+          black app/ --check --line-length=100
+
+      - name: ✅ Run tests
+        env:
+          DATABASE_URL: postgresql+asyncpg://ats_user:ats_password123@localhost:5432/ats_db_test
+          REDIS_URL: redis://localhost:6379/0
+          SECRET_KEY: test_secret_key_for_ci_only
+          DEBUG: true
+        run: |
+          cd backend
+          pytest tests/ -v --cov=app --cov-report=xml
+
+      - name: 📊 Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          file: backend/coverage.xml
+          fail_ci_if_error: false
+
+  # ── Job 2 : Build Docker ───────────────
+  build-docker:
+    name: 🐳 Build Docker Image
+    runs-on: ubuntu-latest
+    needs: test-backend
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐳 Build backend image
+        run: docker build ./backend -t ats-backend:${{ github.sha }}
+
+      - name: ✅ Test image health
+        run: |
+          docker run -d --name test_backend \
+            -e DATABASE_URL=postgresql://test:test@localhost/test \
+            -e SECRET_KEY=test_key \
+            ats-backend:${{ github.sha }}
+          sleep 5
+          docker logs test_backend
+          docker rm -f test_backend
+
+  # ── Job 3 : Tests Frontend ─────────────
+  test-frontend:
+    name: ⚛️ Tests React
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: 📦 Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: 🔍 Lint — ESLint
+        run: |
+          cd frontend
+          npm run lint
+
+      - name: 🏗️ Build
+        run: |
+          cd frontend
+          npm run build
