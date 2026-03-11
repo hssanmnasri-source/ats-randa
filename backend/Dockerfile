@@ -4,7 +4,16 @@ WORKDIR /app
 
 RUN apt-get update -o Acquire::Check-Valid-Until=false \
     -o Acquire::Check-Date=false \
-    && apt-get install -y gcc g++ libpq-dev curl \
+    && apt-get install -y \
+        gcc \
+        g++ \
+        libpq-dev \
+        curl \
+        tesseract-ocr \
+        tesseract-ocr-fra \
+        tesseract-ocr-ara \
+        libmagic1 \
+        poppler-utils \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
