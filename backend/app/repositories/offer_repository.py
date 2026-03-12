@@ -62,3 +62,33 @@ async def list_active(
     query = query.offset(skip).limit(limit).order_by(JobOffer.date_publication.desc())
     result = await db.execute(query)
     return total, result.scalars().all()
+
+async def list_active_search(
+    db: AsyncSession,
+    search: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 20
+) -> tuple[int, list[JobOffer]]:
+    query = select(JobOffer).where(JobOffer.statut == OfferStatus.ACTIVE)
+
+    if search:
+        query = query.where(JobOffer.titre.ilike(f"%{search}%"))
+
+    count_query = select(func.count()).select_from(query.subquery())
+    total = await db.scalar(count_query)
+
+    query = query.offset(skip).limit(limit).order_by(JobOffer.date_publication.desc())
+    result = await db.execute(query)
+    return total, result.scalars().all()
+
+async def get_active_by_id(
+    db: AsyncSession,
+    offer_id: int
+) -> JobOffer | None:
+    result = await db.execute(
+        select(JobOffer).where(
+            JobOffer.id == offer_id,
+            JobOffer.statut == OfferStatus.ACTIVE
+        )
+    )
+    return result.scalar_one_or_none()

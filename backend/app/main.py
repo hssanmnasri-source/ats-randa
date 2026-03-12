@@ -5,10 +5,13 @@ from app.core.config import settings
 from app.core.database import init_db
 import logging
 from app.api.routes.visitor.auth import router as auth_router
+from app.api.routes.visitor.offers import router as visitor_offers_router
 from app.api.routes.admin.users import router as admin_users_router
 from app.api.routes.rh.offers import router as rh_offers_router
 from app.api.routes.candidate.cvs import router as candidate_cvs_router
 from app.api.routes.agent.cvs import router as agent_cvs_router
+
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -40,6 +43,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(auth_router)
+app.include_router(visitor_offers_router)
 app.include_router(admin_users_router)
 app.include_router(rh_offers_router)
 app.include_router(candidate_cvs_router)
