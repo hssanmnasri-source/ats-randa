@@ -1,11 +1,13 @@
 """
 keejob_importer.py
-Import en masse de CVs Keejob depuis un dossier de PDFs.
+Import en masse de CVs depuis un dossier.
+Formats supportés : PDF (natif + scanné OCR), JPG/PNG (OCR), DOCX/DOC.
 
 Usage (depuis le dossier backend/) :
   python -m app.nlp.keejob_importer /chemin/vers/dossier/cvs
   python -m app.nlp.keejob_importer /chemin --agent-id 1
   python -m app.nlp.keejob_importer /chemin --dry-run
+  python -m app.nlp.keejob_importer /chemin --all-files   # inclut JPG, PNG, DOCX
 
 Gestion des erreurs : un CV qui plante n'arrête pas l'import.
 """
@@ -27,22 +29,101 @@ from app.models.db_models import CVStatus
 from app.repositories import cv_repository, candidate_repository
 from app.nlp.keejob_parser import parse_keejob_cv
 
+# Langues OCR : arabe + français + anglais
+_OCR_LANG = "ara+fra+eng"
+
+# Extensions supportées
+_IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif"}
+_WORD_EXTS  = {".docx", ".doc"}
+_PDF_EXTS   = {".pdf"}
+
 
 # ══════════════════════════════════════════════════════════════════════════════
-# EXTRACTION TEXTE
+# EXTRACTION TEXTE — multi-format
 # ══════════════════════════════════════════════════════════════════════════════
 
-def _extract_pdf_text(pdf_path: Path) -> str:
-    """Extrait le texte de toutes les pages d'un PDF avec pdfplumber."""
+def _clean(text: str) -> str:
+    """Supprime les null bytes rejetés par PostgreSQL UTF-8."""
+    return text.replace('\x00', '')
+
+
+def _extract_pdf_text(path: Path) -> str:
+    """
+    Extrait le texte d'un PDF.
+    - Essaie d'abord pdfplumber (PDF natif/texte).
+    - Si le texte est trop court (PDF scanné), bascule sur OCR Tesseract page par page.
+    """
     parts: list[str] = []
-    with pdfplumber.open(str(pdf_path)) as pdf:
+    with pdfplumber.open(str(path)) as pdf:
         for page in pdf.pages:
-            txt = page.extract_text()
-            if txt:
-                # Supprimer les null bytes — PostgreSQL UTF-8 les rejette
-                txt = txt.replace('\x00', '')
+            txt = page.extract_text() or ""
+            txt = _clean(txt)
+            if len(txt.strip()) > 30:
                 parts.append(txt)
+            else:
+                # PDF scanné : convertir la page en image puis OCR
+                try:
+                    from pdf2image import convert_from_path
+                    import pytesseract
+                    images = convert_from_path(str(path), first_page=page.page_number,
+                                               last_page=page.page_number, dpi=200)
+                    for img in images:
+                        ocr_txt = pytesseract.image_to_string(img, lang=_OCR_LANG)
+                        cleaned = _clean(ocr_txt)
+                        if cleaned.strip():
+                            parts.append(cleaned)
+                except Exception as e:
+                    logger.debug(f"OCR page {page.page_number} échouée: {e}")
     return "\n".join(parts)
+
+
+def _extract_image_text(path: Path) -> str:
+    """OCR direct sur une image JPG/PNG."""
+    import pytesseract
+    from PIL import Image
+    img = Image.open(str(path))
+    text = pytesseract.image_to_string(img, lang=_OCR_LANG)
+    return _clean(text)
+
+
+def _extract_docx_text(path: Path) -> str:
+    """Extrait le texte d'un fichier DOCX/DOC."""
+    ext = path.suffix.lower()
+    if ext == ".docx":
+        import docx as docx_lib
+        doc = docx_lib.Document(str(path))
+        lines = [para.text for para in doc.paragraphs if para.text.strip()]
+        return _clean("\n".join(lines))
+    elif ext == ".doc":
+        # .doc ancien format : essayer via antiword ou conversion
+        import subprocess
+        try:
+            result = subprocess.run(
+                ["antiword", str(path)], capture_output=True, text=True, timeout=15
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                return _clean(result.stdout)
+        except FileNotFoundError:
+            pass
+        # Fallback: lire les bytes bruts et extraire les chaînes ASCII/UTF
+        raw = path.read_bytes()
+        text = raw.decode("latin-1", errors="ignore")
+        # Garder uniquement les lignes avec assez de caractères imprimables
+        lines = [l.strip() for l in text.splitlines() if len(l.strip()) > 10]
+        return _clean("\n".join(lines))
+    return ""
+
+
+def extract_text(path: Path) -> str:
+    """Dispatch vers le bon extracteur selon l'extension du fichier."""
+    ext = path.suffix.lower()
+    if ext in _PDF_EXTS:
+        return _extract_pdf_text(path)
+    elif ext in _IMAGE_EXTS:
+        return _extract_image_text(path)
+    elif ext in _WORD_EXTS:
+        return _extract_docx_text(path)
+    return ""
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -56,7 +137,7 @@ async def import_single_cv(
     dry_run: bool = False,
 ) -> dict:
     """
-    Traite un seul PDF Keejob.
+    Traite un seul fichier CV (PDF, image, Word).
 
     Returns:
         dict avec 'status': 'imported' | 'duplicate' | 'error' | 'dry_run'
@@ -71,11 +152,11 @@ async def import_single_cv(
     }
 
     try:
-        # ── a. Extraction du texte ────────────────────────────────────────
-        cv_text = _extract_pdf_text(pdf_path)
+        # ── a. Extraction du texte (PDF natif / OCR / DOCX) ──────────────
+        cv_text = extract_text(pdf_path)
         if not cv_text.strip():
             result["status"] = "error"
-            result["erreur"] = "PDF vide ou illisible (texte non extrait)"
+            result["erreur"] = "Fichier vide ou illisible (texte non extrait)"
             return result
 
         # ── b. Parsing ────────────────────────────────────────────────────
@@ -151,47 +232,61 @@ async def import_single_cv(
 # IMPORT D'UN DOSSIER COMPLET
 # ══════════════════════════════════════════════════════════════════════════════
 
+def _collect_files(folder: Path, keejob_only: bool, all_files: bool) -> list[Path]:
+    """Collecte les fichiers à importer selon le mode choisi."""
+    if keejob_only:
+        logger.info("Mode : uniquement les exports Keejob (cv_keejob_*.pdf)")
+        return sorted(folder.rglob("cv_keejob_*.pdf"))
+
+    all_exts = _PDF_EXTS | _IMAGE_EXTS | (_WORD_EXTS if all_files else set())
+    files: list[Path] = []
+    for ext in all_exts:
+        files.extend(folder.rglob(f"*{ext}"))
+        files.extend(folder.rglob(f"*{ext.upper()}"))
+
+    if all_files:
+        logger.info(f"Mode : tous les fichiers (PDF + images + Word) — {len(files)} fichiers")
+    else:
+        logger.info(f"Mode : tous les PDFs du dossier — {len(files)} fichiers")
+    return sorted(set(files))
+
+
 async def import_folder(
     folder_path: str,
     agent_id: int | None = None,
     dry_run: bool = False,
     keejob_only: bool = True,
+    all_files: bool = False,
 ) -> None:
     """
-    Parcourt récursivement un dossier et importe tous les PDFs Keejob.
+    Parcourt récursivement un dossier et importe tous les CVs.
 
     Args:
         folder_path:  Chemin vers le dossier racine.
         agent_id:     ID de l'agent responsable de l'import (optionnel).
         dry_run:      Si True, simule sans écrire en DB.
         keejob_only:  Si True, importe uniquement les fichiers 'cv_keejob_*.pdf'.
+        all_files:    Si True, inclut images JPG/PNG et fichiers Word DOCX/DOC.
     """
     folder = Path(folder_path)
     if not folder.exists():
         logger.error(f"Dossier introuvable : {folder_path}")
         sys.exit(1)
 
-    # Trouver tous les PDFs
-    if keejob_only:
-        # Seulement les exports Keejob natifs (nommés cv_keejob_NNNNN.pdf)
-        pdf_files = sorted(folder.rglob("cv_keejob_*.pdf"))
-        logger.info("Mode : uniquement les exports Keejob (cv_keejob_*.pdf)")
-    else:
-        pdf_files = sorted(folder.rglob("*.pdf")) + sorted(folder.rglob("*.PDF"))
-        logger.info("Mode : tous les PDFs du dossier")
+    cv_files = _collect_files(folder, keejob_only, all_files)
 
-    if not pdf_files:
-        logger.warning(f"Aucun PDF trouvé dans : {folder_path}")
+    if not cv_files:
+        logger.warning(f"Aucun fichier CV trouvé dans : {folder_path}")
         return
 
     prefix = "[DRY RUN] " if dry_run else ""
-    logger.info(f"{prefix}{len(pdf_files)} PDF(s) à traiter dans {folder_path}")
+    logger.info(f"{prefix}{len(cv_files)} fichier(s) à traiter dans {folder_path}")
 
     stats = {"imported": 0, "duplicate": 0, "error": 0, "dry_run": 0}
     errors: list[dict] = []
 
-    for idx, pdf_path in enumerate(pdf_files, 1):
-        logger.info(f"[{idx:>4}/{len(pdf_files)}] {pdf_path.name}")
+    for idx, pdf_path in enumerate(cv_files, 1):
+        logger.info(f"[{idx:>4}/{len(cv_files)}] {pdf_path.name}")
 
         # Session fraîche par CV : si un CV plante, la session suivante est propre
         async with AsyncSessionLocal() as db:
@@ -228,7 +323,7 @@ async def import_folder(
         logger.success(f"✓ Importés  : {stats['imported']}")
         logger.warning(f"⚠ Doublons  : {stats['duplicate']}")
         logger.error  (f"✗ Erreurs   : {stats['error']}")
-        logger.info   (f"  TOTAL     : {len(pdf_files)}")
+        logger.info   (f"  TOTAL     : {len(cv_files)}")
 
     if errors:
         logger.info("\nDétail des erreurs :")
@@ -242,7 +337,7 @@ async def import_folder(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Import en masse de CVs Keejob (PDF) vers la base ATS RANDA",
+        description="Import en masse de CVs (PDF, images, Word) vers la base ATS RANDA",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Exemples :
@@ -250,15 +345,18 @@ Exemples :
   python -m app.nlp.keejob_importer /data/cvs --agent-id 1
   python -m app.nlp.keejob_importer /data/cvs --dry-run
   python -m app.nlp.keejob_importer /data/cvs --all-pdfs
+  python -m app.nlp.keejob_importer /data/cvs --all-files   # PDF + JPG/PNG + DOCX
         """,
     )
-    parser.add_argument("folder", help="Dossier contenant les PDFs Keejob (recherche récursive)")
+    parser.add_argument("folder", help="Dossier contenant les CVs (recherche récursive)")
     parser.add_argument("--agent-id", type=int, default=None, metavar="N",
                         help="ID de l'agent responsable de l'import")
     parser.add_argument("--dry-run", action="store_true",
                         help="Simuler sans écrire en DB")
     parser.add_argument("--all-pdfs", action="store_true",
                         help="Importer tous les PDFs (pas seulement cv_keejob_*.pdf)")
+    parser.add_argument("--all-files", action="store_true",
+                        help="Importer tous les formats : PDF + images (JPG/PNG) + Word (DOCX/DOC)")
 
     args = parser.parse_args()
 
@@ -266,7 +364,8 @@ Exemples :
         folder_path=args.folder,
         agent_id=args.agent_id,
         dry_run=args.dry_run,
-        keejob_only=not args.all_pdfs,
+        keejob_only=not (args.all_pdfs or args.all_files),
+        all_files=args.all_files,
     ))
 
 
