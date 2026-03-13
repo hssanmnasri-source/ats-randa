@@ -10,6 +10,7 @@ from app.api.routes.admin.users import router as admin_users_router
 from app.api.routes.rh.offers import router as rh_offers_router
 from app.api.routes.candidate.cvs import router as candidate_cvs_router
 from app.api.routes.agent.cvs import router as agent_cvs_router
+from app.api.routes.agent.import_keejob import router as agent_keejob_router
 
 
 
@@ -48,6 +49,7 @@ app.include_router(admin_users_router)
 app.include_router(rh_offers_router)
 app.include_router(candidate_cvs_router)
 app.include_router(agent_cvs_router)
+app.include_router(agent_keejob_router)
 
 @app.get("/health")
 async def health():
