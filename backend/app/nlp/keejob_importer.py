@@ -39,6 +39,8 @@ def _extract_pdf_text(pdf_path: Path) -> str:
         for page in pdf.pages:
             txt = page.extract_text()
             if txt:
+                # Supprimer les null bytes — PostgreSQL UTF-8 les rejette
+                txt = txt.replace('\x00', '')
                 parts.append(txt)
     return "\n".join(parts)
 
@@ -188,32 +190,33 @@ async def import_folder(
     stats = {"imported": 0, "duplicate": 0, "error": 0, "dry_run": 0}
     errors: list[dict] = []
 
-    async with AsyncSessionLocal() as db:
-        for idx, pdf_path in enumerate(pdf_files, 1):
-            logger.info(f"[{idx:>4}/{len(pdf_files)}] {pdf_path.name}")
+    for idx, pdf_path in enumerate(pdf_files, 1):
+        logger.info(f"[{idx:>4}/{len(pdf_files)}] {pdf_path.name}")
 
+        # Session fraîche par CV : si un CV plante, la session suivante est propre
+        async with AsyncSessionLocal() as db:
             result = await import_single_cv(db, pdf_path, agent_id, dry_run)
-            status = result["status"]
-            stats[status] = stats.get(status, 0) + 1
+        status = result["status"]
+        stats[status] = stats.get(status, 0) + 1
 
-            if status == "imported":
-                logger.success(
-                    f"  ✓ CV #{result['cv_id']} | Candidat #{result['candidate_id']}"
-                    f" | {result.get('email') or 'sans email'}"
-                )
-            elif status == "dry_run":
-                p = result.get("preview", {})
-                logger.info(
-                    f"  ~ {p.get('prenom')} {p.get('nom')} | {p.get('email')}"
-                    f" | Exp: {p.get('experience_annees')} ans"
-                    f" | {result.get('nb_competences', 0)} compétences"
-                    f" | {result.get('nb_experiences', 0)} expériences"
-                )
-            elif status == "duplicate":
-                logger.warning(f"  ⚠ Doublon — Candidat #{result['candidate_id']} déjà en DB")
-            elif status == "error":
-                logger.error(f"  ✗ {result['erreur']}")
-                errors.append({"fichier": result["fichier"], "erreur": result["erreur"]})
+        if status == "imported":
+            logger.success(
+                f"  ✓ CV #{result['cv_id']} | Candidat #{result['candidate_id']}"
+                f" | {result.get('email') or 'sans email'}"
+            )
+        elif status == "dry_run":
+            p = result.get("preview", {})
+            logger.info(
+                f"  ~ {p.get('prenom')} {p.get('nom')} | {p.get('email')}"
+                f" | Exp: {p.get('experience_annees')} ans"
+                f" | {result.get('nb_competences', 0)} compétences"
+                f" | {result.get('nb_experiences', 0)} expériences"
+            )
+        elif status == "duplicate":
+            logger.warning(f"  ⚠ Doublon — Candidat #{result['candidate_id']} déjà en DB")
+        elif status == "error":
+            logger.error(f"  ✗ {result['erreur']}")
+            errors.append({"fichier": result["fichier"], "erreur": result["erreur"]})
 
     # ── Résumé final ──────────────────────────────────────────────────────
     logger.info("=" * 60)
