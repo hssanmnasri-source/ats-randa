@@ -31,10 +31,78 @@ async def lifespan(app: FastAPI):
     yield
     logger.info("🛑 Shutting down...")
 
+_DESCRIPTION = """
+## ATS RANDA — Applicant Tracking System
+
+Plateforme de gestion et d'analyse automatisée de CVs développée dans le cadre d'un **Projet de Fin d'Études (PFE)** en Tunisie.
+
+---
+
+### Fonctionnalités principales
+
+- **Import massif de CVs** : PDF (natif + scanné OCR), images JPG/PNG, Word DOCX/DOC
+- **Parsing NLP** : extraction automatique de 15+ entités (nom, email, compétences, expériences, formations…)
+- **Matching sémantique** : embeddings pgvector 384-dim pour le scoring CV ↔ offre
+- **Gestion multi-rôles** : Visiteur, Candidat, Agent, RH, Admin
+
+---
+
+### Rôles & Authentification
+
+| Rôle | Accès |
+|------|-------|
+| `VISITOR` | Consulter les offres publiques, s'inscrire |
+| `CANDIDATE` | Déposer un CV, suivre ses candidatures |
+| `AGENT` | Importer des CVs, gérer les candidats |
+| `RH` | Créer des offres, consulter le matching |
+| `ADMIN` | Gestion complète (utilisateurs, filiates) |
+
+> **Authentification** : Bearer JWT — obtenez un token via `POST /api/visitor/login`
+
+---
+
+### Sources de CVs
+
+| Source | Description |
+|--------|-------------|
+| `KEEJOB` | Import bulk depuis la plateforme Keejob |
+| `AGENT` | Upload manuel par un agent |
+| `CANDIDAT` | Dépôt via le portail candidat *(futur)* |
+| `EMAIL` | Parsing email entrant *(futur)* |
+| `LINKEDIN` | Import profil LinkedIn *(futur)* |
+
+---
+
+### Données disponibles
+- **4 130+ CVs** importés et indexés
+- **4 127+ candidats** en base
+- **PostgreSQL + pgvector** pour le matching sémantique
+"""
+
+_TAGS = [
+    {"name": "🔐 Auth",                    "description": "Inscription et connexion — retourne un JWT Bearer"},
+    {"name": "🌐 Visitor — Offres",         "description": "Consultation publique des offres d'emploi actives"},
+    {"name": "📄 Candidat — CVs",           "description": "Dépôt et suivi des CVs par le candidat"},
+    {"name": "📋 Agent — CVs physiques",    "description": "Upload OCR (photo/PDF) + liste et détail des CVs"},
+    {"name": "📥 Agent — Import Keejob",    "description": "Import d'un CV au format Keejob via API"},
+    {"name": "👤 Agent — Candidats",        "description": "Navigation dans la base candidats avec recherche et pagination"},
+    {"name": "💼 RH — Offres d'emploi",    "description": "Création et gestion des offres d'emploi"},
+    {"name": "📊 RH — Dashboard",           "description": "Statistiques globales : CVs par source/statut, offres, nouveaux CVs"},
+    {"name": "🛡️ Admin — Utilisateurs",    "description": "Gestion des comptes utilisateurs (ADMIN uniquement)"},
+]
+
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
-    description="Application de Traitement Automatisé des Candidatures",
+    description=_DESCRIPTION,
+    openapi_tags=_TAGS,
+    contact={
+        "name": "ATS RANDA — PFE",
+        "url":  "https://github.com/hssanmnasri-source/ats-randa",
+    },
+    license_info={
+        "name": "Projet académique — PFE Tunisie",
+    },
     lifespan=lifespan,
 )
 
