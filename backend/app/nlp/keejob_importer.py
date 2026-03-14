@@ -25,7 +25,7 @@ from loguru import logger
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
 from app.core.database import AsyncSessionLocal
-from app.models.db_models import CVStatus
+from app.models.db_models import CVStatus, CVSource
 from app.repositories import cv_repository, candidate_repository
 from app.nlp.keejob_parser import parse_keejob_cv
 
@@ -204,6 +204,7 @@ async def import_single_cv(
             "id_candidate": candidate.id,
             "id_agent":     agent_id,
             "statut":       CVStatus.INDEXED,
+            "source":       CVSource.KEEJOB,
             "fichier_pdf":  str(pdf_path),
             "cv_text":      cv_text,
             "cv_entities":  entities,

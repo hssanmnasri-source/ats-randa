@@ -38,6 +38,13 @@ class SkillLevel(str, enum.Enum):
     BEGINNER      = "BEGINNER"
     INTERMEDIATE  = "INTERMEDIATE"
     EXPERT        = "EXPERT"
+
+class CVSource(str, enum.Enum):
+    KEEJOB    = "KEEJOB"    # Importé depuis la plateforme Keejob
+    AGENT     = "AGENT"     # Uploadé manuellement par un agent via l'interface
+    CANDIDAT  = "CANDIDAT"  # Soumis par le candidat via le portail (futur)
+    EMAIL     = "EMAIL"     # Reçu et parsé depuis un email (futur)
+    LINKEDIN  = "LINKEDIN"  # Importé depuis LinkedIn (futur)
 # ── Filiale ───────────────────────────────────────
 class Filiale(Base):
     __tablename__ = "filiates"
@@ -95,6 +102,7 @@ class CV(Base):
     id_agent     = Column(Integer, ForeignKey("users.id"),       nullable=True)
     date_depot   = Column(DateTime(timezone=True), server_default=func.now())
     statut       = Column(SAEnum(CVStatus), default=CVStatus.UPLOADED)
+    source       = Column(SAEnum(CVSource), default=CVSource.AGENT, nullable=False)
     fichier_pdf  = Column(String(500))
     cv_text      = Column(Text)
     cv_entities  = Column(JSONB, default=dict)

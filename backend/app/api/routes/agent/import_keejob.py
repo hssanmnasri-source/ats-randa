@@ -20,7 +20,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import require_agent
 from app.core.database import get_db
-from app.models.db_models import CVStatus
+from app.models.db_models import CVStatus, CVSource
 from app.nlp.keejob_parser import parse_keejob_cv
 from app.repositories import candidate_repository, cv_repository
 
@@ -118,6 +118,7 @@ async def import_keejob_cv(
         "id_candidate": candidate.id,
         "id_agent":     agent.id,
         "statut":       CVStatus.INDEXED,
+        "source":       CVSource.AGENT,
         "fichier_pdf":  file.filename,
         "cv_text":      cv_text,
         "cv_entities":  entities,      # tout le dict parsé → JSONB
@@ -137,6 +138,7 @@ async def import_keejob_cv(
         "candidate_id":      candidate.id,
         "candidate_created": created,
         "statut":            cv.statut.value,
+        "source":            cv.source.value,
         "fichier":           file.filename,
         "nb_caracteres":     len(cv_text),
         "entities": {
