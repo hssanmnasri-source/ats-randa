@@ -11,6 +11,8 @@ from app.api.routes.rh.offers import router as rh_offers_router
 from app.api.routes.candidate.cvs import router as candidate_cvs_router
 from app.api.routes.agent.cvs import router as agent_cvs_router
 from app.api.routes.agent.import_keejob import router as agent_keejob_router
+from app.api.routes.agent.candidates import router as agent_candidates_router
+from app.api.routes.rh.dashboard import router as rh_dashboard_router
 
 
 
@@ -50,6 +52,8 @@ app.include_router(rh_offers_router)
 app.include_router(candidate_cvs_router)
 app.include_router(agent_cvs_router)
 app.include_router(agent_keejob_router)
+app.include_router(agent_candidates_router)
+app.include_router(rh_dashboard_router)
 
 @app.get("/health")
 async def health():

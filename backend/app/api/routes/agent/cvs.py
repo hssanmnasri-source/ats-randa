@@ -1,11 +1,14 @@
-from fastapi import APIRouter, Depends, Query, UploadFile, File, Form
-from fastapi import HTTPException, status
+from fastapi import APIRouter, Depends, Query, UploadFile, File, Form, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+from sqlalchemy import select
 from typing import Optional
 from app.core.database import get_db
 from app.api.dependencies import require_agent
-from app.models.schemas.agent_schemas import CVCreateIn, CVListOut
+from app.models.db_models import CV
+from app.models.schemas.agent_schemas import CVListOut, CVDetailOut
 from app.services.agent import cv_service
+from app.repositories import cv_repository
 
 router = APIRouter(
     prefix="/api/agent",
@@ -71,3 +74,39 @@ async def upload_cv(
         candidate_data=candidate_data,
         agent_id=agent.id
     )
+
+
+@router.get("/cvs", response_model=CVListOut)
+async def list_cvs(
+    source: Optional[str] = Query(None, description="KEEJOB | AGENT | CANDIDAT | EMAIL | LINKEDIN"),
+    statut: Optional[str] = Query(None, description="UPLOADED | PARSING | INDEXED | ERROR"),
+    search: Optional[str] = Query(None, description="Recherche nom / prénom / email candidat"),
+    page:   int = Query(1, ge=1),
+    limit:  int = Query(20, ge=1, le=100),
+    agent=Depends(require_agent),
+    db: AsyncSession = Depends(get_db),
+):
+    """Liste tous les CVs avec filtres optionnels (source, statut, recherche)."""
+    skip = (page - 1) * limit
+    total, cvs = await cv_repository.list_all(db, source=source, statut=statut, search=search, skip=skip, limit=limit)
+    return CVListOut(total=total, page=page, pages=max(1, -(-total // limit)), cvs=cvs)
+
+
+@router.get("/cvs/{cv_id}", response_model=CVDetailOut)
+async def get_cv(
+    cv_id: int,
+    agent=Depends(require_agent),
+    db: AsyncSession = Depends(get_db),
+):
+    """Détail d'un CV avec les informations du candidat et les entités extraites."""
+    from sqlalchemy.orm import selectinload
+    from sqlalchemy import select
+    from app.models.db_models import CV
+
+    res = await db.execute(
+        select(CV).options(selectinload(CV.candidate)).where(CV.id == cv_id)
+    )
+    cv = res.scalar_one_or_none()
+    if not cv:
+        raise HTTPException(status_code=404, detail="CV introuvable")
+    return cv

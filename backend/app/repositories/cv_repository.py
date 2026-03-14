@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
-from app.models.db_models import CV, CVStatus, Competence, Experience, Resultat, SkillLevel
+from sqlalchemy import select, func, or_
+from app.models.db_models import CV, CVStatus, CVSource, Competence, Experience, Resultat, SkillLevel, Candidate
 from typing import Optional
 
 async def create(db: AsyncSession, data: dict) -> CV:
@@ -85,6 +85,45 @@ async def list_by_agent(
             query = query.where(CV.statut == CVStatus(statut))
         except ValueError:
             pass  # Statut invalide → ignorer le filtre
+
+    count_query = select(func.count()).select_from(query.subquery())
+    total = await db.scalar(count_query)
+
+    query = query.offset(skip).limit(limit).order_by(CV.date_depot.desc())
+    result = await db.execute(query)
+    return total, result.scalars().all()
+
+
+async def list_all(
+    db: AsyncSession,
+    source: Optional[str] = None,
+    statut: Optional[str] = None,
+    search: Optional[str] = None,   # recherche sur nom/prenom/email du candidat
+    skip: int = 0,
+    limit: int = 20,
+) -> tuple[int, list[CV]]:
+    """Liste tous les CVs avec filtres optionnels, jointure sur le candidat pour la recherche."""
+    query = select(CV).join(Candidate, CV.id_candidate == Candidate.id)
+
+    if source:
+        try:
+            query = query.where(CV.source == CVSource(source))
+        except ValueError:
+            pass
+    if statut:
+        try:
+            query = query.where(CV.statut == CVStatus(statut))
+        except ValueError:
+            pass
+    if search:
+        term = f"%{search}%"
+        query = query.where(
+            or_(
+                Candidate.nom.ilike(term),
+                Candidate.prenom.ilike(term),
+                Candidate.email.ilike(term),
+            )
+        )
 
     count_query = select(func.count()).select_from(query.subquery())
     total = await db.scalar(count_query)
