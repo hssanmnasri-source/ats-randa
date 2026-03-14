@@ -133,7 +133,6 @@ def extract_text(path: Path) -> str:
 async def import_single_cv(
     db,
     pdf_path: Path,
-    agent_id: int | None,
     dry_run: bool = False,
 ) -> dict:
     """
@@ -202,7 +201,7 @@ async def import_single_cv(
         # ── e. Créer le CV ────────────────────────────────────────────────
         cv = await cv_repository.create(db, {
             "id_candidate": candidate.id,
-            "id_agent":     agent_id,
+            "id_agent":     None,           # import bulk : aucun agent spécifique
             "statut":       CVStatus.INDEXED,
             "source":       CVSource.KEEJOB,
             "fichier_pdf":  str(pdf_path),
@@ -254,7 +253,6 @@ def _collect_files(folder: Path, keejob_only: bool, all_files: bool) -> list[Pat
 
 async def import_folder(
     folder_path: str,
-    agent_id: int | None = None,
     dry_run: bool = False,
     keejob_only: bool = True,
     all_files: bool = False,
@@ -264,7 +262,6 @@ async def import_folder(
 
     Args:
         folder_path:  Chemin vers le dossier racine.
-        agent_id:     ID de l'agent responsable de l'import (optionnel).
         dry_run:      Si True, simule sans écrire en DB.
         keejob_only:  Si True, importe uniquement les fichiers 'cv_keejob_*.pdf'.
         all_files:    Si True, inclut images JPG/PNG et fichiers Word DOCX/DOC.
@@ -291,7 +288,7 @@ async def import_folder(
 
         # Session fraîche par CV : si un CV plante, la session suivante est propre
         async with AsyncSessionLocal() as db:
-            result = await import_single_cv(db, pdf_path, agent_id, dry_run)
+            result = await import_single_cv(db, pdf_path, dry_run)
         status = result["status"]
         stats[status] = stats.get(status, 0) + 1
 
@@ -343,15 +340,12 @@ def main() -> None:
         epilog="""
 Exemples :
   python -m app.nlp.keejob_importer /data/cvs
-  python -m app.nlp.keejob_importer /data/cvs --agent-id 1
   python -m app.nlp.keejob_importer /data/cvs --dry-run
   python -m app.nlp.keejob_importer /data/cvs --all-pdfs
   python -m app.nlp.keejob_importer /data/cvs --all-files   # PDF + JPG/PNG + DOCX
         """,
     )
     parser.add_argument("folder", help="Dossier contenant les CVs (recherche récursive)")
-    parser.add_argument("--agent-id", type=int, default=None, metavar="N",
-                        help="ID de l'agent responsable de l'import")
     parser.add_argument("--dry-run", action="store_true",
                         help="Simuler sans écrire en DB")
     parser.add_argument("--all-pdfs", action="store_true",
@@ -363,7 +357,6 @@ Exemples :
 
     asyncio.run(import_folder(
         folder_path=args.folder,
-        agent_id=args.agent_id,
         dry_run=args.dry_run,
         keejob_only=not (args.all_pdfs or args.all_files),
         all_files=args.all_files,
