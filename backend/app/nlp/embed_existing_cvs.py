@@ -37,15 +37,15 @@ async def embed_existing(batch_size: int = 64, limit: int | None = None) -> None
 
         done = 0
         errors = 0
-        offset = 0
 
-        while offset < to_process:
+        # Pas d'offset : après chaque commit, les CVs traités disparaissent
+        # du WHERE embedding IS NULL → toujours query offset=0
+        while done < to_process:
             q = (
                 select(CV)
                 .where(CV.embedding.is_(None))
                 .where(CV.statut == CVStatus.INDEXED)
                 .order_by(CV.id)
-                .offset(offset)
                 .limit(batch_size)
             )
             rows = await db.execute(q)
@@ -65,10 +65,9 @@ async def embed_existing(batch_size: int = 64, limit: int | None = None) -> None
                 logger.info(f"  [{done}/{to_process}] batch OK")
             except Exception as e:
                 errors += len(batch)
-                logger.error(f"  Batch offset={offset} échoué : {e}")
+                logger.error(f"  Batch échoué : {e}")
                 await db.rollback()
-
-            offset += batch_size
+                break  # éviter boucle infinie si le batch plante toujours
 
     logger.info("=" * 50)
     logger.success(f"✓ Embeddings générés : {done}")
