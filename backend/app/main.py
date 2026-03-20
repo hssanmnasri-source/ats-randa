@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.utils import get_openapi
 from contextlib import asynccontextmanager
 from app.core.config import settings
 from app.core.database import init_db
@@ -7,13 +8,16 @@ import logging
 from app.api.routes.visitor.auth import router as auth_router
 from app.api.routes.visitor.offers import router as visitor_offers_router
 from app.api.routes.admin.users import router as admin_users_router
+from app.api.routes.admin.stats import router as admin_stats_router
 from app.api.routes.rh.offers import router as rh_offers_router
+from app.api.routes.rh.dashboard import router as rh_dashboard_router
+from app.api.routes.rh.matching import router as rh_matching_router
+from app.api.routes.candidate.profile import router as candidate_profile_router
 from app.api.routes.candidate.cvs import router as candidate_cvs_router
+from app.api.routes.candidate.applications import router as candidate_applications_router
 from app.api.routes.agent.cvs import router as agent_cvs_router
 from app.api.routes.agent.import_keejob import router as agent_keejob_router
 from app.api.routes.agent.candidates import router as agent_candidates_router
-from app.api.routes.rh.dashboard import router as rh_dashboard_router
-from app.api.routes.rh.matching import router as rh_matching_router
 
 
 
@@ -39,57 +43,115 @@ Plateforme de gestion et d'analyse automatisée de CVs développée dans le cadr
 
 ---
 
-### Fonctionnalités principales
+### Comment s'authentifier
 
-- **Import massif de CVs** : PDF (natif + scanné OCR), images JPG/PNG, Word DOCX/DOC
-- **Parsing NLP** : extraction automatique de 15+ entités (nom, email, compétences, expériences, formations…)
-- **Matching sémantique** : embeddings pgvector 384-dim pour le scoring CV ↔ offre
-- **Gestion multi-rôles** : Visiteur, Candidat, Agent, RH, Admin
-
----
-
-### Rôles & Authentification
-
-| Rôle | Accès |
-|------|-------|
-| `VISITOR` | Consulter les offres publiques, s'inscrire |
-| `CANDIDATE` | Déposer un CV, suivre ses candidatures |
-| `AGENT` | Importer des CVs, gérer les candidats |
-| `RH` | Créer des offres, consulter le matching |
-| `ADMIN` | Gestion complète (utilisateurs, filiates) |
-
-> **Authentification** : Bearer JWT — obtenez un token via `POST /api/visitor/login`
+1. Obtenez un token via **`POST /api/visitor/login`** ou **`POST /api/visitor/register`**
+2. Cliquez sur le bouton **🔒 Authorize** en haut à droite
+3. Entrez : `Bearer <votre_token>`
+4. Toutes les requêtes suivantes incluront automatiquement le token
 
 ---
 
-### Sources de CVs
+### Rôles & Accès
 
-| Source | Description |
-|--------|-------------|
-| `KEEJOB` | Import bulk depuis la plateforme Keejob |
-| `AGENT` | Upload manuel par un agent |
-| `CANDIDAT` | Dépôt via le portail candidat *(futur)* |
-| `EMAIL` | Parsing email entrant *(futur)* |
-| `LINKEDIN` | Import profil LinkedIn *(futur)* |
+| Rôle | Endpoints accessibles |
+|------|-----------------------|
+| `VISITOR` | Offres publiques, inscription/connexion |
+| `CANDIDATE` | Profil, CV (upload/formulaire), candidatures |
+| `AGENT` | CVs (upload/liste/détail), candidats |
+| `RH` | Offres (CRUD), matching, dashboard |
+| `ADMIN` | Tout + gestion utilisateurs + statistiques |
 
 ---
 
-### Données disponibles
-- **4 130+ CVs** importés et indexés
-- **4 127+ candidats** en base
-- **PostgreSQL + pgvector** pour le matching sémantique
+### Pipeline NLP — Matching CV ↔ Offre
+
+```
+Offre → embedding 384-dim
+                ↓
+pgvector cosinus (top 200 CVs)
+                ↓
+Scoring multi-critères :
+  40% sémantique  +  30% compétences
+  20% expérience  +  10% langue
+                ↓
+Top 50 résultats → table resultats
+```
+
+---
+
+### Données en base
+
+| Table | Lignes |
+|-------|--------|
+| `cvs` | **4 131** (tous avec embedding) |
+| `candidates` | **4 128** |
+| `job_offers` | 2 (avec embedding) |
+| `resultats` | 100 |
+| `competences` | ~18 000+ |
+| `experiences` | ~12 000+ |
 """
 
 _TAGS = [
-    {"name": "🔐 Auth",                    "description": "Inscription et connexion — retourne un JWT Bearer"},
-    {"name": "🌐 Visitor — Offres",         "description": "Consultation publique des offres d'emploi actives"},
-    {"name": "📄 Candidat — CVs",           "description": "Dépôt et suivi des CVs par le candidat"},
-    {"name": "📋 Agent — CVs physiques",    "description": "Upload OCR (photo/PDF) + liste et détail des CVs"},
-    {"name": "📥 Agent — Import Keejob",    "description": "Import d'un CV au format Keejob via API"},
-    {"name": "👤 Agent — Candidats",        "description": "Navigation dans la base candidats avec recherche et pagination"},
-    {"name": "💼 RH — Offres d'emploi",    "description": "Création et gestion des offres d'emploi"},
-    {"name": "📊 RH — Dashboard",           "description": "Statistiques globales : CVs par source/statut, offres, nouveaux CVs"},
-    {"name": "🛡️ Admin — Utilisateurs",    "description": "Gestion des comptes utilisateurs (ADMIN uniquement)"},
+    {
+        "name": "🔐 Auth",
+        "description": "**Inscription** (`CANDIDATE`) et **connexion** (tous rôles) — retourne un JWT Bearer valable 7 jours.",
+    },
+    {
+        "name": "🌐 Visitor — Offres",
+        "description": "Consultation publique des offres d'emploi actives. **Aucune authentification requise.**",
+    },
+    {
+        "name": "👤 Candidat — Profil",
+        "description": "Gestion du profil personnel du candidat (nom, prénom, téléphone, adresse). `🔒 CANDIDATE`",
+    },
+    {
+        "name": "👤 Candidat — CVs & Candidatures",
+        "description": (
+            "Dépôt de CV par **upload fichier** (PDF/DOCX/JPG/PNG ≤ 5 MB) "
+            "ou **formulaire en ligne**. Consultation des CVs déposés. `🔒 CANDIDATE`"
+        ),
+    },
+    {
+        "name": "👤 Candidat — Candidatures",
+        "description": "Postuler à une offre, lister ses candidatures, retirer une candidature (PENDING uniquement). `🔒 CANDIDATE`",
+    },
+    {
+        "name": "📋 Agent — CVs physiques",
+        "description": "Upload photo/PDF de CV physique avec OCR automatique. Liste et détail des CVs. `🔒 AGENT`",
+    },
+    {
+        "name": "📥 Agent — Import Keejob",
+        "description": "Import d'un CV au format Keejob (PDF Keejob → parsing regex → 15+ entités). `🔒 AGENT`",
+    },
+    {
+        "name": "👤 Agent — Candidats",
+        "description": "Navigation dans la base candidats avec recherche (nom/prénom/email) et pagination. `🔒 AGENT`",
+    },
+    {
+        "name": "💼 RH — Offres d'emploi",
+        "description": "CRUD complet des offres d'emploi (créer, modifier, clôturer, supprimer). `🔒 RH`",
+    },
+    {
+        "name": "🎯 RH — Matching",
+        "description": (
+            "**POST** : lance le matching (pgvector + scoring) → stocke top N résultats. "
+            "**GET** : résultats paginés filtrables par décision. "
+            "**PATCH** : décision RH (`RETAINED` / `REFUSED` / `PENDING`). `🔒 RH`"
+        ),
+    },
+    {
+        "name": "📊 RH — Dashboard",
+        "description": "Statistiques globales temps réel : CVs par source/statut, nouvelles candidatures, offres actives. `🔒 RH`",
+    },
+    {
+        "name": "⚙️ Admin — Utilisateurs",
+        "description": "CRUD utilisateurs, activation/désactivation de comptes. `🔒 ADMIN`",
+    },
+    {
+        "name": "⚙️ Admin — Statistiques",
+        "description": "Vue d'ensemble système : users/CVs/offres/candidatures par catégorie. `🔒 ADMIN`",
+    },
 ]
 
 app = FastAPI(
@@ -116,19 +178,60 @@ app.add_middleware(
 )
 app.include_router(auth_router)
 app.include_router(visitor_offers_router)
-app.include_router(admin_users_router)
-app.include_router(rh_offers_router)
+# Candidat
+app.include_router(candidate_profile_router)
 app.include_router(candidate_cvs_router)
+app.include_router(candidate_applications_router)
+# Agent
 app.include_router(agent_cvs_router)
 app.include_router(agent_keejob_router)
 app.include_router(agent_candidates_router)
-app.include_router(rh_dashboard_router)
+# RH
+app.include_router(rh_offers_router)
 app.include_router(rh_matching_router)
+app.include_router(rh_dashboard_router)
+# Admin
+app.include_router(admin_users_router)
+app.include_router(admin_stats_router)
 
-@app.get("/health")
+@app.get("/health", tags=["Health"])
 async def health():
     return {
         "status":  "ok",
         "service": settings.APP_NAME,
         "version": settings.APP_VERSION,
     }
+
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    schema = get_openapi(
+        title=settings.APP_NAME,
+        version=settings.APP_VERSION,
+        description=_DESCRIPTION,
+        tags=_TAGS,
+        routes=app.routes,
+        contact={"name": "ATS RANDA — PFE", "url": "https://github.com/hssanmnasri-source/ats-randa"},
+    )
+    # Ajouter le schéma de sécurité HTTPBearer pour le bouton Authorize
+    schema["components"]["securitySchemes"] = {
+        "BearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+            "description": "Entrez votre token JWT obtenu via `POST /api/visitor/login`",
+        }
+    }
+    # Appliquer la sécurité à toutes les routes sauf login/register/health/offers publiques
+    PUBLIC = {"/api/visitor/login", "/api/visitor/register", "/api/visitor/offers", "/health"}
+    for path, methods in schema.get("paths", {}).items():
+        if path in PUBLIC or (path == "/api/visitor/offers/{offer_id}"):
+            continue
+        for method_data in methods.values():
+            method_data.setdefault("security", [{"BearerAuth": []}])
+    app.openapi_schema = schema
+    return schema
+
+
+app.openapi = custom_openapi  # type: ignore

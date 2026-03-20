@@ -24,9 +24,15 @@ async def list_candidates(
     agent=Depends(require_agent),
     db: AsyncSession = Depends(get_db),
 ):
-    """Liste tous les candidats avec recherche et pagination."""
+    """
+    Liste les candidats dont les CVs ont été uploadés par cet agent.
+    Les candidats importés en masse (Keejob bulk) n'apparaissent pas ici
+    car ils ne sont pas attribués à un agent spécifique.
+    """
     skip = (page - 1) * limit
-    total, candidates = await candidate_repository.list_all(db, search=search, skip=skip, limit=limit)
+    total, candidates = await candidate_repository.list_all(
+        db, search=search, agent_id=agent.id, skip=skip, limit=limit
+    )
     return CandidateListOut(
         total=total,
         page=page,

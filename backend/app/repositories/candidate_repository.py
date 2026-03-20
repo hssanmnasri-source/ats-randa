@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, or_
-from app.models.db_models import Candidate
+from sqlalchemy import select, func, or_, exists
+from app.models.db_models import Candidate, CV, CVSource
 from typing import Optional
 
 
@@ -28,6 +28,14 @@ async def create(db: AsyncSession, data: dict) -> Candidate:
     return candidate
 
 
+async def update(db: AsyncSession, candidate: Candidate, data: dict) -> Candidate:
+    for key, value in data.items():
+        setattr(candidate, key, value)
+    await db.commit()
+    await db.refresh(candidate)
+    return candidate
+
+
 async def get_or_create(db: AsyncSession, data: dict) -> tuple:
     """Retourne (candidate, created: bool)"""
     if data.get("email"):
@@ -40,11 +48,24 @@ async def get_or_create(db: AsyncSession, data: dict) -> tuple:
 
 async def list_all(
     db: AsyncSession,
-    search: Optional[str] = None,   # nom, prénom ou email
+    search: Optional[str] = None,
+    agent_id: Optional[int] = None,   # si fourni → uniquement les candidats de cet agent
     skip: int = 0,
     limit: int = 20,
 ) -> tuple[int, list[Candidate]]:
     query = select(Candidate)
+
+    if agent_id is not None:
+        # Garder uniquement les candidats qui ont au moins un CV uploadé par cet agent
+        query = query.where(
+            exists(
+                select(CV.id).where(
+                    CV.id_candidate == Candidate.id,
+                    CV.id_agent == agent_id,
+                    CV.source == CVSource.AGENT,
+                )
+            )
+        )
 
     if search:
         term = f"%{search}%"
