@@ -16,6 +16,8 @@ email-validator==2.1.1
 
 # Task queue
 celery==5.3.6
+redis==5.0.8
+flower==2.0.1
 
 # OCR + Parsing
 pytesseract==0.3.13

@@ -19,8 +19,8 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "pages", "components", "hooks", "services", "store", "types", "router.tsx"]
+  "include": ["src"]
 }
