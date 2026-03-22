@@ -15,9 +15,11 @@ export function useRunMatching() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (offerId: number) => matchingService.runMatching(offerId),
-    onSuccess: (_, offerId) => {
-      qc.invalidateQueries({ queryKey: ['matching', 'results', offerId] });
-      message.success('Matching lancé avec succès.');
+    onSuccess: (data, offerId) => {
+      // Seed the cache with the results returned by POST to avoid an extra GET
+      qc.setQueryData(['matching', 'results', offerId, 100], data);
+      qc.setQueryData(['matching', 'results', offerId, 50], data);
+      message.success(`Matching terminé — ${data.total} candidats analysés.`);
     },
     onError: () => message.error('Erreur lors du lancement du matching.'),
   });

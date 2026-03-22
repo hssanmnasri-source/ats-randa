@@ -43,8 +43,16 @@ export default function HomePage() {
     try {
       await candidateService.applyToOffer(offerId);
       message.success('Candidature envoyée !');
-    } catch {
-      message.error('Erreur lors de la candidature.');
+    } catch (err: unknown) {
+      const detail = (err as { response?: { data?: { detail?: unknown } } })?.response?.data?.detail;
+      if (detail && typeof detail === 'object' && (detail as Record<string, string>).error === 'cv_required') {
+        message.error('Créez votre CV avant de postuler.');
+        navigate('/candidate/cv');
+      } else if (typeof detail === 'string' && detail.includes('déjà postulé')) {
+        message.warning('Vous avez déjà postulé à cette offre.');
+      } else {
+        message.error('Erreur lors de la candidature.');
+      }
     }
   };
 
@@ -55,42 +63,43 @@ export default function HomePage() {
 
   return (
     <div>
-      <div style={{ textAlign: 'center', padding: '40px 0 32px' }}>
-        <Typography.Title level={2}>Offres d'emploi</Typography.Title>
-        <Typography.Text type="secondary">
-          Découvrez les opportunités chez RANDA
+      {/* Hero Section */}
+      <div style={{
+        background: 'linear-gradient(160deg, #3D0C02 0%, #8B1A1A 50%, #C9A84C 100%)',
+        minHeight: 300,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '40px 24px',
+        marginBottom: 40,
+        borderRadius: 16,
+      }}>
+        <img src="/logo-randa.png" alt="ATS RANDA" style={{ height: 80, objectFit: 'contain', marginBottom: 16 }} />
+        <Typography.Title level={2} style={{ color: '#F0D080', margin: 0, textAlign: 'center' }}>
+          Offres d'emploi RANDA
+        </Typography.Title>
+        <Typography.Text style={{ color: '#C9A84C', marginTop: 8, marginBottom: 24, textAlign: 'center' }}>
+          Découvrez les opportunités et postulez en quelques clics
         </Typography.Text>
+        <Space wrap style={{ justifyContent: 'center' }}>
+          <Input
+            placeholder="Rechercher un poste..."
+            prefix={<SearchOutlined style={{ color: '#8B1A1A' }} />}
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            style={{ width: 320, borderRadius: 8 }}
+            allowClear
+          />
+          <Select
+            placeholder="Langue"
+            allowClear
+            style={{ width: 160 }}
+            onChange={(v) => { setLangue(v); setPage(1); }}
+            options={['ar', 'fr', 'en', 'fr/en'].map((l) => ({ label: l, value: l }))}
+          />
+        </Space>
       </div>
-
-      <Space
-        wrap
-        style={{ marginBottom: 24, justifyContent: 'center', width: '100%' }}
-      >
-        <Input
-          placeholder="Rechercher un poste..."
-          prefix={<SearchOutlined />}
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
-          }}
-          style={{ width: 320 }}
-          allowClear
-        />
-        <Select
-          placeholder="Langue"
-          allowClear
-          style={{ width: 160 }}
-          onChange={(v) => {
-            setLangue(v);
-            setPage(1);
-          }}
-          options={['ar', 'fr', 'en', 'fr/en'].map((l) => ({
-            label: l,
-            value: l,
-          }))}
-        />
-      </Space>
 
       {isLoading ? (
         <div style={{ textAlign: 'center', padding: 60 }}>

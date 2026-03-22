@@ -28,9 +28,17 @@ export default function OfferDetailPage() {
     }
     try {
       await candidateService.applyToOffer(Number(id));
-      message.success('Candidature envoyée !');
-    } catch {
-      message.error('Erreur lors de la candidature.');
+      message.success('Candidature envoyée avec succès !');
+    } catch (err: unknown) {
+      const detail = (err as { response?: { data?: { detail?: unknown } } })?.response?.data?.detail;
+      if (detail && typeof detail === 'object' && (detail as Record<string, string>).error === 'cv_required') {
+        message.error('Vous devez créer votre CV avant de postuler.');
+        navigate('/candidate/cv');
+      } else if (typeof detail === 'string' && detail.includes('déjà postulé')) {
+        message.warning('Vous avez déjà postulé à cette offre.');
+      } else {
+        message.error('Erreur lors de la candidature.');
+      }
     }
   };
 

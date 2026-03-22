@@ -38,7 +38,7 @@ def score_competences(cv_entities: dict, required_skills: list) -> float:
 
     def normalize(s) -> str:
         if isinstance(s, dict):
-            s = s.get("nom", "")
+            s = s.get("nom_competence", s.get("nom", ""))
         return str(s).lower().strip()
 
     cv_skills = {

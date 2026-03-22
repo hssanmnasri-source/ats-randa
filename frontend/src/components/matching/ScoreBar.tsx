@@ -8,7 +8,7 @@ interface Props {
 
 export default function ScoreBar({ score, label, showPercent = true }: Props) {
   const pct = Math.round(score * 100);
-  const color = pct >= 70 ? '#34a853' : pct >= 45 ? '#fbbc04' : '#ea4335';
+  const color = pct >= 70 ? '#52C41A' : pct >= 50 ? '#C9A84C' : pct > 30 ? '#FAAD14' : '#8B1A1A';
 
   return (
     <Tooltip title={label}>

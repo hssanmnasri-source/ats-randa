@@ -18,7 +18,7 @@ export default function UploadCVPage() {
           Notre IA analysera automatiquement le contenu.
         </Typography.Paragraph>
         <CVUploadForm
-          onUpload={(file) => upload(file)}
+          onUpload={(payload) => upload(payload)}
           loading={isPending}
         />
       </Card>

@@ -2,8 +2,8 @@ import api from './api';
 import type { MatchingResultsOut, UpdateDecisionRequest, ResultatOut } from '../types/matching';
 
 export const matchingService = {
-  async runMatching(offerId: number): Promise<{ message: string }> {
-    const res = await api.post(`/api/rh/offers/${offerId}/matching`);
+  async runMatching(offerId: number): Promise<MatchingResultsOut> {
+    const res = await api.post<MatchingResultsOut>(`/api/rh/offers/${offerId}/matching`);
     return res.data;
   },
 

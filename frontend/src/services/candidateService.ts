@@ -1,13 +1,27 @@
 import api from './api';
 import type { CandidateProfileOut } from '../types/cv';
 
+export interface OffreSummary {
+  id: number;
+  titre: string;
+  description?: string;
+  date_publication?: string;
+  statut?: string;
+}
+
 export interface ApplicationOut {
   id: number;
   id_offre: number;
   id_cv?: number;
-  statut?: string;
-  created_at?: string;
-  titre_offre?: string;
+  score_final?: number;
+  decision: string;          // 'PENDING' | 'RETAINED' | 'REFUSED'
+  date_candidature?: string;
+  offre?: OffreSummary | null;
+}
+
+export interface ApplicationsListOut {
+  total: number;
+  candidatures: ApplicationOut[];
 }
 
 export const candidateService = {
@@ -27,13 +41,13 @@ export const candidateService = {
     return res.data;
   },
 
-  async applyToOffer(offerId: number): Promise<ApplicationOut> {
-    const res = await api.post<ApplicationOut>(`/api/candidate/offers/${offerId}/apply`);
+  async applyToOffer(offerId: number): Promise<{ success: boolean; application_id: number; titre_offre?: string }> {
+    const res = await api.post(`/api/candidate/offers/${offerId}/apply`);
     return res.data;
   },
 
-  async getMyApplications(): Promise<ApplicationOut[]> {
-    const res = await api.get<ApplicationOut[]>('/api/candidate/applications');
+  async getMyApplications(): Promise<ApplicationsListOut> {
+    const res = await api.get<ApplicationsListOut>('/api/candidate/applications');
     return res.data;
   },
 

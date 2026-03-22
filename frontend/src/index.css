@@ -1,4 +1,43 @@
 @import "tailwindcss";
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #f8fafc; color: #1e293b; }
+body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #F5F5F5; color: #1A1A1A; }
+
+/* RANDA Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #F5F5F5; }
+::-webkit-scrollbar-thumb { background: #8B1A1A; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #C9A84C; }
+
+/* Ant Design Table header override */
+.ant-table-thead > tr > th {
+  background: #3D0C02 !important;
+  color: #F0D080 !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  border-bottom: 2px solid #C9A84C !important;
+  white-space: nowrap;
+  padding: 12px 16px !important;
+}
+
+.ant-table-column-sorter { color: #C9A84C !important; }
+.ant-table-column-sorter-up.active, .ant-table-column-sorter-down.active { color: #F0D080 !important; }
+
+/* Matching table alternating rows */
+.match-row-even td { background: #FFFFFF !important; }
+.match-row-odd td  { background: #FFF8F0 !important; }
+.ant-table-tbody > tr:hover > td { background: #FFF0E6 !important; }
+
+/* Score progress bar transition */
+.ant-progress-bg { transition: width 0.8s ease !important; }
+
+/* Card hover shadow */
+.ant-card-hoverable:hover {
+  box-shadow: 0 8px 24px rgba(139, 26, 26, 0.18) !important;
+  border-color: #C9A84C !important;
+}
+
+/* Primary button hover */
+.ant-btn-primary:hover {
+  background: #A52020 !important;
+}

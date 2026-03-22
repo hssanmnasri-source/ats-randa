@@ -37,15 +37,19 @@ export const cvService = {
   },
 
   // Agent
-  async agentUploadCV(file: File): Promise<CVDetailOut> {
-    if (!ALLOWED_TYPES.includes(file.type)) {
+  async agentUploadCV(payload: { file: File; nom: string; prenom: string; email?: string; telephone?: string }): Promise<CVDetailOut> {
+    if (!ALLOWED_TYPES.includes(payload.file.type)) {
       throw new Error('Format non supporté. Utilisez PDF, DOCX, JPG ou PNG.');
     }
-    if (file.size > MAX_SIZE) {
+    if (payload.file.size > MAX_SIZE) {
       throw new Error('Fichier trop lourd. La taille maximale est 5MB.');
     }
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', payload.file);
+    formData.append('nom', payload.nom);
+    formData.append('prenom', payload.prenom);
+    if (payload.email) formData.append('email', payload.email);
+    if (payload.telephone) formData.append('telephone', payload.telephone);
     const res = await api.post<CVDetailOut>('/api/agent/cvs/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });

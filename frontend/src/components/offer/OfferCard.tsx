@@ -22,17 +22,22 @@ export default function OfferCard({ offer, showApply = true, onApply }: Props) {
     <Card
       hoverable
       onClick={() => navigate(`/offers/${offer.id}`)}
-      style={{ marginBottom: 16 }}
+      style={{
+        marginBottom: 16,
+        borderLeft: '4px solid #8B1A1A',
+        borderRadius: 12,
+        transition: 'box-shadow 0.3s ease, border-color 0.3s ease',
+      }}
       actions={
         showApply
           ? [
               <Button
-                type="primary"
                 key="apply"
                 onClick={(e) => {
                   e.stopPropagation();
                   onApply ? onApply(offer.id) : navigate(`/offers/${offer.id}`);
                 }}
+                style={{ background: '#8B1A1A', color: '#fff', border: 'none' }}
               >
                 Postuler
               </Button>,

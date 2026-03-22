@@ -11,6 +11,10 @@ export interface ResultatOut {
   score_langue?: number;
   decision: Decision;
   date_analyse: string;
+  candidat_nom?: string | null;
+  candidat_prenom?: string | null;
+  candidat_email?: string | null;
+  candidat_telephone?: string | null;
 }
 
 export interface MatchingResultsOut {

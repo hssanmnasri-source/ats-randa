@@ -48,7 +48,7 @@ export function useAgentCVs(params?: { page?: number; limit?: number; search?: s
 export function useAgentUploadCV() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (file: File) => cvService.agentUploadCV(file),
+    mutationFn: (payload: { file: File; nom: string; prenom: string; email?: string; telephone?: string }) => cvService.agentUploadCV(payload),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['cvs'] });
       message.success('CV enregistré avec succès.');

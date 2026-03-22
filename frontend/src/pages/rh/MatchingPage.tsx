@@ -30,9 +30,7 @@ export default function MatchingPage() {
 
   const handleRunMatching = () => {
     if (!selectedOfferId) return;
-    runMatching(selectedOfferId, {
-      onSuccess: () => setTimeout(() => refetch(), 2000),
-    });
+    runMatching(selectedOfferId);
   };
 
   return (

@@ -6,14 +6,26 @@ import type { ApplicationOut } from '../../services/candidateService';
 import PageHeader from '../../components/common/PageHeader';
 import dayjs from 'dayjs';
 
+const DECISION_COLOR: Record<string, string> = {
+  RETAINED: 'success',
+  REFUSED: 'error',
+  PENDING: 'processing',
+};
+
+const DECISION_LABEL: Record<string, string> = {
+  RETAINED: 'Retenu ✓',
+  REFUSED: 'Refusé',
+  PENDING: 'En attente',
+};
+
 export default function ApplicationsPage() {
   const qc = useQueryClient();
-  const { data: applications, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['candidate', 'applications'],
     queryFn: () => candidateService.getMyApplications(),
   });
 
-  const { mutate: withdraw, isPending } = useMutation({
+  const { mutate: withdraw, isPending, variables: withdrawingId } = useMutation({
     mutationFn: (id: number) => candidateService.withdrawApplication(id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidate', 'applications'] });
@@ -22,58 +34,51 @@ export default function ApplicationsPage() {
     onError: () => message.error('Erreur lors du retrait.'),
   });
 
+  const applications = data?.candidatures ?? [];
+  const total = data?.total ?? 0;
+
   const columns: ColumnsType<ApplicationOut> = [
     {
       title: 'Offre',
       key: 'offre',
-      render: (_, r) => r.titre_offre ?? `Offre #${r.id_offre}`,
+      render: (_, r) => r.offre?.titre ?? `Offre #${r.id_offre}`,
     },
     {
       title: 'Statut',
-      dataIndex: 'statut',
-      key: 'statut',
-      width: 130,
-      render: (s) => (
-        <Tag
-          color={
-            s === 'RETAINED'
-              ? 'success'
-              : s === 'REFUSED'
-              ? 'error'
-              : 'processing'
-          }
-        >
-          {s === 'RETAINED'
-            ? 'Retenu'
-            : s === 'REFUSED'
-            ? 'Refusé'
-            : 'En cours'}
+      key: 'decision',
+      width: 140,
+      render: (_, r) => (
+        <Tag color={DECISION_COLOR[r.decision] ?? 'default'}>
+          {DECISION_LABEL[r.decision] ?? r.decision}
         </Tag>
       ),
     },
     {
       title: 'Date',
-      dataIndex: 'created_at',
-      key: 'created_at',
+      key: 'date',
       width: 130,
-      render: (d) => (d ? dayjs(d).format('DD/MM/YYYY') : '—'),
+      render: (_, r) =>
+        r.date_candidature ? dayjs(r.date_candidature).format('DD/MM/YYYY') : '—',
     },
     {
       title: 'Action',
       key: 'action',
-      width: 120,
-      render: (_, r) => (
-        <Popconfirm
-          title="Retirer cette candidature ?"
-          onConfirm={() => withdraw(r.id)}
-          okText="Oui"
-          cancelText="Non"
-        >
-          <Button size="small" danger loading={isPending}>
-            Retirer
-          </Button>
-        </Popconfirm>
-      ),
+      width: 110,
+      render: (_, r) =>
+        r.decision === 'PENDING' ? (
+          <Popconfirm
+            title="Retirer cette candidature ?"
+            onConfirm={() => withdraw(r.id)}
+            okText="Oui"
+            cancelText="Non"
+          >
+            <Button size="small" danger loading={isPending && withdrawingId === r.id}>
+              Retirer
+            </Button>
+          </Popconfirm>
+        ) : (
+          <Tag color="default">—</Tag>
+        ),
     },
   ];
 
@@ -81,20 +86,17 @@ export default function ApplicationsPage() {
     <div>
       <PageHeader
         title="Mes candidatures"
-        subtitle={`${applications?.length ?? 0} candidature${(applications?.length ?? 0) > 1 ? 's' : ''}`}
+        subtitle={`${total} candidature${total > 1 ? 's' : ''}`}
       />
-      {applications?.length === 0 ? (
-        <Empty
-          description="Vous n'avez pas encore de candidatures."
-          style={{ padding: 60 }}
-        />
+      {applications.length === 0 && !isLoading ? (
+        <Empty description="Vous n'avez pas encore de candidatures." style={{ padding: 60 }} />
       ) : (
         <Table
           rowKey="id"
           columns={columns}
-          dataSource={applications ?? []}
+          dataSource={applications}
           loading={isLoading}
-          pagination={{ pageSize: 10 }}
+          pagination={{ pageSize: 10, showTotal: (t) => `${t} candidatures` }}
         />
       )}
     </div>
