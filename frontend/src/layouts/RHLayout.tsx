@@ -53,7 +53,7 @@ export default function RHLayout() {
           background: SIDEBAR_BG,
         }}>
           <img
-            src="/logo-randa.png"
+            src="/logo-randa.transparent.png"
             style={{
               height: collapsed ? 32 : 60,
               objectFit: 'contain',

@@ -5,7 +5,7 @@ celery_app = Celery(
     "ats_randa",
     broker=settings.REDIS_URL,
     backend=settings.REDIS_URL,
-    include=[]
+    include=["app.tasks.cv_tasks", "app.tasks.offer_tasks"],
 )
 
 celery_app.conf.update(

@@ -109,6 +109,8 @@ class CV(Base):
     embedding    = Column(Vector(384))          # ← pgvector
     score_final  = Column(Float, default=0.0)
     created_at   = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    cv_version   = Column(Integer, default=1)
 
     candidate    = relationship("Candidate", back_populates="cvs",
                                 foreign_keys=[id_candidate])
@@ -161,6 +163,7 @@ class JobOffer(Base):
     plateforme_source    = Column(String(100), default="randa")
     embedding            = Column(Vector(384))   # ← pgvector
     statut               = Column(SAEnum(OfferStatus), default=OfferStatus.ACTIVE)
+    last_matching_at     = Column(DateTime(timezone=True), nullable=True)
 
     resultats = relationship("Resultat", back_populates="offre",
                              cascade="all, delete-orphan")
@@ -178,8 +181,9 @@ class Resultat(Base):
     score_langue      = Column(Float, default=0.0)
     score_final       = Column(Float, default=0.0)
     rang              = Column(Integer)
-    decision          = Column(SAEnum(Decision), default=Decision.PENDING)
-    date_analyse      = Column(DateTime(timezone=True), server_default=func.now())
+    decision               = Column(SAEnum(Decision), default=Decision.PENDING)
+    date_analyse           = Column(DateTime(timezone=True), server_default=func.now())
+    last_score_updated_at  = Column(DateTime(timezone=True), server_default=func.now())
 
     cv    = relationship("CV",       back_populates="resultats")
     offre = relationship("JobOffer", back_populates="resultats")

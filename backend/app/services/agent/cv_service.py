@@ -36,6 +36,10 @@ async def register_cv_upload(
         "cv_entities":  {},
     })
 
+    # Déclencher embedding + matching async (PENDING uniquement)
+    from app.tasks.cv_tasks import process_cv_on_upload
+    process_cv_on_upload.delay(cv.id)
+
     return {
         "cv_id":             cv.id,
         "candidate_id":      candidate.id,
@@ -68,6 +72,10 @@ async def register_cv(db: AsyncSession, data, agent_id: int):
 
     if data.experiences:
         await cv_repository.add_experiences(db, cv.id, data.experiences)
+
+    # Déclencher embedding + matching async (PENDING uniquement)
+    from app.tasks.cv_tasks import process_cv_on_upload
+    process_cv_on_upload.delay(cv.id)
 
     return {
         "cv_id":             cv.id,

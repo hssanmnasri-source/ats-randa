@@ -70,6 +70,11 @@ async def upload_cv(db: AsyncSession, file: UploadFile, user) -> dict:
         "statut":       CVStatus.UPLOADED,
         "score_final":  0.0,
     })
+
+    # Déclencher embedding + matching async (PENDING uniquement)
+    from app.tasks.cv_tasks import process_cv_on_upload
+    process_cv_on_upload.delay(cv.id)
+
     return cv
 
 
@@ -101,6 +106,10 @@ async def create_cv_from_form(db: AsyncSession, data: CVFormIn, user) -> dict:
     competences_data = [{"nom_competence": c, "niveau": "INTERMEDIATE"} for c in data.competences]
     if competences_data:
         await cv_repository.add_competences(db, cv.id, competences_data)
+
+    # Déclencher embedding + matching async (PENDING uniquement)
+    from app.tasks.cv_tasks import process_cv_on_upload
+    process_cv_on_upload.delay(cv.id)
 
     return cv
 
