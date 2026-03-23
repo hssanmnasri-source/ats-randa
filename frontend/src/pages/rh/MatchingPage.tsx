@@ -1,15 +1,18 @@
 import { useState } from 'react';
-import { Select, Button, Card, Empty, Spin, Space, Alert, Typography, Tag } from 'antd';
-import { AimOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Select, Button, Card, Empty, Spin, Space, Alert, Typography, Tag, message } from 'antd';
+import { AimOutlined, ReloadOutlined, FilePdfOutlined } from '@ant-design/icons';
 import { useRHOffers } from '../../hooks/useOffers';
 import { useMatchResults, useRunMatching, useUpdateDecision } from '../../hooks/useMatching';
 import MatchResultTable from '../../components/matching/MatchResultTable';
 import PageHeader from '../../components/common/PageHeader';
 import type { Decision } from '../../types/matching';
+import { useAuthStore } from '../../store/authStore';
 
 export default function MatchingPage() {
   const [selectedOfferId, setSelectedOfferId] = useState<number | null>(null);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [exportingPdf, setExportingPdf] = useState(false);
+  const token = useAuthStore((s) => s.token);
 
   const { data: offersData, isLoading: loadingOffers } = useRHOffers({ limit: 100 });
   const { data: matchingData, isLoading: loadingResults, refetch } =
@@ -31,6 +34,31 @@ export default function MatchingPage() {
   const handleRunMatching = () => {
     if (!selectedOfferId) return;
     runMatching(selectedOfferId);
+  };
+
+  const handleExportPdf = async () => {
+    if (!selectedOfferId) return;
+    setExportingPdf(true);
+    try {
+      const res = await fetch(
+        `http://localhost:8000/api/rh/offers/${selectedOfferId}/export/pdf`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const disposition = res.headers.get('Content-Disposition') || '';
+      const match = disposition.match(/filename="?([^"]+)"?/);
+      a.download = match ? match[1] : `matching_${selectedOfferId}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      message.error('Erreur lors de la génération du PDF');
+    } finally {
+      setExportingPdf(false);
+    }
   };
 
   return (
@@ -68,6 +96,16 @@ export default function MatchingPage() {
           {selectedOfferId && (
             <Button icon={<ReloadOutlined />} onClick={() => refetch()}>
               Actualiser
+            </Button>
+          )}
+          {selectedOfferId && results.length > 0 && (
+            <Button
+              icon={<FilePdfOutlined />}
+              loading={exportingPdf}
+              onClick={handleExportPdf}
+              style={{ borderColor: '#8B1A1A', color: '#8B1A1A' }}
+            >
+              Exporter PDF
             </Button>
           )}
         </Space>

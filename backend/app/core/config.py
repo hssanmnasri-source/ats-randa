@@ -41,11 +41,23 @@ class Settings(BaseSettings):
     UPLOAD_DIR: str = "/app/uploads"
     MAX_FILE_SIZE_MB: int = 10
 
+    # Email (optionnel — désactivé si MAIL_USERNAME absent)
+    MAIL_USERNAME: str = ""
+    MAIL_PASSWORD: str = ""
+    MAIL_FROM: str = "ats.randa.noreply@gmail.com"
+    MAIL_PORT: int = 587
+    MAIL_SERVER: str = "smtp.gmail.com"
+    MAIL_FROM_NAME: str = "ATS RANDA"
+    MAIL_ENABLED: bool = False  # Mettre True + configurer MAIL_USERNAME/PASSWORD en .env
+
     # CORS
     CORS_ORIGINS: List[str] = [
         "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002",
         "http://localhost:5173",
         "http://localhost:80",
+        "http://localhost",
     ]
 
     class Config:

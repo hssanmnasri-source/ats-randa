@@ -75,6 +75,13 @@ async def upload_cv(db: AsyncSession, file: UploadFile, user) -> dict:
     from app.tasks.cv_tasks import process_cv_on_upload
     process_cv_on_upload.delay(cv.id)
 
+    # Notification email (fire-and-forget)
+    import asyncio
+    from app.core.mailer import send_cv_received
+    candidate = await candidate_repository.get_by_id(db, candidate_id)
+    if candidate and candidate.email:
+        asyncio.create_task(send_cv_received(candidate.email, candidate.nom or "", candidate.prenom or ""))
+
     return cv
 
 
@@ -110,6 +117,13 @@ async def create_cv_from_form(db: AsyncSession, data: CVFormIn, user) -> dict:
     # Déclencher embedding + matching async (PENDING uniquement)
     from app.tasks.cv_tasks import process_cv_on_upload
     process_cv_on_upload.delay(cv.id)
+
+    # Notification email (fire-and-forget)
+    import asyncio
+    from app.core.mailer import send_cv_received
+    candidate = await candidate_repository.get_by_id(db, candidate_id)
+    if candidate and candidate.email:
+        asyncio.create_task(send_cv_received(candidate.email, candidate.nom or "", candidate.prenom or ""))
 
     return cv
 

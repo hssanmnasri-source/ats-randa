@@ -73,6 +73,15 @@ async def apply_to_offer(db: AsyncSession, offer_id: int, user) -> dict:
     await db.commit()
     await db.refresh(application)
 
+    # Notification email (fire-and-forget)
+    import asyncio
+    from app.core.mailer import send_application_received
+    candidate = await candidate_repository.get_by_email(db, user.email)
+    if candidate and candidate.email:
+        asyncio.create_task(send_application_received(
+            candidate.email, candidate.nom or "", candidate.prenom or "", offer.titre
+        ))
+
     return {
         "success":          True,
         "application_id":   application.id,

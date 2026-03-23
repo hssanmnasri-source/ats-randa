@@ -7,11 +7,13 @@ GET  /api/rh/offers/{id}/matching        → résultats stockés (paginés)
 PATCH /api/rh/offers/{id}/matching/{rid} → mettre à jour la décision
 """
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import get_db, require_rh
 from app.models.db_models import Decision
 from app.services.rh.matching_service import run_matching
+from app.services.rh.pdf_export import generate_matching_pdf
 from app.repositories import result_repository, offer_repository
 
 router = APIRouter(prefix="/api/rh/offers", tags=["🎯 RH — Matching"])
@@ -38,15 +40,16 @@ async def launch_matching(
         raise HTTPException(status_code=404, detail=f"Offre #{offer_id} introuvable")
 
     try:
-        results = await run_matching(db, offer_id, top_n=top_n, force=force)
+        await run_matching(db, offer_id, top_n=top_n, force=force)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+    total, rows = await result_repository.list_by_offer(db, offer_id, limit=top_n)
     return {
         "offer_id":  offer_id,
         "titre":     offer.titre,
-        "total":     len(results),
-        "resultats": results,
+        "total":     total,
+        "resultats": rows,
     }
 
 
@@ -76,21 +79,7 @@ async def get_matching_results(
         "total":     total,
         "skip":      skip,
         "limit":     limit,
-        "resultats": [
-            {
-                "id":               r.id,
-                "id_cv":            r.id_cv,
-                "rang":             r.rang,
-                "score_final":      r.score_final,
-                "score_matching":   r.score_matching,
-                "score_skills":     r.score_skills,
-                "score_experience": r.score_experience,
-                "score_langue":     r.score_langue,
-                "decision":         r.decision.value if r.decision else "PENDING",
-                "date_analyse":     r.date_analyse.isoformat() if r.date_analyse else None,
-            }
-            for r in rows
-        ],
+        "resultats": rows,
     }
 
 
@@ -118,9 +107,59 @@ async def update_decision(
         raise HTTPException(status_code=404, detail="Résultat introuvable")
 
     updated = await result_repository.update_decision(db, result, Decision[decision_str])
+
+    # Notification email pour RETAINED / REFUSED (fire-and-forget)
+    if decision_str in ("RETAINED", "REFUSED"):
+        import asyncio
+        from app.models.db_models import CV, Candidate
+        from app.core.mailer import send_decision_notification
+        cv = await db.get(CV, result.id_cv)
+        if cv:
+            candidate = await db.get(Candidate, cv.id_candidate)
+            offer_obj = await offer_repository.get_by_id(db, offer_id)
+            if candidate and candidate.email and offer_obj:
+                asyncio.create_task(send_decision_notification(
+                    candidate.email,
+                    candidate.nom or "",
+                    candidate.prenom or "",
+                    offer_obj.titre,
+                    decision_str,
+                ))
+
     return {
         "id":       updated.id,
         "decision": updated.decision.value,
         "rang":     updated.rang,
         "score_final": updated.score_final,
     }
+
+
+@router.get("/{offer_id}/export/pdf", status_code=200)
+async def export_matching_pdf(
+    offer_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_rh),
+):
+    """
+    Génère et retourne le rapport PDF de matching pour une offre.
+    Inclut tous les candidats analysés, classés par rang.
+    """
+    offer = await offer_repository.get_by_id(db, offer_id)
+    if not offer:
+        raise HTTPException(status_code=404, detail=f"Offre #{offer_id} introuvable")
+
+    _, results = await result_repository.list_by_offer(db, offer_id, limit=500)
+
+    try:
+        pdf_bytes = generate_matching_pdf(offer, results)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur génération PDF : {e}")
+
+    safe_title = "".join(c if c.isalnum() or c in "-_" else "_" for c in offer.titre[:50])
+    filename = f"matching_{offer_id}_{safe_title}.pdf"
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
