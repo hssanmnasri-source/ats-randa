@@ -125,8 +125,26 @@ async def _process_cv_async(cv_id: int) -> dict:
             logger.error(f"CV {cv_id} introuvable")
             return {"status": "not_found", "cv_id": cv_id}
 
-        # ── 2. Construire texte + générer embedding ─────────────────────
-        embed_text = cv_to_embed_text(cv.cv_entities or {}, cv.cv_text or "")
+        # ── 2. Extraire texte PDF si cv_text absent ─────────────────────
+        cv_text = cv.cv_text or ""
+        if not cv_text.strip() and cv.fichier_pdf:
+            try:
+                import os
+                from app.nlp.ocr import extract_text_from_pdf
+                pdf_path = os.path.join("/app/uploads/cvs", cv.fichier_pdf)
+                if os.path.exists(pdf_path):
+                    with open(pdf_path, "rb") as f:
+                        pdf_bytes = f.read()
+                    cv_text = extract_text_from_pdf(pdf_bytes)
+                    if cv_text:
+                        cv.cv_text = cv_text
+                        await db.commit()
+                        logger.info(f"CV {cv_id} — texte extrait du PDF ({len(cv_text)} chars)")
+            except Exception as e:
+                logger.warning(f"CV {cv_id} — extraction PDF échouée: {e}")
+
+        # ── 3. Construire texte + générer embedding ─────────────────────
+        embed_text = cv_to_embed_text(cv.cv_entities or {}, cv_text)
         if not embed_text.strip():
             logger.warning(f"CV {cv_id} — texte vide, embedding impossible")
             return {"status": "empty_text", "cv_id": cv_id}
@@ -141,7 +159,7 @@ async def _process_cv_async(cv_id: int) -> dict:
         await db.refresh(cv)
         logger.info(f"Embedding CV {cv_id} sauvegardé (version {cv.cv_version})")
 
-        # ── 3. Récupérer toutes les offres ACTIVE ───────────────────────
+        # ── 4. Récupérer toutes les offres ACTIVE ───────────────────────
         offers_result = await db.execute(
             select(JobOffer).where(JobOffer.statut == OfferStatus.ACTIVE)
         )
