@@ -22,6 +22,9 @@ import CandidateDashboard from '../pages/candidate/DashboardPage';
 import MyCVPage from '../pages/candidate/MyCVPage';
 import ApplicationsPage from '../pages/candidate/ApplicationsPage';
 import CandidateProfilePage from '../pages/candidate/ProfilePage';
+import CoverLettersPage from '../pages/candidate/CoverLettersPage';
+import DocumentsPage from '../pages/candidate/DocumentsPage';
+import SettingsPage from '../pages/candidate/SettingsPage';
 
 // Agent pages
 import AgentDashboard from '../pages/agent/DashboardPage';
@@ -68,10 +71,13 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <CandidateDashboard /> },
-      { path: 'cv', element: <MyCVPage /> },
-      { path: 'applications', element: <ApplicationsPage /> },
-      { path: 'profile', element: <CandidateProfilePage /> },
+      { index: true,                 element: <CandidateDashboard /> },
+      { path: 'cv',                  element: <MyCVPage /> },
+      { path: 'applications',        element: <ApplicationsPage /> },
+      { path: 'profile',             element: <CandidateProfilePage /> },
+      { path: 'cover-letters',       element: <CoverLettersPage /> },
+      { path: 'documents',           element: <DocumentsPage /> },
+      { path: 'settings',            element: <SettingsPage /> },
     ],
   },
 
@@ -84,9 +90,9 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <AgentDashboard /> },
-      { path: 'upload', element: <UploadCVPage /> },
-      { path: 'cvs', element: <CVListPage /> },
+      { index: true,     element: <AgentDashboard /> },
+      { path: 'upload',  element: <UploadCVPage /> },
+      { path: 'cvs',     element: <CVListPage /> },
     ],
   },
 
@@ -99,12 +105,12 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <RHDashboard /> },
-      { path: 'offers', element: <OffersPage /> },
-      { path: 'offers/new', element: <OfferFormPage /> },
-      { path: 'offers/:id/edit', element: <OfferFormPage /> },
-      { path: 'matching', element: <MatchingPage /> },
-      { path: 'results', element: <ResultsPage /> },
+      { index: true,                element: <RHDashboard /> },
+      { path: 'offers',             element: <OffersPage /> },
+      { path: 'offers/new',         element: <OfferFormPage /> },
+      { path: 'offers/:id/edit',    element: <OfferFormPage /> },
+      { path: 'matching',           element: <MatchingPage /> },
+      { path: 'results',            element: <ResultsPage /> },
     ],
   },
 
@@ -117,8 +123,8 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <AdminDashboard /> },
-      { path: 'users', element: <UsersPage /> },
+      { index: true,       element: <AdminDashboard /> },
+      { path: 'users',     element: <UsersPage /> },
       { path: 'users/new', element: <UserFormPage /> },
     ],
   },

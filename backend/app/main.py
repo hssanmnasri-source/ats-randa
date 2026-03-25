@@ -15,6 +15,8 @@ from app.api.routes.rh.matching import router as rh_matching_router
 from app.api.routes.candidate.profile import router as candidate_profile_router
 from app.api.routes.candidate.cvs import router as candidate_cvs_router
 from app.api.routes.candidate.applications import router as candidate_applications_router
+from app.api.routes.candidate.cover_letters import router as candidate_cover_letters_router
+from app.api.routes.candidate.documents import router as candidate_documents_router
 from app.api.routes.agent.cvs import router as agent_cvs_router
 from app.api.routes.agent.import_keejob import router as agent_keejob_router
 from app.api.routes.agent.candidates import router as agent_candidates_router
@@ -194,6 +196,8 @@ app.include_router(visitor_offers_router)
 app.include_router(candidate_profile_router)
 app.include_router(candidate_cvs_router)
 app.include_router(candidate_applications_router)
+app.include_router(candidate_cover_letters_router)
+app.include_router(candidate_documents_router)
 # Agent
 app.include_router(agent_cvs_router)
 app.include_router(agent_keejob_router)

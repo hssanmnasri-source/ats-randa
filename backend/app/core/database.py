@@ -40,6 +40,24 @@ async def init_db():
         await conn.execute(text(
             "ALTER TABLE job_offers ADD COLUMN IF NOT EXISTS details JSONB"
         ))
+        # Candidate extended profile (2026-03)
+        _candidate_cols = [
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS photo_url VARCHAR(500)",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS titre_poste VARCHAR(255)",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS niveau_etude VARCHAR(50)",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS salaire_actuel VARCHAR(100)",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS disponibilite VARCHAR(100)",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS genre VARCHAR(20)",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS situation_familiale VARCHAR(50)",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS nationalite VARCHAR(100)",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS has_driving_license BOOLEAN DEFAULT FALSE",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS owns_car BOOLEAN DEFAULT FALSE",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS has_handicap BOOLEAN DEFAULT FALSE",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS visibility_status VARCHAR(20) DEFAULT 'VISIBLE'",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS alert_frequency VARCHAR(20) DEFAULT 'WEEKLY'",
+        ]
+        for stmt in _candidate_cols:
+            await conn.execute(text(stmt))
     logger.info("✅ Database initialized — pgvector active")
 
 # ── Dependency injection ──────────────────────────

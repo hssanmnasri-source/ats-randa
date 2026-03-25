@@ -14,11 +14,13 @@ make up          # Start all services
 make down        # Stop all services
 make build       # Rebuild and start
 make logs        # Stream all logs
-make migrate     # Run Alembic migrations
+make migrate     # Run Alembic migrations inside the backend container
 make db-shell    # PostgreSQL CLI
 make clean       # Remove containers + volumes
 make status      # Show container status
 ```
+
+Docker container names for `docker exec`: `ats_backend`, `ats_postgres`, `ats_redis`.
 
 ### Backend (standalone)
 ```bash
@@ -45,6 +47,26 @@ npm run dev      # Dev server on port 3000 (required for nginx proxy to work)
 npm run build    # TypeScript check + Vite bundle
 ```
 Nginx proxies `/` → `host.docker.internal:3000`, so `npm run dev` must be running for the frontend to be accessible at `http://localhost`.
+
+### Useful one-liners
+```bash
+# Backfill embeddings for all CVs without one
+docker exec ats_backend python -m app.nlp.embed_existing_cvs --batch-size 128
+
+# Bulk import Keejob CVs from a folder
+docker exec ats_backend python -m app.nlp.keejob_importer /app/uploads/keejob --all-files
+
+# Check DB row counts
+docker exec ats_backend python -c "
+import asyncio, sys; sys.path.insert(0, '/app')
+from app.core.database import AsyncSessionLocal
+from sqlalchemy import text
+async def main():
+    async with AsyncSessionLocal() as db:
+        for t in ['candidates','cvs','competences','experiences','job_offers','resultats']:
+            r = await db.execute(text(f'SELECT COUNT(*) FROM {t}')); print(f'{t}: {r.scalar()}')
+asyncio.run(main())"
+```
 
 ## Backend Architecture
 
@@ -83,11 +105,11 @@ backend/app/
 ```
 
 ### User Roles & Auth
-Roles: `VISITOR`, `CANDIDATE`, `AGENT`, `RH`, `ADMIN`. Route-level guards are FastAPI dependencies in `api/dependencies.py` (`require_candidate`, `require_agent`, `require_rh`, `require_admin`). JWT Bearer tokens validated on every protected request. Token expiry: 60 minutes (configurable), refresh tokens: 7-day expiry.
+Roles: `VISITOR`, `CANDIDATE`, `AGENT`, `RH`, `ADMIN`. Route-level guards are FastAPI dependencies in `api/dependencies.py` (`require_candidate`, `require_agent`, `require_rh`, `require_admin`). JWT Bearer tokens validated on every protected request.
 
 ### Key Data Models (db_models.py)
 - `CV` — stores parsed text, `source` (`KEEJOB/AGENT/CANDIDAT`), `statut` (`UPLOADED/PARSING/INDEXED/ERROR`), and a 384-dim pgvector embedding
-  - `source=KEEJOB` → bulk-imported, `id_agent=NULL` — not attributed to any agent
+  - `source=KEEJOB` → bulk-imported, `id_agent=NULL`
   - `source=AGENT` → uploaded by a specific agent, `id_agent=agent.id`
   - `source=CANDIDAT` → submitted by the candidate themselves
 - `JobOffer` — has its own pgvector embedding for semantic matching
@@ -107,20 +129,44 @@ Matching flow: pgvector pre-filters top 200 CVs by cosine similarity → 4-crite
 
 ## Frontend Architecture
 
+### Tech Stack
+- **UI**: Ant Design 5 (`antd`) with a custom dark-red/gold brand theme
+- **Data fetching**: TanStack React Query (`@tanstack/react-query`) — all server state goes through it
+- **Global state**: Zustand (auth token/user, notifications only)
+- **Routing**: React Router 6 with role-based `ProtectedRoute`
+- **Icons**: `@ant-design/icons`
+
+### Design System
+All brand colors and the Ant Design theme override live in `frontend/src/theme.ts`:
+- `COLORS.primary` = `#8B1A1A` (dark red — buttons, links)
+- `COLORS.gold` / `COLORS.goldLight` = `#C9A84C` / `#F0D080` (accents, table headers)
+- `COLORS.sidebarBg` / `COLORS.darkBrown` = `#3D0C02` (all sidebar backgrounds)
+
+Always import from `theme.ts` rather than hardcoding hex values.
+
+### Folder Structure
 ```
 frontend/src/
 ├── pages/          # Route-level page components, one folder per role
 ├── components/     # Reusable UI components (common/, cv/, offer/, matching/, dashboard/)
-├── hooks/          # Custom hooks: useAuth, useCVs, useOffers, useMatching, useDashboard, useAdmin
-├── services/       # API layer: api.ts (axios + JWT interceptor), authService, cvService, offerService, matchingService, adminService
+├── hooks/          # Custom hooks wrapping TanStack Query (useCVs, useOffers, useMatching, etc.)
+├── services/       # API layer: api.ts (axios + JWT interceptor), then per-role service files
 ├── store/          # Zustand: authStore (user/token, persisted), notificationStore (toasts)
 ├── types/          # TypeScript interfaces
+├── layouts/        # Per-role layouts (AgentLayout, RHLayout, CandidateLayout, etc.)
 └── router/         # React Router 6 config with ProtectedRoute component
 ```
 
-State management is intentionally minimal — Zustand only for cross-cutting concerns (auth, notifications). All data fetching goes through custom hooks wrapping the service layer.
+### API Client (`services/api.ts`)
+Axios instance with `baseURL: 'http://localhost:8000'`. All endpoint paths include the `/api/` prefix (e.g. `/api/candidate/profile`). The request interceptor auto-attaches the JWT Bearer token from Zustand. A 401 response triggers automatic logout and redirect to `/login`.
 
-**Vite proxy:** `vite.config.ts` proxies `/api` → `http://localhost:8000`, so both direct `:8000` and nginx-proxied `:80` work for API calls.
+**Vite proxy:** `vite.config.ts` also proxies `/api` → `http://localhost:8000` as a fallback for build-time usage.
+
+### Data Fetching Pattern
+Use TanStack Query in hooks, not directly in components. Query keys follow the pattern `['role', 'resource']` (e.g. `['candidate', 'profile']`, `['rh', 'offers']`). Default `staleTime` is 5 minutes.
+
+### Existing Candidate Portal (`/candidate`)
+Four pages are implemented: `DashboardPage`, `MyCVPage`, `ApplicationsPage`, `ProfilePage`. The `CandidateLayout` sidebar currently has 4 menu items. Backend endpoints for profile (`GET/PUT /api/candidate/profile`), CVs (`GET/POST /api/candidate/cvs`), applications (`GET /api/candidate/applications`), and offer application (`POST /api/candidate/offers/{id}/apply`) are all present.
 
 ## Infrastructure
 
@@ -130,14 +176,6 @@ Nginx routes: `/api/*` and `/docs` → `backend:8000`, `/` → `host.docker.inte
 
 API docs: `http://localhost:8000/docs` (Swagger) and `/redoc`.
 
-## Database State
-
-Current production data:
-- **4,131 CVs** — all `statut=INDEXED` with embeddings (no pending embedding work)
-- **4,128 candidates**
-- **2 job offers**
-- ~18,000+ competences, ~12,000+ experiences
-
 ## Environment Variables
 
-All config lives in `.env` at the repo root. Key variables: `POSTGRES_*`, `REDIS_*`, `SECRET_KEY`, `CORS_ORIGINS`, `UPLOAD_DIR`, `MAX_FILE_SIZE_MB`. The backend reads these via `app/core/config.py`.
+All config lives in `.env` at the repo root. Key variables: `POSTGRES_*`, `REDIS_*`, `SECRET_KEY`, `CORS_ORIGINS`, `UPLOAD_DIR`, `MAX_FILE_SIZE_MB`. The backend reads these via `app/core/config.py`. See `.env.example` for the full list.

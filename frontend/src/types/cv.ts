@@ -1,4 +1,5 @@
-// CV from candidate space
+// ── CV ────────────────────────────────────────────────────────────────────────
+
 export interface CVOut {
   id: number;
   id_candidate: number;
@@ -15,7 +16,6 @@ export interface CVListOut {
   cvs: CVOut[];
 }
 
-// CV detail (with candidate info)
 export interface CVDetailOut {
   id: number;
   id_candidate: number;
@@ -28,13 +28,14 @@ export interface CVDetailOut {
   candidate?: CandidateOut | null;
 }
 
-// Agent CV list
 export interface AgentCVListOut {
   total: number;
   page: number;
   pages: number;
   cvs: CVDetailOut[];
 }
+
+// ── Candidate ─────────────────────────────────────────────────────────────────
 
 export interface CandidateOut {
   id: number;
@@ -55,8 +56,24 @@ export interface CandidateProfileOut {
   telephone?: string | null;
   adresse?: string | null;
   date_naissance?: string | null;
+  // Extended
+  photo_url?:           string | null;
+  titre_poste?:         string | null;
+  niveau_etude?:        string | null;
+  salaire_actuel?:      string | null;
+  disponibilite?:       string | null;
+  genre?:               string | null;
+  situation_familiale?: string | null;
+  nationalite?:         string | null;
+  has_driving_license:  boolean;
+  owns_car:             boolean;
+  has_handicap:         boolean;
+  visibility_status:    'VISIBLE' | 'ANONYMOUS' | 'INVISIBLE';
+  alert_frequency:      'DAILY' | 'TWICE_WEEK' | 'WEEKLY' | 'NEVER';
   created_at: string;
 }
+
+// ── CV Form ───────────────────────────────────────────────────────────────────
 
 export interface LangueIn {
   langue: string;
@@ -74,4 +91,73 @@ export interface CVFormIn {
   adresse?: string | null;
   disponibilite?: string | null;
   salaire_souhaite?: string | null;
+}
+
+// ── Experiences & Skills ──────────────────────────────────────────────────────
+
+export interface ExperienceOut {
+  id:           number;
+  poste?:       string | null;
+  entreprise?:  string | null;
+  date_debut?:  string | null;
+  date_fin?:    string | null;
+  description?: string | null;
+}
+
+export interface SkillOut {
+  id:             number;
+  nom_competence: string;
+  niveau:         string;
+}
+
+// ── Profile completion ────────────────────────────────────────────────────────
+
+export interface SectionCompletion {
+  label:  string;
+  weight: number;
+  score:  number;
+  filled: boolean;
+}
+
+export interface ProfileCompletionOut {
+  total:    number;
+  sections: Record<string, SectionCompletion>;
+}
+
+export interface FullProfileOut {
+  profile:     CandidateProfileOut;
+  completion:  ProfileCompletionOut;
+  experiences: ExperienceOut[];
+  skills:      SkillOut[];
+  langues:     Array<{ langue: string; niveau?: string }>;
+}
+
+// ── Cover Letters ─────────────────────────────────────────────────────────────
+
+export interface CoverLetterOut {
+  id:          number;
+  titre:       string;
+  contenu:     string;
+  created_at:  string;
+  updated_at?: string;
+}
+
+export interface CoverLetterListOut {
+  total:         number;
+  cover_letters: CoverLetterOut[];
+}
+
+// ── Documents ─────────────────────────────────────────────────────────────────
+
+export interface DocumentOut {
+  id:         number;
+  nom:        string;
+  type_doc?:  string | null;
+  taille?:    number | null;
+  created_at: string;
+}
+
+export interface DocumentListOut {
+  total:     number;
+  documents: DocumentOut[];
 }
