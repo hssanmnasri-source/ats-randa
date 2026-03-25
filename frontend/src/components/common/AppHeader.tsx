@@ -47,8 +47,13 @@ export default function AppHeader() {
       }}
     >
       <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <Typography.Title level={4} style={{ color: '#fff', margin: 0 }}>
-          🏢 ATS RANDA
+        <img
+          src="/logo-randa.transparent.png"
+          alt="ATS RANDA"
+          style={{ height: 40, objectFit: 'contain' }}
+        />
+        <Typography.Title level={4} style={{ color: '#F0D080', margin: 0, fontWeight: 700, letterSpacing: 1 }}>
+          ATS RANDA
         </Typography.Title>
       </Link>
 

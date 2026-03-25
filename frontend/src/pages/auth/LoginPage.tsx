@@ -38,7 +38,7 @@ export default function LoginPage() {
       <div style={{ textAlign: 'center', marginBottom: 32 }}>
         <img
           src="/logo-randa.png"
-          style={{ width: 180, marginBottom: 16, objectFit: 'contain' }}
+          style={{ width: 180, marginBottom: 16, objectFit: 'contain', display: 'block', margin: '0 auto 16px' }}
           alt="ATS RANDA"
         />
         <Title level={4} style={{ color: '#8B1A1A', margin: 0 }}>

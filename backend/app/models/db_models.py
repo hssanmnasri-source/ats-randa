@@ -164,6 +164,7 @@ class JobOffer(Base):
     embedding            = Column(Vector(384))   # ← pgvector
     statut               = Column(SAEnum(OfferStatus), default=OfferStatus.ACTIVE)
     last_matching_at     = Column(DateTime(timezone=True), nullable=True)
+    details              = Column(JSONB, nullable=True)  # extended fields
 
     resultats = relationship("Resultat", back_populates="offre",
                              cascade="all, delete-orphan")

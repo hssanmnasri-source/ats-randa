@@ -50,6 +50,8 @@ export default function AgentLayout() {
               objectFit: 'contain',
               maxWidth: '100%',
               transition: 'height 0.2s',
+              display: 'block',
+              margin: '0 auto',
             }}
             alt="ATS RANDA"
           />

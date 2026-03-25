@@ -36,6 +36,10 @@ async def init_db():
         await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
         # Créer toutes les tables
         await conn.run_sync(Base.metadata.create_all)
+        # Migrations légères idempotentes
+        await conn.execute(text(
+            "ALTER TABLE job_offers ADD COLUMN IF NOT EXISTS details JSONB"
+        ))
     logger.info("✅ Database initialized — pgvector active")
 
 # ── Dependency injection ──────────────────────────

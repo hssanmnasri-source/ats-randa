@@ -75,7 +75,7 @@ export default function HomePage() {
         marginBottom: 40,
         borderRadius: 16,
       }}>
-        <img src="/logo-randa.png" alt="ATS RANDA" style={{ height: 80, objectFit: 'contain', marginBottom: 16 }} />
+        <img src="/logo-randa.transparent.png" alt="ATS RANDA" style={{ height: 80, objectFit: 'contain', marginBottom: 16 }} />
         <Typography.Title level={2} style={{ color: '#F0D080', margin: 0, textAlign: 'center' }}>
           Offres d'emploi RANDA
         </Typography.Title>

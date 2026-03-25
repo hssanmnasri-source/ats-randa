@@ -28,28 +28,29 @@ export default function OfferFormPage() {
 
   if (isEdit && isLoading) return <LoadingSpinner fullPage />;
 
+  const initialValues: Partial<CreateOfferRequest> | undefined = existingOffer
+    ? {
+        titre: existingOffer.titre,
+        description: existingOffer.description,
+        competences_requises: existingOffer.competences_requises,
+        experience_requise: existingOffer.experience_requise,
+        langue_requise: existingOffer.langue_requise,
+        ...(existingOffer.details ?? {}),
+      }
+    : undefined;
+
   return (
     <div>
       <PageHeader
-        title={isEdit ? "Modifier l'offre" : 'Nouvelle offre'}
+        title={isEdit ? "Modifier l'annonce" : 'Créer une nouvelle annonce'}
         breadcrumbs={[
           { title: 'Offres', href: '/rh/offers' },
           { title: isEdit ? 'Modifier' : 'Nouvelle' },
         ]}
       />
-      <Card style={{ maxWidth: 720 }}>
+      <Card style={{ maxWidth: 860 }}>
         <OfferForm
-          initialValues={
-            existingOffer
-              ? {
-                  titre: existingOffer.titre,
-                  description: existingOffer.description,
-                  competences_requises: existingOffer.competences_requises,
-                  experience_requise: existingOffer.experience_requise,
-                  langue_requise: existingOffer.langue_requise,
-                }
-              : undefined
-          }
+          initialValues={initialValues}
           onSubmit={handleSubmit}
           loading={creating || updating}
           onCancel={() => navigate('/rh/offers')}
