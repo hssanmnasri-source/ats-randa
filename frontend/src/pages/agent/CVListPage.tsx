@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Table, Tag, Input, Space } from 'antd';
+import { Table, Tag, Input, Space, Select, Button } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, UploadOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import { useAgentCVs } from '../../hooks/useCVs';
 import type { CVDetailOut } from '../../types/cv';
 import PageHeader from '../../components/common/PageHeader';
@@ -21,13 +22,24 @@ const STATUS_LABEL: Record<string, string> = {
   ERROR: 'Erreur',
 };
 
+const STATUS_OPTIONS = [
+  { value: 'UPLOADED', label: 'Uploadé' },
+  { value: 'PARSING', label: 'Analyse...' },
+  { value: 'INDEXED', label: 'Indexé' },
+  { value: 'ERROR', label: 'Erreur' },
+];
+
 export default function CVListPage() {
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [statut, setStatut] = useState<string>('UPLOADED');
+
   const { data, isLoading } = useAgentCVs({
     page,
     limit: 20,
     search: search || undefined,
+    statut: statut || undefined,
   });
 
   const columns: ColumnsType<CVDetailOut> = [
@@ -37,11 +49,18 @@ export default function CVListPage() {
       render: (_, r) => r.fichier_pdf ?? `CV #${r.id}`,
     },
     {
-      title: 'Source',
-      dataIndex: 'source',
-      key: 'source',
-      width: 110,
-      render: (s) => s ? <Tag>{s}</Tag> : '—',
+      title: 'Candidat',
+      key: 'candidat',
+      render: (_, r) =>
+        r.candidate
+          ? `${r.candidate.prenom ?? ''} ${r.candidate.nom ?? ''}`.trim() ||
+            r.candidate.email
+          : '—',
+    },
+    {
+      title: 'Email',
+      key: 'email',
+      render: (_, r) => r.candidate?.email ?? '—',
     },
     {
       title: 'Statut',
@@ -55,15 +74,6 @@ export default function CVListPage() {
       ),
     },
     {
-      title: 'Candidat',
-      key: 'candidat',
-      render: (_, r) =>
-        r.candidate
-          ? `${r.candidate.prenom ?? ''} ${r.candidate.nom ?? ''}`.trim() ||
-            r.candidate.email
-          : '—',
-    },
-    {
       title: 'Date',
       dataIndex: 'date_depot',
       key: 'date_depot',
@@ -75,12 +85,12 @@ export default function CVListPage() {
   return (
     <div>
       <PageHeader
-        title="Liste des CVs"
-        subtitle={`${data?.total ?? 0} CVs enregistrés`}
+        title="Mes CVs uploadés"
+        subtitle={`${data?.total ?? 0} CV(s) trouvé(s)`}
       />
-      <Space style={{ marginBottom: 16 }}>
+      <Space style={{ marginBottom: 16 }} wrap>
         <Input
-          placeholder="Rechercher..."
+          placeholder="Rechercher par nom, prénom, email..."
           prefix={<SearchOutlined />}
           value={search}
           onChange={(e) => {
@@ -90,6 +100,24 @@ export default function CVListPage() {
           style={{ width: 280 }}
           allowClear
         />
+        <Select
+          value={statut || undefined}
+          placeholder="Tous les statuts"
+          allowClear
+          style={{ width: 160 }}
+          options={STATUS_OPTIONS}
+          onChange={(val) => {
+            setStatut(val ?? '');
+            setPage(1);
+          }}
+        />
+        <Button
+          type="primary"
+          icon={<UploadOutlined />}
+          onClick={() => navigate('/agent/upload')}
+        >
+          Uploader un CV
+        </Button>
       </Space>
       <Table
         rowKey="id"
@@ -101,7 +129,7 @@ export default function CVListPage() {
           total: data?.total ?? 0,
           pageSize: 20,
           onChange: setPage,
-          showTotal: (t) => `${t} CVs`,
+          showTotal: (t) => `${t} CV(s)`,
         }}
       />
     </div>

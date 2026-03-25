@@ -60,6 +60,8 @@ export const cvService = {
     page?: number;
     limit?: number;
     search?: string;
+    statut?: string;
+    source?: string;
   }): Promise<AgentCVListOut> {
     const res = await api.get<AgentCVListOut>('/api/agent/cvs', { params });
     return res.data;

@@ -38,7 +38,7 @@ export function useCVForm() {
   });
 }
 
-export function useAgentCVs(params?: { page?: number; limit?: number; search?: string }) {
+export function useAgentCVs(params?: { page?: number; limit?: number; search?: string; statut?: string; source?: string }) {
   return useQuery({
     queryKey: ['cvs', 'agent', params],
     queryFn: () => cvService.getAgentCVs(params),

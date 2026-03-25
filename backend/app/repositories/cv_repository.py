@@ -76,15 +76,25 @@ async def list_by_agent(
     db: AsyncSession,
     agent_id: int,
     statut: Optional[str] = None,
+    search: Optional[str] = None,
     skip: int = 0,
     limit: int = 20,
 ) -> tuple[int, list[CV]]:
-    query = select(CV).where(CV.id_agent == agent_id)
+    query = select(CV).join(Candidate, CV.id_candidate == Candidate.id).where(CV.id_agent == agent_id)
     if statut:
         try:
             query = query.where(CV.statut == CVStatus(statut))
         except ValueError:
-            pass  # Statut invalide → ignorer le filtre
+            pass
+    if search:
+        term = f"%{search}%"
+        query = query.where(
+            or_(
+                Candidate.nom.ilike(term),
+                Candidate.prenom.ilike(term),
+                Candidate.email.ilike(term),
+            )
+        )
 
     count_query = select(func.count()).select_from(query.subquery())
     total = await db.scalar(count_query)

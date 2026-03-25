@@ -78,7 +78,6 @@ async def upload_cv(
 
 @router.get("/cvs", response_model=CVListOut)
 async def list_cvs(
-    source: Optional[str] = Query(None, description="KEEJOB | AGENT | CANDIDAT | EMAIL | LINKEDIN"),
     statut: Optional[str] = Query(None, description="UPLOADED | PARSING | INDEXED | ERROR"),
     search: Optional[str] = Query(None, description="Recherche nom / prénom / email candidat"),
     page:   int = Query(1, ge=1),
@@ -86,9 +85,9 @@ async def list_cvs(
     agent=Depends(require_agent),
     db: AsyncSession = Depends(get_db),
 ):
-    """Liste tous les CVs avec filtres optionnels (source, statut, recherche)."""
+    """Liste uniquement les CVs uploadés par cet agent."""
     skip = (page - 1) * limit
-    total, cvs = await cv_repository.list_all(db, source=source, statut=statut, search=search, skip=skip, limit=limit)
+    total, cvs = await cv_repository.list_by_agent(db, agent_id=agent.id, statut=statut, search=search, skip=skip, limit=limit)
     return CVListOut(total=total, page=page, pages=max(1, -(-total // limit)), cvs=cvs)
 
 
