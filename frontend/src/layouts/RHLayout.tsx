@@ -55,7 +55,7 @@ export default function RHLayout() {
           <img
             src="/logo-randa.transparent.png"
             style={{
-              height: collapsed ? 44 : 90,
+              height: collapsed ? 32 : 60,
               objectFit: 'contain',
               maxWidth: '100%',
               transition: 'height 0.2s',
