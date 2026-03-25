@@ -9,8 +9,10 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #
 ::-webkit-scrollbar-thumb { background: #8B1A1A; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #C9A84C; }
 
-/* Ant Design Table header override */
-.ant-table-thead > tr > th {
+/* Ant Design Table header override (AntD 5 — ant-table-cell) */
+.ant-table-thead .ant-table-cell,
+.ant-table-thead > tr > th,
+.ant-table-thead > tr > td {
   background: #3D0C02 !important;
   color: #F0D080 !important;
   font-weight: 700 !important;
