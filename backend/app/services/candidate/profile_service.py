@@ -11,6 +11,8 @@ from app.models.db_models import CV, CVSource, CVStatus, Competence, Experience
 from app.models.schemas.candidate_schemas import (
     CandidateProfileUpdateIn,
     ExperienceIn,
+    PersonalUpdateIn,
+    ProfessionalUpdateIn,
     SkillIn,
     VisibilityUpdateIn,
 )
@@ -70,6 +72,24 @@ async def update_profile(db: AsyncSession, user, data: CandidateProfileUpdateIn)
     return await candidate_repository.update(db, candidate, updates)
 
 
+async def update_personal(db: AsyncSession, user, data: PersonalUpdateIn):
+    """Update personal info + location + mobility fields."""
+    candidate = await _get_candidate_or_404(db, user)
+    updates = {k: v for k, v in data.model_dump(exclude_none=True).items()}
+    if not updates:
+        return candidate
+    return await candidate_repository.update(db, candidate, updates)
+
+
+async def update_professional(db: AsyncSession, user, data: ProfessionalUpdateIn):
+    """Update professional identity fields."""
+    candidate = await _get_candidate_or_404(db, user)
+    updates = {k: v for k, v in data.model_dump(exclude_none=True).items()}
+    if not updates:
+        return candidate
+    return await candidate_repository.update(db, candidate, updates)
+
+
 async def update_visibility(db: AsyncSession, user, data: VisibilityUpdateIn):
     candidate = await _get_candidate_or_404(db, user)
     updates: dict = {"visibility_status": data.visibility_status}
@@ -105,10 +125,11 @@ async def compute_completion(db: AsyncSession, candidate) -> dict:
 
     sections = {}
 
-    # Personal (15%) — 6 fields
+    # Personal (15%) — 7 fields (added ville)
     p_fields = [
         candidate.nom, candidate.prenom, candidate.telephone,
         candidate.adresse, candidate.date_naissance, candidate.genre,
+        candidate.ville,
     ]
     p_filled = sum(1 for f in p_fields if f)
     sections["personal"] = {
@@ -118,8 +139,8 @@ async def compute_completion(db: AsyncSession, candidate) -> dict:
         "filled": p_filled == len(p_fields),
     }
 
-    # Professional (15%) — 3 fields
-    pr_fields = [candidate.titre_poste, candidate.niveau_etude, candidate.disponibilite]
+    # Professional (15%) — 4 fields (added statut_pro)
+    pr_fields = [candidate.titre_poste, candidate.niveau_etude, candidate.disponibilite, candidate.statut_pro]
     pr_filled = sum(1 for f in pr_fields if f)
     sections["professional"] = {
         "label": "Identité professionnelle",

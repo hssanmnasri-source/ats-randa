@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import {
   Row, Col, Card, Progress, Tag, Alert, Button, Modal, Form, Input, Select,
-  Space, Typography, Divider, Tooltip, Popconfirm, Switch,
+  Space, Typography, Divider, Tooltip, Popconfirm, Switch, Checkbox, Avatar,
+  Radio,
 } from 'antd';
 import {
   UserOutlined, BankOutlined, TrophyOutlined, BookOutlined,
   ThunderboltOutlined, GlobalOutlined, PlusOutlined, EditOutlined, DeleteOutlined,
-  CheckCircleOutlined, ExclamationCircleOutlined,
+  CheckCircleOutlined, ExclamationCircleOutlined, EnvironmentOutlined,
 } from '@ant-design/icons';
 import {
   useFullProfile,
-  useUpdateProfile,
+  useUpdatePersonal,
+  useUpdateProfessional,
   useAddExperience,
   useDeleteExperience,
   useAddSkill,
@@ -18,6 +20,7 @@ import {
 } from '../../hooks/useCandidate';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import type { ExperienceOut, SkillOut } from '../../types/cv';
+import { METIERS_CATEGORIES } from '../../data/metiers';
 
 const { Text, Title } = Typography;
 const { TextArea } = Input;
@@ -31,6 +34,21 @@ const SKILL_LEVELS = [
 const SKILL_COLORS: Record<string, string> = {
   BEGINNER: 'blue', INTERMEDIATE: 'gold', EXPERT: 'green',
 };
+const CONTRACT_TYPES = ['CDI', 'CDD', 'SIVP', 'Freelance', 'Stage', 'Alternance'];
+const COMPANY_SIZES = ['< 20 salariés', '20 - 100', '100 - 500', '> 500'];
+const COMPANY_CATEGORIES = ['Privée Tunisienne', 'Étrangère', 'Publique / Semi-publique'];
+const REGIONS_TN = [
+  'Tunis', 'Ariana', 'Ben Arous', 'Manouba', 'Nabeul', 'Zaghouan', 'Bizerte',
+  'Béja', 'Jendouba', 'Kef', 'Siliana', 'Sousse', 'Monastir', 'Mahdia',
+  'Sfax', 'Kairouan', 'Kasserine', 'Sidi Bouzid', 'Gabès', 'Médenine',
+  'Tataouine', 'Gafsa', 'Tozeur', 'Kébili',
+];
+
+// ── Sector options derived from METIERS_CATEGORIES ────────────────────────────
+const SECTOR_OPTIONS = METIERS_CATEGORIES.map((c) => ({
+  value: c.categorie,
+  label: c.categorie,
+}));
 
 function completionColor(pct: number) {
   if (pct >= 80) return '#52C41A';
@@ -58,7 +76,7 @@ function SectionHeader({
       </Space>
       <Button
         type="link"
-        icon={<PlusOutlined />}
+        icon={actionLabel === 'Modifier' ? <EditOutlined /> : <PlusOutlined />}
         size="small"
         style={{ color: '#8B1A1A', padding: 0 }}
         onClick={onAction}
@@ -82,26 +100,29 @@ function EmptySection({ label }: { label: string }) {
 
 export default function CandidateProfilePage() {
   const { data, isLoading } = useFullProfile();
-  const { mutate: updateProfile, isPending: savingProfile } = useUpdateProfile();
-  const { mutate: addExperience, isPending: addingExp } = useAddExperience();
-  const { mutate: deleteExperience } = useDeleteExperience();
-  const { mutate: addSkill, isPending: addingSkill } = useAddSkill();
-  const { mutate: deleteSkill } = useDeleteSkill();
+  const { mutate: updatePersonal,      isPending: savingPersonal } = useUpdatePersonal();
+  const { mutate: updateProfessional,  isPending: savingPro }      = useUpdateProfessional();
+  const { mutate: addExperience,       isPending: addingExp }       = useAddExperience();
+  const { mutate: deleteExperience }                                = useDeleteExperience();
+  const { mutate: addSkill,            isPending: addingSkill }     = useAddSkill();
+  const { mutate: deleteSkill }                                     = useDeleteSkill();
 
   const [personalModal, setPersonalModal] = useState(false);
-  const [proModal, setProModal] = useState(false);
-  const [expModal, setExpModal] = useState(false);
-  const [skillModal, setSkillModal] = useState(false);
+  const [proModal,      setProModal]      = useState(false);
+  const [expModal,      setExpModal]      = useState(false);
+  const [skillModal,    setSkillModal]    = useState(false);
 
   const [personalForm] = Form.useForm();
-  const [proForm] = Form.useForm();
-  const [expForm] = Form.useForm();
-  const [skillForm] = Form.useForm();
+  const [proForm]      = Form.useForm();
+  const [expForm]      = Form.useForm();
+  const [skillForm]    = Form.useForm();
+
+  const isCurrentWatch = Form.useWatch('is_current', expForm);
 
   if (isLoading) return <LoadingSpinner fullPage />;
 
   const { profile, completion, experiences, skills, langues } = data!;
-  const pct = completion.total;
+  const pct      = completion.total;
   const sections = completion.sections;
 
   const openPersonal = () => {
@@ -112,6 +133,8 @@ export default function CandidateProfilePage() {
       situation_familiale: profile.situation_familiale,
       has_driving_license: profile.has_driving_license,
       owns_car: profile.owns_car, has_handicap: profile.has_handicap,
+      code_postal: profile.code_postal, ville: profile.ville, region: profile.region,
+      mobilite_tn: profile.mobilite_tn, mobilite_intl: profile.mobilite_intl,
     });
     setPersonalModal(true);
   };
@@ -120,60 +143,106 @@ export default function CandidateProfilePage() {
     proForm.setFieldsValue({
       titre_poste: profile.titre_poste, niveau_etude: profile.niveau_etude,
       salaire_actuel: profile.salaire_actuel, disponibilite: profile.disponibilite,
+      statut_pro: profile.statut_pro,
+      secteurs_recherche: profile.secteurs_recherche ?? [],
+      metiers_recherche: profile.metiers_recherche ?? [],
     });
     setProModal(true);
   };
 
   const handlePersonalSave = () => {
     personalForm.validateFields().then((values) => {
-      updateProfile(values, { onSuccess: () => setPersonalModal(false) });
+      updatePersonal(values, { onSuccess: () => setPersonalModal(false) });
     });
   };
 
   const handleProSave = () => {
     proForm.validateFields().then((values) => {
-      updateProfile(values, { onSuccess: () => setProModal(false) });
+      updateProfessional(values, { onSuccess: () => setProModal(false) });
     });
   };
 
   const handleAddExp = () => {
     expForm.validateFields().then((values) => {
-      addExperience(values, { onSuccess: () => { setExpModal(false); expForm.resetFields(); } });
+      addExperience(values, {
+        onSuccess: () => { setExpModal(false); expForm.resetFields(); },
+      });
     });
   };
 
   const handleAddSkill = () => {
     skillForm.validateFields().then((values) => {
-      addSkill(values, { onSuccess: () => { setSkillModal(false); skillForm.resetFields(); } });
+      addSkill(values, {
+        onSuccess: () => { setSkillModal(false); skillForm.resetFields(); },
+      });
     });
   };
 
   const isPersonalFilled = sections.personal?.filled ?? false;
-  const isProFilled = sections.professional?.filled ?? false;
+  const isProFilled      = sections.professional?.filled ?? false;
+
+  const initials =
+    `${(profile.prenom ?? '?')[0] ?? ''}${(profile.nom ?? '?')[0] ?? ''}`.toUpperCase();
 
   return (
     <div>
-      <Title level={4} style={{ marginBottom: 4 }}>Mon Profil CV</Title>
-      <Text type="secondary" style={{ display: 'block', marginBottom: 20 }}>
-        Complétez votre profil pour augmenter vos chances d'être contacté par les recruteurs.
-      </Text>
-
-      {/* Completion bar */}
-      <Card style={{ marginBottom: 24, borderColor: completionColor(pct) }} bodyStyle={{ padding: '16px 20px' }}>
-        <Row align="middle" gutter={16}>
+      {/* ── Profile Header ──────────────────────────────────────────────────── */}
+      <Card
+        style={{ marginBottom: 24, borderColor: '#C9A84C' }}
+        bodyStyle={{ padding: '20px 24px' }}
+      >
+        <Row align="middle" gutter={20}>
+          <Col>
+            <Avatar
+              size={72}
+              src={profile.photo_url ?? undefined}
+              icon={!profile.photo_url && <UserOutlined />}
+              style={{ background: '#8B1A1A', fontSize: 26, flexShrink: 0 }}
+            >
+              {!profile.photo_url && initials}
+            </Avatar>
+          </Col>
           <Col flex="auto">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-              <Text strong>Profil complété</Text>
-              <Text strong style={{ color: completionColor(pct) }}>{pct}%</Text>
-            </div>
-            <Progress
-              percent={pct}
-              strokeColor={completionColor(pct)}
-              showInfo={false}
-            />
+            <Title level={4} style={{ margin: 0 }}>
+              {profile.prenom} {profile.nom}
+            </Title>
+            {profile.titre_poste && (
+              <Text style={{ color: '#8B1A1A', fontSize: 14 }}>{profile.titre_poste}</Text>
+            )}
+            <Space wrap style={{ marginTop: 6 }}>
+              {profile.email && (
+                <Text type="secondary" style={{ fontSize: 12 }}>{profile.email}</Text>
+              )}
+              {profile.telephone && (
+                <Text type="secondary" style={{ fontSize: 12 }}>{profile.telephone}</Text>
+              )}
+              {(profile.ville || profile.region) && (
+                <Text type="secondary" style={{ fontSize: 12 }}>
+                  <EnvironmentOutlined style={{ marginRight: 3 }} />
+                  {[profile.ville, profile.region].filter(Boolean).join(', ')}
+                </Text>
+              )}
+            </Space>
+          </Col>
+          <Col>
+            <Space direction="vertical" align="end">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Text style={{ color: completionColor(pct), fontWeight: 600 }}>{pct}%</Text>
+                <Progress
+                  type="circle"
+                  percent={pct}
+                  size={48}
+                  strokeColor={completionColor(pct)}
+                  format={() => ''}
+                />
+              </div>
+              <Text type="secondary" style={{ fontSize: 11 }}>Profil complété</Text>
+            </Space>
           </Col>
         </Row>
-        <Row gutter={8} style={{ marginTop: 12 }}>
+
+        {/* Section tags */}
+        <Row gutter={8} style={{ marginTop: 14 }}>
           {Object.entries(sections).map(([key, s]) => (
             <Col key={key}>
               <Tooltip title={`${s.label} — ${s.score}/${s.weight}%`}>
@@ -197,31 +266,31 @@ export default function CandidateProfilePage() {
                 title="Informations personnelles"
                 filled={isPersonalFilled}
                 onAction={openPersonal}
-                actionLabel="Modifier"
               />
             }
           >
             {isPersonalFilled ? (
               <Space direction="vertical" style={{ width: '100%' }}>
                 <Row gutter={8}>
-                  <Col span={12}><Text type="secondary">Nom : </Text><Text>{profile.nom} {profile.prenom}</Text></Col>
-                  <Col span={12}><Text type="secondary">Tél : </Text><Text>{profile.telephone || '—'}</Text></Col>
-                </Row>
-                <Row gutter={8}>
                   <Col span={12}><Text type="secondary">Genre : </Text><Text>{profile.genre || '—'}</Text></Col>
                   <Col span={12}><Text type="secondary">Naissance : </Text><Text>{profile.date_naissance || '—'}</Text></Col>
-                </Row>
-                <Row gutter={8}>
-                  <Col span={24}><Text type="secondary">Adresse : </Text><Text>{profile.adresse || '—'}</Text></Col>
                 </Row>
                 <Row gutter={8}>
                   <Col span={12}><Text type="secondary">Nationalité : </Text><Text>{profile.nationalite || '—'}</Text></Col>
                   <Col span={12}><Text type="secondary">Situation : </Text><Text>{profile.situation_familiale || '—'}</Text></Col>
                 </Row>
+                {(profile.ville || profile.code_postal) && (
+                  <div>
+                    <Text type="secondary">Localisation : </Text>
+                    <Text>{[profile.code_postal, profile.ville, profile.region].filter(Boolean).join(', ')}</Text>
+                  </div>
+                )}
                 <Divider style={{ margin: '8px 0' }} />
-                <Space>
+                <Space wrap>
                   <Tag color={profile.has_driving_license ? 'green' : 'default'}>Permis B</Tag>
                   <Tag color={profile.owns_car ? 'green' : 'default'}>Véhicule</Tag>
+                  <Tag color={profile.mobilite_tn ? 'green' : 'default'}>Mobilité TN</Tag>
+                  <Tag color={profile.mobilite_intl ? 'blue' : 'default'}>Mobilité Intl.</Tag>
                   {profile.has_handicap && <Tag color="orange">RQTH</Tag>}
                 </Space>
               </Space>
@@ -241,21 +310,37 @@ export default function CandidateProfilePage() {
                 title="Identité professionnelle"
                 filled={isProFilled}
                 onAction={openPro}
-                actionLabel="Modifier"
               />
             }
           >
             {isProFilled ? (
               <Space direction="vertical" style={{ width: '100%' }}>
-                {profile.titre_poste && (
-                  <Tag color="volcano" style={{ fontSize: 13, padding: '2px 10px' }}>{profile.titre_poste}</Tag>
+                {profile.statut_pro && (
+                  <Tag color="volcano">{
+                    profile.statut_pro === 'EN_POSTE' ? 'En poste'
+                    : profile.statut_pro === 'EN_RECHERCHE' ? 'En recherche active'
+                    : 'Étudiant / Jeune diplômé'
+                  }</Tag>
                 )}
                 <Row gutter={8}>
                   <Col span={12}><Text type="secondary">Niveau : </Text><Text>{profile.niveau_etude || '—'}</Text></Col>
                   <Col span={12}><Text type="secondary">Dispo : </Text><Text>{profile.disponibilite || '—'}</Text></Col>
                 </Row>
                 {profile.salaire_actuel && (
-                  <div><Text type="secondary">Salaire actuel : </Text><Text>{profile.salaire_actuel}</Text></div>
+                  <div><Text type="secondary">Salaire : </Text><Text>{profile.salaire_actuel}</Text></div>
+                )}
+                {profile.secteurs_recherche && profile.secteurs_recherche.length > 0 && (
+                  <div>
+                    <Text type="secondary" style={{ fontSize: 12 }}>Secteurs : </Text>
+                    <Space wrap>
+                      {profile.secteurs_recherche.slice(0, 3).map((s) => (
+                        <Tag key={s} color="geekblue" style={{ fontSize: 11 }}>{s}</Tag>
+                      ))}
+                      {profile.secteurs_recherche.length > 3 && (
+                        <Tag style={{ fontSize: 11 }}>+{profile.secteurs_recherche.length - 3}</Tag>
+                      )}
+                    </Space>
+                  </div>
                 )}
               </Space>
             ) : (
@@ -296,18 +381,30 @@ export default function CandidateProfilePage() {
                       </Popconfirm>
                     }
                   >
-                    <Text strong>{exp.poste}</Text>
-                    {exp.entreprise && <Text type="secondary"> · {exp.entreprise}</Text>}
-                    {(exp.date_debut || exp.date_fin) && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 4 }}>
                       <div>
-                        <Text type="secondary" style={{ fontSize: 12 }}>
-                          {exp.date_debut || '?'} — {exp.date_fin || 'Présent'}
-                        </Text>
+                        <Text strong>{exp.poste}</Text>
+                        {exp.entreprise && <Text type="secondary"> · {exp.entreprise}</Text>}
                       </div>
+                      <Space size={4} wrap>
+                        {exp.type_contrat && <Tag color="blue" style={{ fontSize: 11 }}>{exp.type_contrat}</Tag>}
+                        {exp.is_current && <Tag color="green" style={{ fontSize: 11 }}>En cours</Tag>}
+                      </Space>
+                    </div>
+                    {(exp.date_debut || exp.date_fin) && (
+                      <Text type="secondary" style={{ fontSize: 12 }}>
+                        {exp.date_debut || '?'} — {exp.is_current ? 'Présent' : (exp.date_fin || '?')}
+                      </Text>
                     )}
-                    {exp.description && (
+                    {exp.secteur_activite && (
+                      <div><Text type="secondary" style={{ fontSize: 12 }}>Secteur : {exp.secteur_activite}</Text></div>
+                    )}
+                    {(exp.missions || exp.description) && (
                       <Text type="secondary" style={{ fontSize: 12, display: 'block', marginTop: 4 }}>
-                        {exp.description.length > 120 ? exp.description.slice(0, 120) + '…' : exp.description}
+                        {(() => {
+                          const txt = exp.missions || exp.description || '';
+                          return txt.length > 150 ? txt.slice(0, 150) + '…' : txt;
+                        })()}
                       </Text>
                     )}
                   </Card>
@@ -336,7 +433,10 @@ export default function CandidateProfilePage() {
             {skills.length > 0 ? (
               <Space wrap>
                 {skills.map((skill: SkillOut) => (
-                  <Tooltip key={skill.id} title={`${SKILL_LEVELS.find(l => l.value === skill.niveau)?.label ?? skill.niveau} — cliquer ×  pour supprimer`}>
+                  <Tooltip
+                    key={skill.id}
+                    title={`${SKILL_LEVELS.find(l => l.value === skill.niveau)?.label ?? skill.niveau} — × pour supprimer`}
+                  >
                     <Tag
                       color={SKILL_COLORS[skill.niveau] ?? 'default'}
                       closable
@@ -423,10 +523,10 @@ export default function CandidateProfilePage() {
         open={personalModal}
         onOk={handlePersonalSave}
         onCancel={() => setPersonalModal(false)}
-        confirmLoading={savingProfile}
+        confirmLoading={savingPersonal}
         okText="Enregistrer"
         cancelText="Annuler"
-        width={600}
+        width={680}
       >
         <Form form={personalForm} layout="vertical" style={{ marginTop: 16 }}>
           <Row gutter={16}>
@@ -473,10 +573,37 @@ export default function CandidateProfilePage() {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item name="adresse" label="Adresse">
-                <Input placeholder="Ville, Pays" />
+              <Form.Item name="adresse" label="Adresse (rue)">
+                <Input placeholder="Numéro, Rue, Quartier" />
               </Form.Item>
             </Col>
+          </Row>
+
+          <Divider style={{ fontSize: 13 }}>Localisation</Divider>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item name="code_postal" label="Code postal">
+                <Input placeholder="1000" />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item name="ville" label="Ville">
+                <Input placeholder="Tunis" />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item name="region" label="Gouvernorat">
+                <Select
+                  showSearch
+                  options={REGIONS_TN.map((r) => ({ value: r, label: r }))}
+                  placeholder="Sélectionner"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Divider>Mobilité & Extras</Divider>
+          <Row gutter={16}>
             <Col span={8}>
               <Form.Item name="has_driving_license" label="Permis B" valuePropName="checked">
                 <Switch />
@@ -492,6 +619,18 @@ export default function CandidateProfilePage() {
                 <Switch />
               </Form.Item>
             </Col>
+            <Col span={24}>
+              <Form.Item label="Mobilité">
+                <Space>
+                  <Form.Item name="mobilite_tn" valuePropName="checked" noStyle>
+                    <Checkbox>Mobilité en Tunisie</Checkbox>
+                  </Form.Item>
+                  <Form.Item name="mobilite_intl" valuePropName="checked" noStyle>
+                    <Checkbox>Mobilité internationale</Checkbox>
+                  </Form.Item>
+                </Space>
+              </Form.Item>
+            </Col>
           </Row>
         </Form>
       </Modal>
@@ -502,31 +641,71 @@ export default function CandidateProfilePage() {
         open={proModal}
         onOk={handleProSave}
         onCancel={() => setProModal(false)}
-        confirmLoading={savingProfile}
+        confirmLoading={savingPro}
         okText="Enregistrer"
         cancelText="Annuler"
+        width={620}
       >
         <Form form={proForm} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="titre_poste" label="Titre du poste / Métier" rules={[{ required: true }]}>
-            <Input placeholder="Ex : Développeur Full Stack" />
+          <Form.Item name="statut_pro" label="Statut professionnel actuel">
+            <Radio.Group>
+              <Space direction="vertical">
+                <Radio value="EN_POSTE">En poste</Radio>
+                <Radio value="EN_RECHERCHE">En recherche active</Radio>
+                <Radio value="ETUDIANT">Étudiant / Jeune diplômé</Radio>
+              </Space>
+            </Radio.Group>
           </Form.Item>
-          <Form.Item name="niveau_etude" label="Niveau d'études">
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item name="titre_poste" label="Titre du poste / Métier" rules={[{ required: true }]}>
+                <Input placeholder="Ex : Développeur Full Stack" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="niveau_etude" label="Niveau d'études">
+                <Select options={NIVEAUX.map((n) => ({ value: n, label: n }))} placeholder="Sélectionner" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="salaire_actuel" label="Salaire actuel / souhaité">
+                <Input placeholder="Ex : 2500 TND / mois" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="disponibilite" label="Disponibilité">
+                <Select
+                  options={[
+                    { value: 'Immédiatement',  label: 'Immédiatement' },
+                    { value: '1 mois',         label: '1 mois de préavis' },
+                    { value: '3 mois',         label: '3 mois de préavis' },
+                    { value: 'En poste',       label: 'En poste (non disponible)' },
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Form.Item
+            name="secteurs_recherche"
+            label="Secteurs d'activité recherchés (max 10)"
+          >
             <Select
-              options={NIVEAUX.map((n) => ({ value: n, label: n }))}
-              placeholder="Sélectionner"
+              mode="multiple"
+              options={SECTOR_OPTIONS}
+              placeholder="Sélectionner des secteurs"
+              maxCount={10}
+              showSearch
+              filterOption={(input, option) =>
+                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
             />
           </Form.Item>
-          <Form.Item name="salaire_actuel" label="Salaire actuel">
-            <Input placeholder="Ex : 2500 TND / mois" />
-          </Form.Item>
-          <Form.Item name="disponibilite" label="Disponibilité">
+          <Form.Item name="metiers_recherche" label="Métiers / Postes visés">
             <Select
-              options={[
-                { value: 'Immédiatement', label: 'Immédiatement' },
-                { value: '1 mois',        label: '1 mois de préavis' },
-                { value: '3 mois',        label: '3 mois de préavis' },
-                { value: 'En poste',      label: 'En poste (non disponible)' },
-              ]}
+              mode="tags"
+              placeholder="Ex : Développeur Backend, Chef de projet…"
+              tokenSeparators={[',']}
+              maxCount={20}
             />
           </Form.Item>
         </Form>
@@ -534,16 +713,20 @@ export default function CandidateProfilePage() {
 
       {/* Add experience modal */}
       <Modal
-        title="Ajouter une expérience"
+        title="Ajouter une expérience professionnelle"
         open={expModal}
         onOk={handleAddExp}
         onCancel={() => { setExpModal(false); expForm.resetFields(); }}
         confirmLoading={addingExp}
         okText="Ajouter"
         cancelText="Annuler"
-        width={600}
+        width={700}
       >
-        <Form form={expForm} layout="vertical" style={{ marginTop: 16 }}>
+        <Form form={expForm} layout="vertical" style={{ marginTop: 16 }}
+          initialValues={{ is_current: false }}>
+          <Form.Item name="is_current" valuePropName="checked" style={{ marginBottom: 12 }}>
+            <Checkbox>Poste actuel (encore en cours)</Checkbox>
+          </Form.Item>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item name="poste" label="Titre du poste" rules={[{ required: true }]}>
@@ -555,18 +738,58 @@ export default function CandidateProfilePage() {
                 <Input placeholder="Ex : Société XYZ" />
               </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item name="date_debut" label="Date de début">
-                <Input placeholder="Ex : 01/2020" />
+            <Col span={6}>
+              <Form.Item name="date_debut" label="Début">
+                <Input placeholder="MM/YYYY" />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item name="date_fin" label="Fin">
+                <Input placeholder="MM/YYYY" disabled={isCurrentWatch} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item name="date_fin" label="Date de fin">
-                <Input placeholder="Ex : 12/2022 ou Présent" />
+              <Form.Item name="type_contrat" label="Type de contrat">
+                <Select
+                  options={CONTRACT_TYPES.map((c) => ({ value: c, label: c }))}
+                  placeholder="Sélectionner"
+                />
               </Form.Item>
             </Col>
           </Row>
-          <Form.Item name="description" label="Missions et tâches">
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item name="secteur_activite" label="Secteur d'activité">
+                <Select
+                  showSearch
+                  options={SECTOR_OPTIONS}
+                  placeholder="Sélectionner"
+                  filterOption={(input, option) =>
+                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                  }
+                />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item name="taille_entreprise" label="Taille entreprise">
+                <Select
+                  options={COMPANY_SIZES.map((s) => ({ value: s, label: s }))}
+                  placeholder="Choisir"
+                />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item name="categorie_entreprise" label="Catégorie">
+                <Select
+                  options={COMPANY_CATEGORIES.map((c) => ({ value: c, label: c }))}
+                  placeholder="Choisir"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Form.Item name="missions" label="Missions & Réalisations">
             <TextArea
               rows={4}
               placeholder="Décrivez vos principales missions, réalisations et responsabilités…"

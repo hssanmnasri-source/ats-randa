@@ -70,6 +70,16 @@ export interface CandidateProfileOut {
   has_handicap:         boolean;
   visibility_status:    'VISIBLE' | 'ANONYMOUS' | 'INVISIBLE';
   alert_frequency:      'DAILY' | 'TWICE_WEEK' | 'WEEKLY' | 'NEVER';
+  // Location & mobility
+  code_postal?:         string | null;
+  ville?:               string | null;
+  region?:              string | null;
+  mobilite_tn:          boolean;
+  mobilite_intl:        boolean;
+  // Professional preferences
+  statut_pro?:          string | null;
+  secteurs_recherche?:  string[] | null;
+  metiers_recherche?:   string[] | null;
   created_at: string;
 }
 
@@ -96,12 +106,18 @@ export interface CVFormIn {
 // ── Experiences & Skills ──────────────────────────────────────────────────────
 
 export interface ExperienceOut {
-  id:           number;
-  poste?:       string | null;
-  entreprise?:  string | null;
-  date_debut?:  string | null;
-  date_fin?:    string | null;
-  description?: string | null;
+  id:                    number;
+  poste?:                string | null;
+  entreprise?:           string | null;
+  date_debut?:           string | null;
+  date_fin?:             string | null;
+  description?:          string | null;
+  type_contrat?:         string | null;
+  taille_entreprise?:    string | null;
+  categorie_entreprise?: string | null;
+  secteur_activite?:     string | null;
+  missions?:             string | null;
+  is_current:            boolean;
 }
 
 export interface SkillOut {

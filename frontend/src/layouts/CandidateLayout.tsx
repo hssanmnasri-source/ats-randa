@@ -10,6 +10,7 @@ import {
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  HeartOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
@@ -25,6 +26,7 @@ const menuItems = [
   { key: '/candidate',              icon: <HomeOutlined />,       label: 'Mon Espace'              },
   { key: '/candidate/profile',      icon: <UserOutlined />,       label: 'Mon Profil CV'           },
   { key: '/candidate/applications', icon: <AppstoreOutlined />,   label: 'Mes Candidatures'        },
+  { key: '/candidate/favorites',     icon: <HeartOutlined />,      label: 'Offres favorites'        },
   { key: '/candidate/cover-letters',icon: <MailOutlined />,       label: 'Lettres de motivation'   },
   { key: '/candidate/documents',    icon: <FolderOutlined />,     label: 'Mes Documents'           },
   { key: '/candidate/settings',     icon: <SettingOutlined />,    label: 'Paramètres'              },

@@ -55,8 +55,29 @@ async def init_db():
             "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS has_handicap BOOLEAN DEFAULT FALSE",
             "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS visibility_status VARCHAR(20) DEFAULT 'VISIBLE'",
             "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS alert_frequency VARCHAR(20) DEFAULT 'WEEKLY'",
+            # Location & Mobility (2026-03)
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS code_postal VARCHAR(10)",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS ville VARCHAR(100)",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS region VARCHAR(100)",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS mobilite_tn BOOLEAN DEFAULT FALSE",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS mobilite_intl BOOLEAN DEFAULT FALSE",
+            # Professional preferences
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS statut_pro VARCHAR(50)",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS secteurs_recherche JSONB DEFAULT '[]'",
+            "ALTER TABLE candidates ADD COLUMN IF NOT EXISTS metiers_recherche JSONB DEFAULT '[]'",
         ]
         for stmt in _candidate_cols:
+            await conn.execute(text(stmt))
+        # Experience extended fields (2026-03)
+        _exp_cols = [
+            "ALTER TABLE experiences ADD COLUMN IF NOT EXISTS type_contrat VARCHAR(50)",
+            "ALTER TABLE experiences ADD COLUMN IF NOT EXISTS taille_entreprise VARCHAR(50)",
+            "ALTER TABLE experiences ADD COLUMN IF NOT EXISTS categorie_entreprise VARCHAR(100)",
+            "ALTER TABLE experiences ADD COLUMN IF NOT EXISTS secteur_activite VARCHAR(255)",
+            "ALTER TABLE experiences ADD COLUMN IF NOT EXISTS missions TEXT",
+            "ALTER TABLE experiences ADD COLUMN IF NOT EXISTS is_current BOOLEAN DEFAULT FALSE",
+        ]
+        for stmt in _exp_cols:
             await conn.execute(text(stmt))
     logger.info("✅ Database initialized — pgvector active")
 

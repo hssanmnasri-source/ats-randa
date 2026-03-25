@@ -46,6 +46,16 @@ export const candidateService = {
     return res.data;
   },
 
+  async updatePersonal(data: Partial<CandidateProfileOut>): Promise<CandidateProfileOut> {
+    const res = await api.put<CandidateProfileOut>('/api/candidate/profile/personal', data);
+    return res.data;
+  },
+
+  async updateProfessional(data: Partial<CandidateProfileOut>): Promise<CandidateProfileOut> {
+    const res = await api.put<CandidateProfileOut>('/api/candidate/profile/professional', data);
+    return res.data;
+  },
+
   async updateVisibility(data: {
     visibility_status: string;
     alert_frequency?: string;

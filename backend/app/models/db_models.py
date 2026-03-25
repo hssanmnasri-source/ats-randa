@@ -116,6 +116,16 @@ class Candidate(Base):
     has_handicap        = Column(Boolean, default=False)
     visibility_status   = Column(SAEnum(VisibilityStatus), default=VisibilityStatus.VISIBLE)
     alert_frequency     = Column(SAEnum(AlertFrequency),   default=AlertFrequency.WEEKLY)
+    # ── Location & Mobility ──────────────────────────
+    code_postal         = Column(String(10))
+    ville               = Column(String(100))
+    region              = Column(String(100))
+    mobilite_tn         = Column(Boolean, default=False)
+    mobilite_intl       = Column(Boolean, default=False)
+    # ── Professional preferences ──────────────────────
+    statut_pro          = Column(String(50))          # EN_POSTE | EN_RECHERCHE | ETUDIANT
+    secteurs_recherche  = Column(JSONB, default=list) # list of sector names
+    metiers_recherche   = Column(JSONB, default=list) # list of job title strings
 
     cvs = relationship("CV", back_populates="candidate",
                        foreign_keys="CV.id_candidate")
@@ -169,13 +179,20 @@ class Competence(Base):
 class Experience(Base):
     __tablename__ = "experiences"
 
-    id           = Column(Integer, primary_key=True, index=True)
-    id_cv        = Column(Integer, ForeignKey("cvs.id"), nullable=False)
-    poste        = Column(String(255))
-    entreprise   = Column(String(255))
-    date_debut   = Column(String(20))
-    date_fin     = Column(String(20))
-    description  = Column(Text)
+    id                  = Column(Integer, primary_key=True, index=True)
+    id_cv               = Column(Integer, ForeignKey("cvs.id"), nullable=False)
+    poste               = Column(String(255))
+    entreprise          = Column(String(255))
+    date_debut          = Column(String(20))
+    date_fin            = Column(String(20))
+    description         = Column(Text)
+    # ── Extended Keejob-style fields ─────────────────
+    type_contrat        = Column(String(50))   # CDI | CDD | SIVP | Freelance | Stage | Alternance
+    taille_entreprise   = Column(String(50))   # <20 | 20-100 | 100-500 | >500
+    categorie_entreprise= Column(String(100))  # Privée TN | Étrangère | Publique
+    secteur_activite    = Column(String(255))
+    missions            = Column(Text)         # detailed bullet points
+    is_current          = Column(Boolean, default=False)
 
     cv = relationship("CV", back_populates="experiences")
 

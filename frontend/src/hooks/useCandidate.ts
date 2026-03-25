@@ -35,6 +35,32 @@ export function useUpdateProfile() {
   });
 }
 
+export function useUpdatePersonal() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Parameters<typeof candidateService.updatePersonal>[0]) =>
+      candidateService.updatePersonal(data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['candidate'] });
+      message.success('Informations personnelles mises à jour.');
+    },
+    onError: () => message.error('Erreur lors de la mise à jour.'),
+  });
+}
+
+export function useUpdateProfessional() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Parameters<typeof candidateService.updateProfessional>[0]) =>
+      candidateService.updateProfessional(data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['candidate'] });
+      message.success('Identité professionnelle mise à jour.');
+    },
+    onError: () => message.error('Erreur lors de la mise à jour.'),
+  });
+}
+
 export function useUpdateVisibility() {
   const qc = useQueryClient();
   return useMutation({

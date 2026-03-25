@@ -10,6 +10,8 @@ from app.api.dependencies import require_candidate
 from app.models.schemas.candidate_schemas import (
     CandidateProfileOut,
     CandidateProfileUpdateIn,
+    PersonalUpdateIn,
+    ProfessionalUpdateIn,
     VisibilityUpdateIn,
     ExperienceIn,
     ExperienceOut,
@@ -43,6 +45,26 @@ async def update_profile(
 ):
     """Met à jour les informations du profil candidat."""
     return await profile_service.update_profile(db, candidate, data)
+
+
+@router.put("/profile/personal", response_model=CandidateProfileOut)
+async def update_personal(
+    data: PersonalUpdateIn,
+    candidate=Depends(require_candidate),
+    db: AsyncSession = Depends(get_db),
+):
+    """Met à jour les informations personnelles et de mobilité."""
+    return await profile_service.update_personal(db, candidate, data)
+
+
+@router.put("/profile/professional", response_model=CandidateProfileOut)
+async def update_professional(
+    data: ProfessionalUpdateIn,
+    candidate=Depends(require_candidate),
+    db: AsyncSession = Depends(get_db),
+):
+    """Met à jour l'identité professionnelle (titre, secteurs, statut…)."""
+    return await profile_service.update_professional(db, candidate, data)
 
 
 @router.put("/profile/visibility", response_model=CandidateProfileOut)

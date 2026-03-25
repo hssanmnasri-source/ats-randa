@@ -36,6 +36,16 @@ class CandidateProfileOut(BaseModel):
     has_handicap:        bool = False
     visibility_status:   str  = "VISIBLE"
     alert_frequency:     str  = "WEEKLY"
+    # Location & mobility
+    code_postal:         Optional[str]  = None
+    ville:               Optional[str]  = None
+    region:              Optional[str]  = None
+    mobilite_tn:         bool = False
+    mobilite_intl:       bool = False
+    # Professional preferences
+    statut_pro:          Optional[str]  = None
+    secteurs_recherche:  Optional[list] = None
+    metiers_recherche:   Optional[list] = None
     created_at: datetime
 
     class Config:
@@ -58,6 +68,45 @@ class CandidateProfileUpdateIn(BaseModel):
     has_driving_license: Optional[bool] = None
     owns_car:            Optional[bool] = None
     has_handicap:        Optional[bool] = None
+    code_postal:         Optional[str]  = None
+    ville:               Optional[str]  = None
+    region:              Optional[str]  = None
+    mobilite_tn:         Optional[bool] = None
+    mobilite_intl:       Optional[bool] = None
+    statut_pro:          Optional[str]  = None
+    secteurs_recherche:  Optional[list] = None
+    metiers_recherche:   Optional[list] = None
+
+
+class PersonalUpdateIn(BaseModel):
+    """Personal info section: name, contact, location, mobility."""
+    nom:                 Optional[str]  = None
+    prenom:              Optional[str]  = None
+    telephone:           Optional[str]  = None
+    adresse:             Optional[str]  = None
+    date_naissance:      Optional[str]  = None
+    genre:               Optional[str]  = None
+    situation_familiale: Optional[str]  = None
+    nationalite:         Optional[str]  = None
+    has_driving_license: Optional[bool] = None
+    owns_car:            Optional[bool] = None
+    has_handicap:        Optional[bool] = None
+    code_postal:         Optional[str]  = None
+    ville:               Optional[str]  = None
+    region:              Optional[str]  = None
+    mobilite_tn:         Optional[bool] = None
+    mobilite_intl:       Optional[bool] = None
+
+
+class ProfessionalUpdateIn(BaseModel):
+    """Professional identity section: title, degree, salary, availability, status, sectors."""
+    titre_poste:        Optional[str]  = None
+    niveau_etude:       Optional[str]  = None
+    salaire_actuel:     Optional[str]  = None
+    disponibilite:      Optional[str]  = None
+    statut_pro:         Optional[str]  = None
+    secteurs_recherche: Optional[list] = None
+    metiers_recherche:  Optional[list] = None
 
 
 class VisibilityUpdateIn(BaseModel):
@@ -68,20 +117,32 @@ class VisibilityUpdateIn(BaseModel):
 # ── Expériences (CRUD direct depuis profil) ───────────────────────────────────
 
 class ExperienceIn(BaseModel):
-    poste:       str
-    entreprise:  str
-    date_debut:  Optional[str] = None
-    date_fin:    Optional[str] = None
-    description: Optional[str] = None
+    poste:                str
+    entreprise:           str
+    date_debut:           Optional[str] = None
+    date_fin:             Optional[str] = None
+    description:          Optional[str] = None
+    type_contrat:         Optional[str] = None
+    taille_entreprise:    Optional[str] = None
+    categorie_entreprise: Optional[str] = None
+    secteur_activite:     Optional[str] = None
+    missions:             Optional[str] = None
+    is_current:           bool = False
 
 
 class ExperienceOut(BaseModel):
-    id:          int
-    poste:       Optional[str] = None
-    entreprise:  Optional[str] = None
-    date_debut:  Optional[str] = None
-    date_fin:    Optional[str] = None
-    description: Optional[str] = None
+    id:                   int
+    poste:                Optional[str] = None
+    entreprise:           Optional[str] = None
+    date_debut:           Optional[str] = None
+    date_fin:             Optional[str] = None
+    description:          Optional[str] = None
+    type_contrat:         Optional[str] = None
+    taille_entreprise:    Optional[str] = None
+    categorie_entreprise: Optional[str] = None
+    secteur_activite:     Optional[str] = None
+    missions:             Optional[str] = None
+    is_current:           bool = False
 
     class Config:
         from_attributes = True
