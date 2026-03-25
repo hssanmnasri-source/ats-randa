@@ -258,7 +258,7 @@ export default function OfferForm({ initialValues, onSubmit, loading, onCancel }
           placeholder="Sélectionnez un ou plusieurs métiers"
           showSearch
           filterOption={(input, option) =>
-            (option?.children as string)?.toLowerCase().includes(input.toLowerCase())
+            (option?.children as unknown as string)?.toLowerCase().includes(input.toLowerCase())
           }
           style={{ width: '100%' }}
         >
