@@ -44,7 +44,7 @@ export default function AdminLayout() {
           background: SIDEBAR_BG,
         }}>
           <img
-            src="/admin-transparent.png"
+            src="/logo-randa.transparent.png"
             style={{
               height: collapsed ? 32 : 60,
               objectFit: 'contain',

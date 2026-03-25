@@ -44,7 +44,7 @@ export default function AgentLayout() {
           background: SIDEBAR_BG,
         }}>
           <img
-            src="/agent_transparent.png"
+            src="/logo-randa.transparent.png"
             style={{
               height: collapsed ? 32 : 60,
               objectFit: 'contain',

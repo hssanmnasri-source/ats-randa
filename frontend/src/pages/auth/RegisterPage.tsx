@@ -30,8 +30,8 @@ export default function RegisterPage() {
     >
       <div style={{ textAlign: 'center', marginBottom: 28 }}>
         <img
-          src="/logo-randa.transparent.png"
-          style={{ width: 180, marginBottom: 12, objectFit: 'contain' }}
+          src="/logo-randa.png"
+          style={{ width: 160, marginBottom: 12, objectFit: 'contain' }}
           alt="ATS RANDA"
         />
         <Title level={4} style={{ color: '#8B1A1A', margin: 0 }}>
