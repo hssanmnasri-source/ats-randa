@@ -28,3 +28,11 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+/** Converts a relative upload path (e.g. /uploads/photos/x.jpg) to a full URL. */
+export const API_BASE = 'http://localhost:8000';
+export function mediaUrl(path?: string | null): string | undefined {
+  if (!path) return undefined;
+  if (path.startsWith('http')) return path;
+  return `${API_BASE}${path}`;
+}

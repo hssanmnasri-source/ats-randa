@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { candidateService } from '../services/candidateService';
-import { message } from 'antd';
+import { msg } from '../services/messageService';
 
 // ── Full profile (single round-trip) ─────────────────────────────────────────
 
@@ -20,6 +20,24 @@ export function useProfileCompletion() {
   });
 }
 
+// ── Photo upload ──────────────────────────────────────────────────────────────
+
+export function useUploadPhoto() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (file: File) => candidateService.uploadPhoto(file),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['candidate'] });
+      msg.success('Photo de profil mise à jour.');
+    },
+    onError: (err: unknown) => {
+      const errMsg = (err as { response?: { data?: { detail?: string } } })
+        ?.response?.data?.detail ?? 'Erreur lors de l\'upload.';
+      msg.error(errMsg);
+    },
+  });
+}
+
 // ── Profile update ────────────────────────────────────────────────────────────
 
 export function useUpdateProfile() {
@@ -29,9 +47,9 @@ export function useUpdateProfile() {
       candidateService.updateProfile(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidate'] });
-      message.success('Profil mis à jour.');
+      msg.success('Profil mis à jour.');
     },
-    onError: () => message.error('Erreur lors de la mise à jour.'),
+    onError: () => msg.error('Erreur lors de la mise à jour.'),
   });
 }
 
@@ -42,9 +60,9 @@ export function useUpdatePersonal() {
       candidateService.updatePersonal(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidate'] });
-      message.success('Informations personnelles mises à jour.');
+      msg.success('Informations personnelles mises à jour.');
     },
-    onError: () => message.error('Erreur lors de la mise à jour.'),
+    onError: () => msg.error('Erreur lors de la mise à jour.'),
   });
 }
 
@@ -55,9 +73,9 @@ export function useUpdateProfessional() {
       candidateService.updateProfessional(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidate'] });
-      message.success('Identité professionnelle mise à jour.');
+      msg.success('Identité professionnelle mise à jour.');
     },
-    onError: () => message.error('Erreur lors de la mise à jour.'),
+    onError: () => msg.error('Erreur lors de la mise à jour.'),
   });
 }
 
@@ -68,9 +86,9 @@ export function useUpdateVisibility() {
       candidateService.updateVisibility(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidate'] });
-      message.success('Paramètres sauvegardés.');
+      msg.success('Paramètres sauvegardés.');
     },
-    onError: () => message.error('Erreur lors de la sauvegarde.'),
+    onError: () => msg.error('Erreur lors de la sauvegarde.'),
   });
 }
 
@@ -90,9 +108,9 @@ export function useAddExperience() {
       candidateService.addExperience(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidate'] });
-      message.success('Expérience ajoutée.');
+      msg.success('Expérience ajoutée.');
     },
-    onError: () => message.error("Erreur lors de l'ajout."),
+    onError: () => msg.error("Erreur lors de l'ajout."),
   });
 }
 
@@ -102,9 +120,9 @@ export function useDeleteExperience() {
     mutationFn: (id: number) => candidateService.deleteExperience(id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidate'] });
-      message.success('Expérience supprimée.');
+      msg.success('Expérience supprimée.');
     },
-    onError: () => message.error('Erreur lors de la suppression.'),
+    onError: () => msg.error('Erreur lors de la suppression.'),
   });
 }
 
@@ -124,9 +142,9 @@ export function useAddSkill() {
       candidateService.addSkill(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidate'] });
-      message.success('Compétence ajoutée.');
+      msg.success('Compétence ajoutée.');
     },
-    onError: () => message.error("Erreur lors de l'ajout."),
+    onError: () => msg.error("Erreur lors de l'ajout."),
   });
 }
 
@@ -136,9 +154,9 @@ export function useDeleteSkill() {
     mutationFn: (id: number) => candidateService.deleteSkill(id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidate'] });
-      message.success('Compétence supprimée.');
+      msg.success('Compétence supprimée.');
     },
-    onError: () => message.error('Erreur lors de la suppression.'),
+    onError: () => msg.error('Erreur lors de la suppression.'),
   });
 }
 
@@ -158,9 +176,9 @@ export function useCreateCoverLetter() {
       candidateService.createCoverLetter(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidate', 'cover-letters'] });
-      message.success('Lettre créée.');
+      msg.success('Lettre créée.');
     },
-    onError: () => message.error('Erreur lors de la création.'),
+    onError: () => msg.error('Erreur lors de la création.'),
   });
 }
 
@@ -171,9 +189,9 @@ export function useUpdateCoverLetter() {
       candidateService.updateCoverLetter(id, data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidate', 'cover-letters'] });
-      message.success('Lettre mise à jour.');
+      msg.success('Lettre mise à jour.');
     },
-    onError: () => message.error('Erreur lors de la mise à jour.'),
+    onError: () => msg.error('Erreur lors de la mise à jour.'),
   });
 }
 
@@ -183,9 +201,9 @@ export function useDeleteCoverLetter() {
     mutationFn: (id: number) => candidateService.deleteCoverLetter(id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidate', 'cover-letters'] });
-      message.success('Lettre supprimée.');
+      msg.success('Lettre supprimée.');
     },
-    onError: () => message.error('Erreur lors de la suppression.'),
+    onError: () => msg.error('Erreur lors de la suppression.'),
   });
 }
 
@@ -205,9 +223,9 @@ export function useUploadDocument() {
       candidateService.uploadDocument(file, type_doc),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidate', 'documents'] });
-      message.success('Document uploadé.');
+      msg.success('Document uploadé.');
     },
-    onError: () => message.error("Erreur lors de l'upload."),
+    onError: () => msg.error("Erreur lors de l'upload."),
   });
 }
 
@@ -217,8 +235,8 @@ export function useDeleteDocument() {
     mutationFn: (id: number) => candidateService.deleteDocument(id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidate', 'documents'] });
-      message.success('Document supprimé.');
+      msg.success('Document supprimé.');
     },
-    onError: () => message.error('Erreur lors de la suppression.'),
+    onError: () => msg.error('Erreur lors de la suppression.'),
   });
 }

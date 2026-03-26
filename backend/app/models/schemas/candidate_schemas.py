@@ -185,6 +185,7 @@ class FullProfileOut(BaseModel):
     experiences: List[ExperienceOut]
     skills:      List[SkillOut]
     langues:     List[dict]   # from cv_entities
+    formations:  List[dict] = []   # from cv_entities (diplômes et formations)
 
 
 # ── CV ────────────────────────────────────────────────────────────────────────
@@ -260,6 +261,34 @@ class CVFormIn(BaseModel):
         if not cleaned:
             raise ValueError("Au moins une compétence est requise")
         return cleaned
+
+
+# ── Validation CV (human-in-the-loop) ────────────────────────────────────────
+
+class ExperienceValidateIn(BaseModel):
+    poste:       str
+    entreprise:  Optional[str] = None
+    date_debut:  Optional[str] = None
+    date_fin:    Optional[str] = None
+    description: Optional[str] = None
+    is_current:  bool = False
+
+
+class CVValidateIn(BaseModel):
+    """Corrections apportées par le candidat après lecture OCR."""
+    # Informations personnelles
+    nom:           Optional[str] = None
+    prenom:        Optional[str] = None
+    telephone:     Optional[str] = None
+    adresse:       Optional[str] = None
+    titre_poste:   Optional[str] = None
+    niveau_etude:  Optional[str] = None
+    disponibilite: Optional[str] = None
+    resume:        Optional[str] = None
+    # Données structurées
+    experiences:  List[ExperienceValidateIn] = []
+    competences:  List[str] = []           # noms uniquement
+    langues:      List[LangueIn] = []
 
 
 # ── Candidature ───────────────────────────────────────────────────────────────

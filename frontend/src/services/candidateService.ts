@@ -74,6 +74,15 @@ export const candidateService = {
     return res.data;
   },
 
+  async uploadPhoto(file: File): Promise<CandidateProfileOut> {
+    const form = new FormData();
+    form.append('file', file);
+    const res = await api.post<CandidateProfileOut>('/api/candidate/profile/photo', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return res.data;
+  },
+
   // ── Experiences ───────────────────────────────────────────────────────────
   async listExperiences(): Promise<ExperienceOut[]> {
     const res = await api.get<ExperienceOut[]>('/api/candidate/profile/experiences');

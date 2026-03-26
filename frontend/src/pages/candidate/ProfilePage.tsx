@@ -90,7 +90,7 @@ function SectionHeader({
 function EmptySection({ label }: { label: string }) {
   return (
     <Alert
-      message={`${label} non renseigné`}
+      title={`${label} non renseigné`}
       type="warning"
       showIcon
       style={{ marginTop: 8 }}
@@ -189,7 +189,7 @@ export default function CandidateProfilePage() {
       {/* ── Profile Header ──────────────────────────────────────────────────── */}
       <Card
         style={{ marginBottom: 24, borderColor: '#C9A84C' }}
-        bodyStyle={{ padding: '20px 24px' }}
+        styles={{ body: { padding: '20px 24px' } }}
       >
         <Row align="middle" gutter={20}>
           <Col>
@@ -225,7 +225,7 @@ export default function CandidateProfilePage() {
             </Space>
           </Col>
           <Col>
-            <Space direction="vertical" align="end">
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Text style={{ color: completionColor(pct), fontWeight: 600 }}>{pct}%</Text>
                 <Progress
@@ -237,7 +237,7 @@ export default function CandidateProfilePage() {
                 />
               </div>
               <Text type="secondary" style={{ fontSize: 11 }}>Profil complété</Text>
-            </Space>
+            </div>
           </Col>
         </Row>
 
@@ -270,7 +270,7 @@ export default function CandidateProfilePage() {
             }
           >
             {isPersonalFilled ? (
-              <Space direction="vertical" style={{ width: '100%' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
                 <Row gutter={8}>
                   <Col span={12}><Text type="secondary">Genre : </Text><Text>{profile.genre || '—'}</Text></Col>
                   <Col span={12}><Text type="secondary">Naissance : </Text><Text>{profile.date_naissance || '—'}</Text></Col>
@@ -293,7 +293,7 @@ export default function CandidateProfilePage() {
                   <Tag color={profile.mobilite_intl ? 'blue' : 'default'}>Mobilité Intl.</Tag>
                   {profile.has_handicap && <Tag color="orange">RQTH</Tag>}
                 </Space>
-              </Space>
+              </div>
             ) : (
               <EmptySection label="Informations personnelles" />
             )}
@@ -314,7 +314,7 @@ export default function CandidateProfilePage() {
             }
           >
             {isProFilled ? (
-              <Space direction="vertical" style={{ width: '100%' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
                 {profile.statut_pro && (
                   <Tag color="volcano">{
                     profile.statut_pro === 'EN_POSTE' ? 'En poste'
@@ -342,7 +342,7 @@ export default function CandidateProfilePage() {
                     </Space>
                   </div>
                 )}
-              </Space>
+              </div>
             ) : (
               <EmptySection label="Identité professionnelle" />
             )}
@@ -364,7 +364,7 @@ export default function CandidateProfilePage() {
             }
           >
             {experiences.length > 0 ? (
-              <Space direction="vertical" style={{ width: '100%' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
                 {experiences.map((exp: ExperienceOut) => (
                   <Card
                     key={exp.id}
@@ -409,7 +409,7 @@ export default function CandidateProfilePage() {
                     )}
                   </Card>
                 ))}
-              </Space>
+              </div>
             ) : (
               <EmptySection label="Expériences professionnelles" />
             )}
@@ -478,7 +478,7 @@ export default function CandidateProfilePage() {
               </Space>
             ) : (
               <Alert
-                message="Langues non renseignées — utilisez le formulaire CV pour les ajouter"
+                title="Langues non renseignées — utilisez le formulaire CV pour les ajouter"
                 type="warning"
                 showIcon
                 style={{ marginTop: 8 }}
@@ -505,7 +505,7 @@ export default function CandidateProfilePage() {
               <Tag color="purple">{profile.niveau_etude}</Tag>
             ) : (
               <Alert
-                message="Formations non renseignées — utilisez le formulaire CV pour les ajouter"
+                title="Formations non renseignées — utilisez le formulaire CV pour les ajouter"
                 type="warning"
                 showIcon
                 style={{ marginTop: 8 }}
@@ -649,11 +649,11 @@ export default function CandidateProfilePage() {
         <Form form={proForm} layout="vertical" style={{ marginTop: 16 }}>
           <Form.Item name="statut_pro" label="Statut professionnel actuel">
             <Radio.Group>
-              <Space direction="vertical">
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 <Radio value="EN_POSTE">En poste</Radio>
                 <Radio value="EN_RECHERCHE">En recherche active</Radio>
                 <Radio value="ETUDIANT">Étudiant / Jeune diplômé</Radio>
-              </Space>
+              </div>
             </Radio.Group>
           </Form.Item>
           <Row gutter={16}>

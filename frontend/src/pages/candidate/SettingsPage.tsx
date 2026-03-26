@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Card, Form, Radio, Select, Button, Input, Modal, Divider, Space,
-  Typography, Row, Col, Alert, message as antMessage,
+  Typography, Row, Col, Alert, App,
 } from 'antd';
 import {
   EyeOutlined, LockOutlined, MailOutlined, DeleteOutlined, BellOutlined,
@@ -15,6 +15,7 @@ import api from '../../services/api';
 const { Title, Text, Paragraph } = Typography;
 
 export default function SettingsPage() {
+  const { message } = App.useApp();
   const { data, isLoading } = useFullProfile();
   const { mutate: updateVisibility, isPending: savingVisibility } = useUpdateVisibility();
   const { logout } = useAuthStore();
@@ -42,10 +43,10 @@ export default function SettingsPage() {
     setSavingEmail(true);
     try {
       await api.put('/api/candidate/profile', { email: values.email });
-      antMessage.success('Email mis à jour.');
+      message.success('Email mis à jour.');
       emailForm.resetFields(['password_confirm']);
     } catch {
-      antMessage.error('Erreur lors du changement d\'email.');
+      message.error('Erreur lors du changement d\'email.');
     } finally {
       setSavingEmail(false);
     }
@@ -54,7 +55,7 @@ export default function SettingsPage() {
   const handlePwdSave = async () => {
     const values = await pwdForm.validateFields();
     if (values.new_password !== values.confirm_password) {
-      antMessage.error('Les mots de passe ne correspondent pas.');
+      message.error('Les mots de passe ne correspondent pas.');
       return;
     }
     setSavingPwd(true);
@@ -63,11 +64,11 @@ export default function SettingsPage() {
         current_password: values.current_password,
         new_password: values.new_password,
       });
-      antMessage.success('Mot de passe mis à jour.');
+      message.success('Mot de passe mis à jour.');
       pwdForm.resetFields();
     } catch (err: unknown) {
       const axiosErr = err as { response?: { data?: { detail?: string } } };
-      antMessage.error(axiosErr?.response?.data?.detail ?? 'Erreur lors du changement de mot de passe.');
+      message.error(axiosErr?.response?.data?.detail ?? 'Erreur lors du changement de mot de passe.');
     } finally {
       setSavingPwd(false);
     }
@@ -79,7 +80,7 @@ export default function SettingsPage() {
       logout();
       navigate('/');
     } catch {
-      antMessage.error('Erreur lors de la suppression du compte.');
+      message.error('Erreur lors de la suppression du compte.');
     }
   };
 
@@ -106,7 +107,7 @@ export default function SettingsPage() {
             >
               <Form.Item name="visibility_status" label="Qui peut voir votre profil ?">
                 <Radio.Group>
-                  <Space direction="vertical">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     <Radio value="VISIBLE">
                       <Text strong>Visible</Text>
                       <Text type="secondary" style={{ display: 'block', fontSize: 12 }}>
@@ -125,7 +126,7 @@ export default function SettingsPage() {
                         Profil non visible par les recruteurs
                       </Text>
                     </Radio>
-                  </Space>
+                  </div>
                 </Radio.Group>
               </Form.Item>
 
@@ -159,7 +160,7 @@ export default function SettingsPage() {
 
         {/* Email & Password */}
         <Col xs={24} lg={12}>
-          <Space direction="vertical" style={{ width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {/* Change email */}
             <Card title={<Space><MailOutlined style={{ color: '#8B1A1A' }} /><span>Changer l'adresse email</span></Space>}>
               <Form form={emailForm} layout="vertical">
@@ -210,7 +211,7 @@ export default function SettingsPage() {
                 </Button>
               </Form>
             </Card>
-          </Space>
+          </div>
         </Col>
 
         {/* Danger zone */}
@@ -220,7 +221,7 @@ export default function SettingsPage() {
             style={{ borderColor: '#FF4D4F' }}
           >
             <Alert
-              message="Suppression définitive du compte"
+              title="Suppression définitive du compte"
               description="Cette action est irréversible. Toutes vos données (profil, CV, candidatures, lettres de motivation) seront définitivement supprimées."
               type="error"
               showIcon

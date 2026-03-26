@@ -1,5 +1,5 @@
 import api from './api';
-import type { CVOut, CVListOut, CVDetailOut, AgentCVListOut, CVFormIn } from '../types/cv';
+import type { CVOut, CVListOut, CVDetailOut, AgentCVListOut, CVFormIn, CVValidateIn } from '../types/cv';
 
 const ALLOWED_TYPES = [
   'application/pdf',
@@ -33,6 +33,16 @@ export const cvService = {
 
   async createCVFromForm(data: CVFormIn): Promise<CVOut> {
     const res = await api.post<CVOut>('/api/candidate/cvs/form', data);
+    return res.data;
+  },
+
+  async getMyCV(cvId: number): Promise<CVOut> {
+    const res = await api.get<CVOut>(`/api/candidate/cvs/${cvId}`);
+    return res.data;
+  },
+
+  async validateCV(cvId: number, data: CVValidateIn): Promise<CVOut> {
+    const res = await api.put<CVOut>(`/api/candidate/cvs/${cvId}/validate`, data);
     return res.data;
   },
 

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { message } from 'antd';
 import { cvService } from '../services/cvService';
-import type { CVFormIn } from '../types/cv';
+import { msg } from '../services/messageService';
+import type { CVFormIn, CVValidateIn } from '../types/cv';
 
 export function useMyCVs() {
   return useQuery({
@@ -17,11 +17,11 @@ export function useUploadCV() {
     mutationFn: (file: File) => cvService.uploadCV(file),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['cv'] });
-      message.success('CV uploadé avec succès. Analyse en cours...');
+      msg.success('CV uploadé avec succès. Analyse en cours...');
     },
     onError: (err: unknown) => {
-      const msg = err instanceof Error ? err.message : "Erreur lors de l'upload.";
-      message.error(msg);
+      const errMsg = err instanceof Error ? err.message : "Erreur lors de l'upload.";
+      msg.error(errMsg);
     },
   });
 }
@@ -32,9 +32,36 @@ export function useCVForm() {
     mutationFn: (data: CVFormIn) => cvService.createCVFromForm(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['cv'] });
-      message.success('CV créé avec succès.');
+      msg.success('CV créé avec succès.');
     },
-    onError: () => message.error('Erreur lors de la création du CV.'),
+    onError: () => msg.error('Erreur lors de la création du CV.'),
+  });
+}
+
+export function useMyCV(cvId: number | undefined) {
+  return useQuery({
+    queryKey: ['cv', 'single', cvId],
+    queryFn: () => cvService.getMyCV(cvId!),
+    enabled: !!cvId,
+    refetchInterval: (query) => {
+      const statut = query.state.data?.statut;
+      // Poll every 3 s while the Celery task is still running
+      return statut === 'UPLOADED' || statut === 'PARSING' ? 3000 : false;
+    },
+  });
+}
+
+export function useValidateCV() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ cvId, data }: { cvId: number; data: CVValidateIn }) =>
+      cvService.validateCV(cvId, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['cv'] });
+      qc.invalidateQueries({ queryKey: ['candidate'] });
+      msg.success('CV validé ! Le matching sera recalculé sous peu.');
+    },
+    onError: () => msg.error('Erreur lors de la validation du CV.'),
   });
 }
 
@@ -51,11 +78,11 @@ export function useAgentUploadCV() {
     mutationFn: (payload: { file: File; nom: string; prenom: string; email?: string; telephone?: string }) => cvService.agentUploadCV(payload),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['cvs'] });
-      message.success('CV enregistré avec succès.');
+      msg.success('CV enregistré avec succès.');
     },
     onError: (err: unknown) => {
-      const msg = err instanceof Error ? err.message : "Erreur lors de l'upload.";
-      message.error(msg);
+      const errMsg = err instanceof Error ? err.message : "Erreur lors de l'upload.";
+      msg.error(errMsg);
     },
   });
 }

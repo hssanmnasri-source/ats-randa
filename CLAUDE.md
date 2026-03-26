@@ -165,8 +165,21 @@ Axios instance with `baseURL: 'http://localhost:8000'`. All endpoint paths inclu
 ### Data Fetching Pattern
 Use TanStack Query in hooks, not directly in components. Query keys follow the pattern `['role', 'resource']` (e.g. `['candidate', 'profile']`, `['rh', 'offers']`). Default `staleTime` is 5 minutes.
 
-### Existing Candidate Portal (`/candidate`)
-Four pages are implemented: `DashboardPage`, `MyCVPage`, `ApplicationsPage`, `ProfilePage`. The `CandidateLayout` sidebar currently has 4 menu items. Backend endpoints for profile (`GET/PUT /api/candidate/profile`), CVs (`GET/POST /api/candidate/cvs`), applications (`GET /api/candidate/applications`), and offer application (`POST /api/candidate/offers/{id}/apply`) are all present.
+### Candidate Portal (`/candidate`)
+Pages implemented: `DashboardPage`, `MyCVPage`, `CVGeneratorPage`, `ApplicationsPage`, `ProfilePage`, `CoverLettersPage`, `DocumentsPage`, `SettingsPage`, `FavoritesPage`. The `CandidateLayout` sidebar has 8 menu items.
+
+Backend endpoints: profile (`GET/PUT /api/candidate/profile`), full profile (`GET /api/candidate/profile/full`), CVs (`GET/POST /api/candidate/cvs`), applications (`GET /api/candidate/applications`), offer application (`POST /api/candidate/offers/{id}/apply`).
+
+#### CV Generator (`/candidate/cv-generator`)
+- **Component**: `frontend/src/components/cv/CVDocument.tsx` — `React.forwardRef` component rendering the CV in Keejob style (A4, inline CSS, brand colours).
+- **Page**: `frontend/src/pages/candidate/CVGeneratorPage.tsx` — uses `useFullProfile()` + `react-to-print` for PDF export.
+- **Data source**: `GET /api/candidate/profile/full` — returns `{ profile, completion, experiences, skills, langues, formations }`. `formations` and `langues` are extracted from `cv_entities` JSONB of the candidate's indexed CVs.
+- **formations structure** (from Keejob parser): `{ diplome, etablissement, type, statut, mention, date_debut, date_fin, pays }`.
+- **Print CSS**: `@page { size: A4; margin: 10mm }` + `print-color-adjust: exact` injected via `<style>` inside the component.
+- **Library**: `react-to-print ^3.3.0` (hook API: `useReactToPrint({ contentRef })`).
+
+#### `FullProfileOut` schema (backend + frontend)
+Both `candidate_schemas.py` and `types/cv.ts` include `formations: List[dict]` / `formations: FormationOut[]`. Always keep them in sync if adding new fields to the full profile response.
 
 ## Infrastructure
 

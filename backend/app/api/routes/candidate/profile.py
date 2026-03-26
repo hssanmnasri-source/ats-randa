@@ -2,7 +2,7 @@
 api/routes/candidate/profile.py
 Routes de gestion du profil candidat étendu.
 """
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -97,6 +97,18 @@ async def get_full_profile(
 ):
     """Profil complet : infos + complétion + expériences + compétences + langues."""
     return await profile_service.get_full_profile(db, candidate)
+
+
+# ── Photo de profil ───────────────────────────────────────────────────────────
+
+@router.post("/profile/photo", response_model=CandidateProfileOut)
+async def upload_photo(
+    file: UploadFile = File(...),
+    candidate=Depends(require_candidate),
+    db: AsyncSession = Depends(get_db),
+):
+    """Upload ou remplace la photo de profil (JPG/PNG/GIF/WebP, max 2 Mo)."""
+    return await profile_service.upload_photo(db, candidate, file)
 
 
 # ── Expériences ───────────────────────────────────────────────────────────────

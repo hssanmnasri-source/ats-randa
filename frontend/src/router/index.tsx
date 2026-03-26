@@ -26,6 +26,7 @@ import CoverLettersPage from '../pages/candidate/CoverLettersPage';
 import DocumentsPage from '../pages/candidate/DocumentsPage';
 import SettingsPage from '../pages/candidate/SettingsPage';
 import FavoritesPage from '../pages/candidate/FavoritesPage';
+import CVGeneratorPage from '../pages/candidate/CVGeneratorPage';
 
 // Agent pages
 import AgentDashboard from '../pages/agent/DashboardPage';
@@ -74,6 +75,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true,                 element: <CandidateDashboard /> },
       { path: 'cv',                  element: <MyCVPage /> },
+      { path: 'cv-generator',        element: <CVGeneratorPage /> },
       { path: 'applications',        element: <ApplicationsPage /> },
       { path: 'profile',             element: <CandidateProfilePage /> },
       { path: 'favorites',           element: <FavoritesPage /> },

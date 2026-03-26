@@ -140,12 +140,80 @@ export interface ProfileCompletionOut {
   sections: Record<string, SectionCompletion>;
 }
 
+export interface FormationOut {
+  diplome?:      string | null;
+  etablissement?: string | null;
+  type?:         string | null;
+  statut?:       string | null;
+  mention?:      string | null;
+  date_debut?:   string | null;
+  date_fin?:     string | null;
+  pays?:         string | null;
+}
+
 export interface FullProfileOut {
   profile:     CandidateProfileOut;
   completion:  ProfileCompletionOut;
   experiences: ExperienceOut[];
   skills:      SkillOut[];
   langues:     Array<{ langue: string; niveau?: string }>;
+  formations:  FormationOut[];
+}
+
+// ── CV Validate (human-in-the-loop) ──────────────────────────────────────────
+
+export interface ExperienceValidateIn {
+  poste:       string;
+  entreprise?: string | null;
+  date_debut?: string | null;
+  date_fin?:   string | null;
+  description?: string | null;
+  is_current:  boolean;
+}
+
+export interface CVValidateIn {
+  nom?:          string;
+  prenom?:       string;
+  telephone?:    string;
+  adresse?:      string;
+  titre_poste?:  string;
+  niveau_etude?: string;
+  disponibilite?: string;
+  resume?:       string;
+  experiences:   ExperienceValidateIn[];
+  competences:   string[];
+  langues:       Array<{ langue: string; niveau?: string }>;
+}
+
+// ── Confidence scoring ────────────────────────────────────────────────────────
+
+export type ConfidenceLevel = 'success' | 'warning' | 'error';
+
+export function computeConfidence(entities: Record<string, unknown>): {
+  level: ConfidenceLevel;
+  filled: number;
+  total: number;
+  missing: string[];
+} {
+  const KEY_FIELDS: Record<string, string> = {
+    nom:          'Nom',
+    prenom:       'Prénom',
+    titre_poste:  'Titre du poste',
+    experiences:  'Expériences',
+    competences:  'Compétences',
+    niveau_etude: "Niveau d'étude",
+  };
+  const missing: string[] = [];
+  let filled = 0;
+  for (const [key, label] of Object.entries(KEY_FIELDS)) {
+    const v = entities[key];
+    const ok = v && (Array.isArray(v) ? (v as unknown[]).length > 0 : true);
+    if (ok) filled++; else missing.push(label);
+  }
+  const total = Object.keys(KEY_FIELDS).length;
+  const score = filled / total;
+  const level: ConfidenceLevel = score >= 0.67 ? 'success' : score >= 0.34 ? 'warning' : 'error';
+  return { level, filled, total, missing };
 }
 
 // ── Cover Letters ─────────────────────────────────────────────────────────────

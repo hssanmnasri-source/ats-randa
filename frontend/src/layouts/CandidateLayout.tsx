@@ -11,6 +11,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   HeartOutlined,
+  FilePdfOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
@@ -23,13 +24,14 @@ const GOLD = '#C9A84C';
 const GOLD_LIGHT = '#F0D080';
 
 const menuItems = [
-  { key: '/candidate',              icon: <HomeOutlined />,       label: 'Mon Espace'              },
-  { key: '/candidate/profile',      icon: <UserOutlined />,       label: 'Mon Profil CV'           },
-  { key: '/candidate/applications', icon: <AppstoreOutlined />,   label: 'Mes Candidatures'        },
-  { key: '/candidate/favorites',     icon: <HeartOutlined />,      label: 'Offres favorites'        },
-  { key: '/candidate/cover-letters',icon: <MailOutlined />,       label: 'Lettres de motivation'   },
-  { key: '/candidate/documents',    icon: <FolderOutlined />,     label: 'Mes Documents'           },
-  { key: '/candidate/settings',     icon: <SettingOutlined />,    label: 'Paramètres'              },
+  { key: '/candidate',                   icon: <HomeOutlined />,     label: 'Mon Espace'            },
+  { key: '/candidate/profile',           icon: <UserOutlined />,     label: 'Mon Profil CV'         },
+  { key: '/candidate/cv-generator',      icon: <FilePdfOutlined />,  label: 'Mon CV Généré'         },
+  { key: '/candidate/applications',      icon: <AppstoreOutlined />, label: 'Mes Candidatures'      },
+  { key: '/candidate/favorites',         icon: <HeartOutlined />,    label: 'Offres favorites'      },
+  { key: '/candidate/cover-letters',     icon: <MailOutlined />,     label: 'Lettres de motivation' },
+  { key: '/candidate/documents',         icon: <FolderOutlined />,   label: 'Mes Documents'         },
+  { key: '/candidate/settings',          icon: <SettingOutlined />,  label: 'Paramètres'            },
 ];
 
 function completionColor(pct: number) {
@@ -112,7 +114,7 @@ export default function CandidateLayout() {
               showInfo={false}
               size="small"
               strokeColor={completionColor(pct)}
-              trailColor="rgba(255,255,255,0.15)"
+              railColor="rgba(255,255,255,0.15)"
             />
           </div>
         )}
@@ -126,7 +128,7 @@ export default function CandidateLayout() {
                 size={32}
                 strokeColor={completionColor(pct)}
                 format={() => ''}
-                trailColor="rgba(255,255,255,0.15)"
+                railColor="rgba(255,255,255,0.15)"
               />
             </div>
           </Tooltip>

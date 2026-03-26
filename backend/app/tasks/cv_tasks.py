@@ -143,7 +143,22 @@ async def _process_cv_async(cv_id: int) -> dict:
             except Exception as e:
                 logger.warning(f"CV {cv_id} — extraction PDF échouée: {e}")
 
-        # ── 3. Construire texte + générer embedding ─────────────────────
+        # ── 3. Parser le texte → cv_entities si absent ou vide ─────────
+        if not cv.cv_entities and cv_text.strip():  # covers None and {}
+            try:
+                from app.nlp.general_cv_parser import parse_cv_text
+                parsed = parse_cv_text(cv_text)
+                if parsed:
+                    cv.cv_entities = parsed
+                    await db.commit()
+                    logger.info(
+                        f"CV {cv_id} — entités extraites : "
+                        f"{list(parsed.keys())}"
+                    )
+            except Exception as e:
+                logger.warning(f"CV {cv_id} — parsing général échoué: {e}")
+
+        # ── 4. Construire texte + générer embedding ─────────────────────
         embed_text = cv_to_embed_text(cv.cv_entities or {}, cv_text)
         if not embed_text.strip():
             logger.warning(f"CV {cv_id} — texte vide, embedding impossible")
@@ -159,7 +174,7 @@ async def _process_cv_async(cv_id: int) -> dict:
         await db.refresh(cv)
         logger.info(f"Embedding CV {cv_id} sauvegardé (version {cv.cv_version})")
 
-        # ── 4. Récupérer toutes les offres ACTIVE ───────────────────────
+        # ── 5. Récupérer toutes les offres ACTIVE ───────────────────────
         offers_result = await db.execute(
             select(JobOffer).where(JobOffer.statut == OfferStatus.ACTIVE)
         )

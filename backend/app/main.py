@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from app.core.config import settings
 from app.core.database import init_db
 import logging
+import os
 from app.api.routes.visitor.auth import router as auth_router
 from app.api.routes.visitor.offers import router as visitor_offers_router
 from app.api.routes.admin.users import router as admin_users_router
@@ -209,6 +211,11 @@ app.include_router(rh_dashboard_router)
 # Admin
 app.include_router(admin_users_router)
 app.include_router(admin_stats_router)
+
+# ── Static files (photos de profil, uploads) ──────────────────────────────────
+os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
+
 
 @app.get("/health", tags=["Health"])
 async def health():

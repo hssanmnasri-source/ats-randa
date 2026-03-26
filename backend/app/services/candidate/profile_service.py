@@ -2,10 +2,13 @@
 services/candidate/profile_service.py
 Logique métier pour le profil candidat étendu.
 """
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from pathlib import Path
+import uuid
 
+from app.core.config import settings
 from app.repositories import candidate_repository
 from app.models.db_models import CV, CVSource, CVStatus, Competence, Experience
 from app.models.schemas.candidate_schemas import (
@@ -16,6 +19,16 @@ from app.models.schemas.candidate_schemas import (
     SkillIn,
     VisibilityUpdateIn,
 )
+
+# ── Allowed photo MIME types ───────────────────────────────────────────────────
+_PHOTO_ALLOWED = {"image/jpeg", "image/png", "image/gif", "image/webp"}
+_PHOTO_EXT_MAP = {
+    "image/jpeg": "jpg",
+    "image/png":  "png",
+    "image/gif":  "gif",
+    "image/webp": "webp",
+}
+_PHOTO_MAX_BYTES = 2 * 1024 * 1024  # 2 MB
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -236,14 +249,16 @@ async def get_full_profile(db: AsyncSession, user) -> dict:
         )
         skills = skill_r.scalars().all()
 
-        # Collect langues from cv_entities
+        # Collect langues and formations from cv_entities
         cvs_r = await db.execute(
             select(CV).where(CV.id.in_(cv_ids))
         )
+        formations = []
         for cv in cvs_r.scalars().all():
-            if cv.cv_entities and cv.cv_entities.get("langues"):
+            if not langues and cv.cv_entities and cv.cv_entities.get("langues"):
                 langues = cv.cv_entities["langues"]
-                break  # use first CV with languages
+            if not formations and cv.cv_entities and cv.cv_entities.get("formations"):
+                formations = cv.cv_entities["formations"]
 
     return {
         "profile": candidate,
@@ -251,6 +266,7 @@ async def get_full_profile(db: AsyncSession, user) -> dict:
         "experiences": list(experiences),
         "skills": list(skills),
         "langues": langues,
+        "formations": formations,
     }
 
 
@@ -348,3 +364,36 @@ async def delete_skill(db: AsyncSession, user, skill_id: int) -> None:
         raise HTTPException(status_code=404, detail="Compétence introuvable")
     await db.delete(skill)
     await db.commit()
+
+
+# ── Photo de profil ───────────────────────────────────────────────────────────
+
+async def upload_photo(db: AsyncSession, user, file: UploadFile):
+    """Valide, sauvegarde la photo de profil et met à jour le candidat."""
+    # ── Type MIME ──────────────────────────────────────────────────────────────
+    content_type = (file.content_type or "").lower()
+    if content_type not in _PHOTO_ALLOWED:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Format non supporté. Utilisez JPG, PNG, GIF ou WebP.",
+        )
+
+    # ── Lecture + taille ───────────────────────────────────────────────────────
+    content = await file.read()
+    if len(content) > _PHOTO_MAX_BYTES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Image trop lourde. Maximum 2 Mo.",
+        )
+
+    # ── Sauvegarde sur disque ──────────────────────────────────────────────────
+    candidate = await _get_candidate_or_404(db, user)
+    ext = _PHOTO_EXT_MAP.get(content_type, "jpg")
+    filename = f"photo_{candidate.id}_{uuid.uuid4().hex[:10]}.{ext}"
+    photo_dir = Path(settings.UPLOAD_DIR) / "photos"
+    photo_dir.mkdir(parents=True, exist_ok=True)
+    (photo_dir / filename).write_bytes(content)
+
+    # ── Mise à jour BDD ────────────────────────────────────────────────────────
+    photo_url = f"/uploads/photos/{filename}"
+    return await candidate_repository.update(db, candidate, {"photo_url": photo_url})

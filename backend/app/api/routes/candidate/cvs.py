@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.api.dependencies import require_candidate
-from app.models.schemas.candidate_schemas import CVOut, CVListOut, ResultatListOut, CVFormIn
+from app.models.schemas.candidate_schemas import CVOut, CVListOut, ResultatListOut, CVFormIn, CVValidateIn
 from app.services.candidate import cv_service
 
 router = APIRouter(
@@ -70,6 +70,20 @@ async def get_cv(
 ):
     """Détail d'un CV (uniquement les miens)."""
     return await cv_service.get_cv(db, cv_id, candidate)
+
+
+@router.put("/cvs/{cv_id}/validate", response_model=CVOut)
+async def validate_cv(
+    cv_id: int,
+    data: CVValidateIn,
+    candidate=Depends(require_candidate),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Valide et corrige les données extraites par l'OCR.
+    Met à jour le profil candidat, les expériences, compétences, puis re-indexe.
+    """
+    return await cv_service.validate_cv(db, cv_id, candidate, data)
 
 
 @router.get("/candidatures", response_model=ResultatListOut)
