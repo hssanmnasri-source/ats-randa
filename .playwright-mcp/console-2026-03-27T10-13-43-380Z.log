@@ -1,0 +1,2 @@
+[     258ms] [ERROR] Warning: [antd: Spin] `tip` is deprecated. Please use `description` instead. @ http://localhost:3000/node_modules/.vite/deps/chunk-UIDPYNXV.js?v=ec53c783:1253
+[     344ms] [ERROR] Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead. @ http://localhost:3000/node_modules/.vite/deps/chunk-UIDPYNXV.js?v=ec53c783:1253

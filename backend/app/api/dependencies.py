@@ -1,11 +1,13 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Optional
 from app.core.database import get_db
 from app.core.security import decode_token
 from app.repositories.user_repository import get_by_id
 
 bearer = HTTPBearer()
+_optional_bearer = HTTPBearer(auto_error=False)
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(bearer),
@@ -37,6 +39,23 @@ def require_role(*roles):
             )
         return user
     return checker
+
+async def get_optional_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(_optional_bearer),
+    db: AsyncSession = Depends(get_db),
+):
+    """Returns the authenticated User, or None if no valid token provided."""
+    if not credentials:
+        return None
+    try:
+        payload = decode_token(credentials.credentials)
+        if not payload or payload.get("type") != "access":
+            return None
+        user = await get_by_id(db, int(payload["sub"]))
+        return user if user and user.is_active else None
+    except Exception:
+        return None
+
 
 # ── Shortcuts par acteur ──────────────────────────
 require_candidate   = require_role("CANDIDATE")

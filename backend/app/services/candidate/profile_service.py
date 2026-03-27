@@ -2,11 +2,13 @@
 services/candidate/profile_service.py
 Logique métier pour le profil candidat étendu.
 """
+import asyncio
+import uuid
+from pathlib import Path
+
 from fastapi import HTTPException, status, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from pathlib import Path
-import uuid
 
 from app.core.config import settings
 from app.repositories import candidate_repository
@@ -259,6 +261,8 @@ async def get_full_profile(db: AsyncSession, user) -> dict:
                 langues = cv.cv_entities["langues"]
             if not formations and cv.cv_entities and cv.cv_entities.get("formations"):
                 formations = cv.cv_entities["formations"]
+            if langues and formations:
+                break
 
     return {
         "profile": candidate,
@@ -392,7 +396,7 @@ async def upload_photo(db: AsyncSession, user, file: UploadFile):
     filename = f"photo_{candidate.id}_{uuid.uuid4().hex[:10]}.{ext}"
     photo_dir = Path(settings.UPLOAD_DIR) / "photos"
     photo_dir.mkdir(parents=True, exist_ok=True)
-    (photo_dir / filename).write_bytes(content)
+    await asyncio.to_thread((photo_dir / filename).write_bytes, content)
 
     # ── Mise à jour BDD ────────────────────────────────────────────────────────
     photo_url = f"/uploads/photos/{filename}"

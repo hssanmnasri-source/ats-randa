@@ -87,7 +87,7 @@ _LANGUE_LEVEL_MAP: dict[str, str] = {
     "intermédiaire": "Intermédiaire", "intermediaire": "Intermédiaire",
     "courant": "Courant",     "bien": "Courant",         "correct": "Courant",
     "avancé": "Bilingue",     "avance": "Bilingue",
-    "bilingue": "Bilingue",   "courant": "Courant",
+    "bilingue": "Bilingue",
     "maternelle": "Langue maternelle", "natif": "Langue maternelle",
 }
 
@@ -137,7 +137,7 @@ _SKILL_DISPLAY: dict[str, str] = {
     "c++": "C++", "c#": "C#", "node.js": "Node.js", "nodejs": "Node.js",
     "css": "CSS", "html": "HTML", "api": "API", "sql server": "SQL Server",
     "rest": "REST", "ci/cd": "CI/CD", "gcp": "GCP", "aws": "AWS",
-    "aws": "AWS", "nlp": "NLP",
+    "nlp": "NLP",
 }
 
 def _extract_competences(text: str) -> list[str]:

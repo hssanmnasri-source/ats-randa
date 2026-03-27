@@ -158,7 +158,7 @@ async def validate_cv(db: AsyncSession, cv_id: int, user, data) -> dict:
       4. Mettre à jour cv_entities avec les données validées
       5. Relancer process_cv_on_upload (embedding + matching)
     """
-    from sqlalchemy import select, delete
+    from sqlalchemy import delete
     from app.models.db_models import Experience, Competence, CVStatus, SkillLevel
 
     # ── 1. Charger et vérifier le CV ────────────────────────────────────────
@@ -187,8 +187,6 @@ async def validate_cv(db: AsyncSession, cv_id: int, user, data) -> dict:
 
     # ── 3. Remplacer expériences ─────────────────────────────────────────────
     await db.execute(delete(Experience).where(Experience.id_cv == cv_id))
-    await db.commit()
-
     for exp in data.experiences:
         if not (exp.poste or exp.entreprise):
             continue
@@ -201,12 +199,9 @@ async def validate_cv(db: AsyncSession, cv_id: int, user, data) -> dict:
             description=exp.description or None,
             is_current=exp.is_current,
         ))
-    await db.commit()
 
     # ── 4. Remplacer compétences ─────────────────────────────────────────────
     await db.execute(delete(Competence).where(Competence.id_cv == cv_id))
-    await db.commit()
-
     for nom_comp in data.competences:
         nom_comp = nom_comp.strip()
         if nom_comp:
@@ -215,18 +210,17 @@ async def validate_cv(db: AsyncSession, cv_id: int, user, data) -> dict:
                 nom_competence=nom_comp,
                 niveau=SkillLevel.INTERMEDIATE,
             ))
-    await db.commit()
 
-    # ── 5. Mettre à jour cv_entities ─────────────────────────────────────────
+    # ── 5. Mettre à jour cv_entities et committer tout en une transaction ─────
     entities = dict(cv.cv_entities or {})
-    if data.nom:           entities["nom"]           = data.nom
-    if data.prenom:        entities["prenom"]        = data.prenom
-    if data.telephone:     entities["telephone"]     = data.telephone
-    if data.adresse:       entities["adresse"]       = data.adresse
-    if data.titre_poste:   entities["titre_poste"]   = data.titre_poste
-    if data.niveau_etude:  entities["niveau_etude"]  = data.niveau_etude
-    if data.disponibilite: entities["disponibilite"] = data.disponibilite
-    if data.resume:        entities["resume"]        = data.resume
+    if data.nom is not None:           entities["nom"]           = data.nom
+    if data.prenom is not None:        entities["prenom"]        = data.prenom
+    if data.telephone is not None:     entities["telephone"]     = data.telephone
+    if data.adresse is not None:       entities["adresse"]       = data.adresse
+    if data.titre_poste is not None:   entities["titre_poste"]   = data.titre_poste
+    if data.niveau_etude is not None:  entities["niveau_etude"]  = data.niveau_etude
+    if data.disponibilite is not None: entities["disponibilite"] = data.disponibilite
+    if data.resume is not None:        entities["resume"]        = data.resume
     entities["competences"] = [{"nom_competence": c, "niveau": "INTERMEDIATE"} for c in data.competences if c.strip()]
     entities["langues"]     = [l.model_dump() for l in data.langues]
     entities["experiences"] = [
@@ -250,7 +244,7 @@ async def validate_cv(db: AsyncSession, cv_id: int, user, data) -> dict:
     from app.tasks.cv_tasks import process_cv_on_upload
     process_cv_on_upload.delay(cv_id)
 
-    return await cv_repository.get_by_id(db, cv_id)
+    return cv
 
 
 async def list_candidatures(db: AsyncSession, user, page: int, limit: int) -> dict:

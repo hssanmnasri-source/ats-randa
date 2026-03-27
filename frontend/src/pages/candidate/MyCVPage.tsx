@@ -4,7 +4,6 @@ import {
   Spin, Steps, Space, Divider,
 } from 'antd';
 import {
-  FileTextOutlined,
   FormOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -53,10 +52,13 @@ export default function MyCVPage() {
   const myCv   = cvList?.cvs?.[0] ?? null;
   const hasCv  = !!myCv;
 
-  // Poll the latest CV status while UPLOADED/PARSING
-  const isProcessing = myCv && (myCv.statut === 'UPLOADED' || myCv.statut === 'PARSING');
-  const { data: freshCv } = useMyCV(isProcessing ? myCv?.id : undefined);
+  // Poll the latest CV status while UPLOADED/PARSING.
+  // Start polling based on the list entry; stop once liveCv (which includes the
+  // polled fresh data) no longer shows an in-progress status.
+  const mightBeProcessing = myCv && (myCv.statut === 'UPLOADED' || myCv.statut === 'PARSING');
+  const { data: freshCv } = useMyCV(mightBeProcessing ? myCv?.id : undefined);
   const liveCv = freshCv ?? myCv;
+  const isProcessing = liveCv && (liveCv.statut === 'UPLOADED' || liveCv.statut === 'PARSING');
 
   // Auto-switch to review once indexing completes
   useEffect(() => {
@@ -153,7 +155,7 @@ export default function MyCVPage() {
       {mode === 'upload' && (
         <Card
           title={<Text strong>Upload de CV</Text>}
-          extra={<Button type="text" onClick={() => setMode(hasCv ? 'view' : 'view')}>Annuler</Button>}
+          extra={<Button type="text" onClick={() => setMode('view')}>Annuler</Button>}
           style={{ maxWidth: 600 }}
         >
           <CVUploadForm

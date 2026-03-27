@@ -5,6 +5,9 @@ import type {
   UpdateOfferRequest,
   PublicOfferListOut,
   OfferListOut,
+  OffersFilters,
+  OffersListResponse,
+  PublicOfferDetail,
 } from '../types/offer';
 import type { MatchingResultsOut, UpdateDecisionRequest, ResultatOut } from '../types/matching';
 
@@ -21,6 +24,21 @@ export const offerService = {
 
   async getPublicOffer(id: number): Promise<JobOffer> {
     const res = await api.get<JobOffer>(`/api/visitor/offers/${id}`);
+    return res.data;
+  },
+
+  async listOffers(filters?: OffersFilters): Promise<OffersListResponse> {
+    const res = await api.get<OffersListResponse>('/api/visitor/offers', { params: filters });
+    return res.data;
+  },
+
+  async getOfferDetail(id: number): Promise<PublicOfferDetail> {
+    const res = await api.get<PublicOfferDetail>(`/api/visitor/offers/${id}`);
+    return res.data;
+  },
+
+  async applyToOffer(offerId: number): Promise<unknown> {
+    const res = await api.post(`/api/candidate/offers/${offerId}/apply`);
     return res.data;
   },
 

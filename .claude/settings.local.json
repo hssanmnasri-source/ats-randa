@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(cd:*)",
+      "Bash(docker ps:*)",
+      "mcp__playwright__browser_snapshot",
+      "Bash(curl -s \"http://localhost:8000/api/visitor/offers?limit=3\")",
+      "Bash(node -e \"const icons = require\\(''@ant-design/icons''\\); const names = Object.keys\\(icons\\).filter\\(k => k.includes\\(''Outlined''\\)\\); console.log\\(names.filter\\(n => /brief|job|work|career|solu|recru/i.test\\(n\\)\\).join\\(''\\\\n''\\)\\)\")"
+    ]
+  }
+}

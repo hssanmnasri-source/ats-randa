@@ -5,8 +5,8 @@
  */
 import { useEffect } from 'react';
 import {
-  Alert, Button, Card, Col, Divider, Form, Input, InputNumber,
-  Row, Select, Space, Tag, Typography,
+  Alert, Button, Card, Col, Divider, Form, Input,
+  Row, Select, Tag, Typography,
 } from 'antd';
 import {
   CheckCircleOutlined,
@@ -22,14 +22,13 @@ import { computeConfidence } from '../../types/cv';
 import { useValidateCV } from '../../hooks/useCVs';
 import { COLORS } from '../../theme';
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const NIVEAUX_ETUDE   = ['BAC', 'BAC+2', 'BAC+3', 'BAC+5', 'Doctorat'];
 const LANGUES_OPTIONS = ['Arabe', 'Français', 'Anglais', 'Espagnol', 'Allemand', 'Autre'];
 const DISPO_OPTIONS   = ['Immédiate', 'Avec préavis', '1 mois', '3 mois'];
-const NIVEAU_LANGUE   = ['Débutant', 'Intermédiaire', 'Courant', 'Bilingue', 'Langue maternelle'];
 
 // ── Alert banner ─────────────────────────────────────────────────────────────
 

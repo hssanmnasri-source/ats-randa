@@ -131,32 +131,47 @@ async def _process_cv_async(cv_id: int) -> dict:
             try:
                 import os
                 from app.nlp.ocr import extract_text_from_pdf
+                from app.models.db_models import CVSource
                 pdf_path = os.path.join("/app/uploads/cvs", cv.fichier_pdf)
                 if os.path.exists(pdf_path):
                     with open(pdf_path, "rb") as f:
                         pdf_bytes = f.read()
-                    cv_text = extract_text_from_pdf(pdf_bytes)
+                    # CVs libres (AGENT/CANDIDAT) peuvent avoir 2 colonnes → psm 3
+                    multi_column = cv.source in (CVSource.AGENT, CVSource.CANDIDAT)
+                    cv_text = extract_text_from_pdf(pdf_bytes, multi_column=multi_column)
                     if cv_text:
                         cv.cv_text = cv_text
                         await db.commit()
-                        logger.info(f"CV {cv_id} — texte extrait du PDF ({len(cv_text)} chars)")
+                        logger.info(
+                            f"CV {cv_id} [{cv.source}] — texte extrait "
+                            f"({'multi-col' if multi_column else 'standard'}, "
+                            f"{len(cv_text)} chars)"
+                        )
             except Exception as e:
                 logger.warning(f"CV {cv_id} — extraction PDF échouée: {e}")
 
         # ── 3. Parser le texte → cv_entities si absent ou vide ─────────
+        # Stratégie hybride : keejob_parser pour CVs Keejob (structure fixe),
+        # generic_parser pour CVs libres (AGENT / CANDIDAT, multi-colonnes).
         if not cv.cv_entities and cv_text.strip():  # covers None and {}
             try:
-                from app.nlp.general_cv_parser import parse_cv_text
-                parsed = parse_cv_text(cv_text)
+                from app.models.db_models import CVSource as _CVSource
+                if cv.source == _CVSource.KEEJOB:
+                    from app.nlp.keejob_parser import parse_keejob_cv
+                    parsed = parse_keejob_cv(cv_text)
+                else:
+                    from app.nlp.generic_parser import parse_generic_cv
+                    parsed = parse_generic_cv(cv_text)
+
                 if parsed:
                     cv.cv_entities = parsed
                     await db.commit()
                     logger.info(
-                        f"CV {cv_id} — entités extraites : "
-                        f"{list(parsed.keys())}"
+                        f"CV {cv_id} [{cv.source}] — entités extraites "
+                        f"({list(parsed.keys())})"
                     )
             except Exception as e:
-                logger.warning(f"CV {cv_id} — parsing général échoué: {e}")
+                logger.warning(f"CV {cv_id} — parsing échoué: {e}")
 
         # ── 4. Construire texte + générer embedding ─────────────────────
         embed_text = cv_to_embed_text(cv.cv_entities or {}, cv_text)

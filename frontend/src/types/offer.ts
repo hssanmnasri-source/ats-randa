@@ -49,6 +49,41 @@ export interface PublicOfferListOut {
   offers: JobOffer[];
 }
 
+export interface PublicOffer {
+  id: number;
+  titre: string;
+  description: string;
+  competences_requises: string[];
+  experience_requise: number;
+  langue_requise: string;
+  date_publication: string;
+  plateforme_source: string;
+  nb_candidatures: number;
+  is_new: boolean;
+  ville: string | null;
+  details?: OfferDetails | null;
+}
+
+export interface PublicOfferDetail extends PublicOffer {
+  offres_similaires: PublicOffer[];
+  mon_score_matching: number | null;
+}
+
+export interface OffersFilters {
+  search?: string;
+  experience_min?: number;
+  langue?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface OffersListResponse {
+  total: number;
+  page: number;
+  limit: number;
+  offers: PublicOffer[];
+}
+
 export interface CreateOfferRequest {
   // Core
   titre: string;

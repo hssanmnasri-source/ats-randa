@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from datetime import datetime
 
 class RegisterIn(BaseModel):
@@ -38,9 +38,18 @@ class PublicOfferOut(BaseModel):
     langue_requise: str
     date_publication: datetime
     plateforme_source: str
+    nb_candidatures: int = 0
+    is_new: bool = False
+    ville: Optional[str] = None
 
     class Config:
         from_attributes = True
+
+
+class PublicOfferDetailOut(PublicOfferOut):
+    offres_similaires: List[PublicOfferOut] = []
+    mon_score_matching: Optional[float] = None
+
 
 class PublicOfferListOut(BaseModel):
     total: int

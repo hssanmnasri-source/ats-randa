@@ -13,15 +13,19 @@ import type {
   FormationOut,
 } from '../../types/cv';
 import { mediaUrl } from '../../services/api';
+import { COLORS } from '../../theme';
+import { calcExpYears } from '../../utils/experienceUtils';
 
-// ── Brand colours (mirrors theme.ts) ────────────────────────────────────────
-const PRIMARY   = '#8B1A1A';
-const GOLD      = '#C9A84C';
+// ── Local print-specific constants (not in theme.ts) ────────────────────────
 const GOLD_LIGHT = '#F5E9C8';
-const TEXT_DARK = '#1A1A1A';
-const TEXT_MID  = '#444444';
-const TEXT_SOFT = '#666666';
-const BG_WHITE  = '#FFFFFF';
+const TEXT_MID   = '#444444';
+const TEXT_SOFT  = '#666666';
+
+// ── Aliases for readability in print layout ───────────────────────────────────
+const PRIMARY  = COLORS.primary;
+const GOLD     = COLORS.gold;
+const TEXT_DARK = COLORS.textDark;
+const BG_WHITE  = COLORS.white;
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -43,20 +47,6 @@ function levelLabel(niveau: string) {
     EXPERT:       'Expert',
   };
   return map[niveau] ?? niveau;
-}
-
-function calcExperienceYears(experiences: ExperienceOut[]): number {
-  if (!experiences.length) return 0;
-  let total = 0;
-  const now = new Date();
-  for (const exp of experiences) {
-    const start = exp.date_debut ? new Date(exp.date_debut) : null;
-    const end   = exp.is_current ? now : (exp.date_fin ? new Date(exp.date_fin) : null);
-    if (start && end && !isNaN(start.getTime()) && !isNaN(end.getTime())) {
-      total += (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
-    }
-  }
-  return Math.round(total);
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -114,7 +104,7 @@ export interface CVDocumentProps {
 
 const CVDocument = React.forwardRef<HTMLDivElement, CVDocumentProps>(
   ({ profile, experiences, skills, langues, formations }, ref) => {
-    const expYears = calcExperienceYears(experiences);
+    const expYears = calcExpYears(experiences);
     const fullName = [profile.prenom, profile.nom].filter(Boolean).join(' ');
 
     return (

@@ -46,7 +46,7 @@ export default function AvatarUpload({ photoUrl, size = 88 }: Props) {
       modalCancel="Annuler"
     >
       <Upload
-        accept="image/jpeg,image/png,image/gif,image/webp"
+        accept={ALLOWED_TYPES.join(',')}
         showUploadList={false}
         beforeUpload={(file) => {
           // Validate BEFORE the crop dialog opens
