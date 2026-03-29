@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { Layout, Menu, Typography, Button, Space, Avatar } from 'antd';
+import { Layout, Menu, Typography, Button, Space } from 'antd';
 import {
   DashboardOutlined,
   UploadOutlined,
   UnorderedListOutlined,
   LogoutOutlined,
-  UserOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from '@ant-design/icons';
@@ -43,6 +42,11 @@ export default function AgentLayout() {
           borderBottom: '1px solid #5C1010',
           background: SIDEBAR_BG,
         }}>
+          {!collapsed && (
+            <Typography.Text style={{ display: 'block', color: GOLD_LIGHT, fontSize: 12, fontWeight: 600, marginBottom: 8 }}>
+              Espace Agent
+            </Typography.Text>
+          )}
           <img
             src="/logo-randa.transparent.png"
             style={{
@@ -55,12 +59,23 @@ export default function AgentLayout() {
             }}
             alt="ATS RANDA"
           />
-          {!collapsed && (
-            <Typography.Text style={{ display: 'block', color: GOLD_LIGHT, fontSize: 11, marginTop: 4 }}>
-              Espace Agent
-            </Typography.Text>
-          )}
         </div>
+
+        {/* Role badge */}
+        {!collapsed && (
+          <div style={{
+            textAlign: 'center',
+            padding: '12px 16px',
+            borderBottom: '1px solid #5C1010',
+            background: 'rgba(0,0,0,0.2)',
+          }}>
+            <img src="/icon/agent-icon.png" width={52} alt="Agent" style={{ objectFit: 'contain', display: 'block', margin: '0 auto' }} />
+            <div style={{ color: GOLD_LIGHT, fontSize: 12, marginTop: 4, fontWeight: 600 }}>
+              {user?.prenom} {user?.nom}
+            </div>
+            <div style={{ color: GOLD, fontSize: 11 }}>Agent RH</div>
+          </div>
+        )}
 
         <Menu
           theme="dark"
@@ -74,7 +89,7 @@ export default function AgentLayout() {
         <div style={{ position: 'absolute', bottom: 24, width: '100%', padding: '0 16px' }}>
           {!collapsed && (
             <Space style={{ marginBottom: 8 }}>
-              <Avatar size="small" icon={<UserOutlined />} style={{ background: '#8B1A1A' }} />
+              <img src="/icon/agent-icon.png" width={28} height={28} style={{ objectFit: 'contain' }} alt="Agent" />
               <Typography.Text style={{ color: GOLD_LIGHT, fontSize: 12 }}>
                 {user?.prenom} {user?.nom}
               </Typography.Text>

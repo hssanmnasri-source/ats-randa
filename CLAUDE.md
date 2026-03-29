@@ -166,9 +166,19 @@ Axios instance with `baseURL: 'http://localhost:8000'`. All endpoint paths inclu
 Use TanStack Query in hooks, not directly in components. Query keys follow the pattern `['role', 'resource']` (e.g. `['candidate', 'profile']`, `['rh', 'offers']`). Default `staleTime` is 5 minutes.
 
 ### Candidate Portal (`/candidate`)
-Pages implemented: `DashboardPage`, `MyCVPage`, `CVGeneratorPage`, `ApplicationsPage`, `ProfilePage`, `CoverLettersPage`, `DocumentsPage`, `SettingsPage`, `FavoritesPage`. The `CandidateLayout` sidebar has 8 menu items.
+Pages implemented: `DashboardPage`, `MyCVPage`, `CVGeneratorPage`, `ApplicationsPage`, `ProfilePage`, `CoverLettersPage`, `DocumentsPage`, `SettingsPage`, `FavoritesPage`, `OffresPage`, `OffreDetailPage`. The `CandidateLayout` sidebar has 10 menu items.
 
-Backend endpoints: profile (`GET/PUT /api/candidate/profile`), full profile (`GET /api/candidate/profile/full`), CVs (`GET/POST /api/candidate/cvs`), applications (`GET /api/candidate/applications`), offer application (`POST /api/candidate/offers/{id}/apply`).
+**Favorites** (`useFavorites` hook) — stored entirely in `localStorage` under key `ats_favorite_offers`. There is no backend endpoint for favorites; the hook is pure client-side state.
+
+Backend endpoints (via `candidateService`):
+- Profile: `GET/PUT /api/candidate/profile`, sub-routes `/personal`, `/professional`, `/visibility`, `/completion`, `/photo`
+- Full profile: `GET /api/candidate/profile/full`
+- Experiences: `GET/POST /api/candidate/profile/experiences`, `DELETE /api/candidate/profile/experiences/{id}`
+- Skills: `GET/POST /api/candidate/profile/skills`, `DELETE /api/candidate/profile/skills/{id}`
+- CVs: `GET/POST /api/candidate/cvs`
+- Cover letters: `GET/POST /api/candidate/cover-letters`, `PUT/DELETE /api/candidate/cover-letters/{id}`
+- Documents: `GET /api/candidate/documents`, `POST /api/candidate/documents/upload`, `DELETE /api/candidate/documents/{id}`
+- Applications: `GET /api/candidate/applications`, `POST /api/candidate/offers/{id}/apply`, `DELETE /api/candidate/applications/{id}`
 
 #### CV Generator (`/candidate/cv-generator`)
 - **Component**: `frontend/src/components/cv/CVDocument.tsx` — `React.forwardRef` component rendering the CV in Keejob style (A4, inline CSS, brand colours).

@@ -2,17 +2,20 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Button, Card, Col, Empty, Input, Pagination,
-  Row, Select, Slider, Space, Spin, Tag, Typography,
+  Row, Select, Slider, Space, Spin, Tag, Tooltip, Typography,
 } from 'antd';
 import {
   SolutionOutlined,
   ClockCircleOutlined,
   EnvironmentOutlined,
+  HeartOutlined,
+  HeartFilled,
   SearchOutlined,
   TeamOutlined,
   TranslationOutlined,
 } from '@ant-design/icons';
 import { usePublicOffers } from '../../hooks/usePublicOffers';
+import { useFavorites } from '../../hooks/useFavorites';
 import type { OffersFilters, PublicOffer } from '../../types/offer';
 import { COLORS } from '../../theme';
 
@@ -36,7 +39,17 @@ function daysSince(dateStr: string): number {
   return Math.floor((Date.now() - new Date(dateStr).getTime()) / 86_400_000);
 }
 
-function OfferCard({ offer, onClick }: { offer: PublicOffer; onClick: () => void }) {
+function OfferCard({
+  offer,
+  onClick,
+  isFav,
+  onToggleFav,
+}: {
+  offer: PublicOffer;
+  onClick: () => void;
+  isFav: boolean;
+  onToggleFav: (e: React.MouseEvent) => void;
+}) {
   const days = daysSince(offer.date_publication);
   const dateLabel = days === 0 ? "Aujourd'hui" : days === 1 ? 'Hier' : `Il y a ${days} j`;
 
@@ -78,7 +91,22 @@ function OfferCard({ offer, onClick }: { offer: PublicOffer; onClick: () => void
           </Space>
         </Col>
         <Col flex="none" style={{ textAlign: 'right', minWidth: 120 }}>
-          <Text style={{ fontSize: 12, color: COLORS.textMedium, display: 'block', marginBottom: 6 }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 6 }}>
+            <Tooltip title={isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}>
+              <Button
+                type="text"
+                size="small"
+                icon={
+                  isFav
+                    ? <HeartFilled style={{ color: COLORS.primary, fontSize: 16 }} />
+                    : <HeartOutlined style={{ color: COLORS.textMedium, fontSize: 16 }} />
+                }
+                onClick={onToggleFav}
+                style={{ padding: '0 4px' }}
+              />
+            </Tooltip>
+          </div>
+          <Text style={{ fontSize: 12, color: COLORS.textMedium, display: 'block', marginBottom: 4 }}>
             <ClockCircleOutlined style={{ marginRight: 4 }} />{dateLabel}
           </Text>
           {offer.ville && (
@@ -106,6 +134,7 @@ export default function OffresPage() {
   const [expMin, setExpMin]   = useState<number>(0);
 
   const { data, isLoading } = usePublicOffers(filters);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const handleSearch = () => {
     setFilters((f) => ({ ...f, search: search || undefined, page: 1 }));
@@ -202,6 +231,8 @@ export default function OffresPage() {
                 key={offer.id}
                 offer={offer}
                 onClick={() => navigate(`/candidate/offres/${offer.id}`)}
+                isFav={isFavorite(offer.id)}
+                onToggleFav={(e) => { e.stopPropagation(); toggleFavorite(offer); }}
               />
             ))}
             <div style={{ textAlign: 'center', marginTop: 24 }}>

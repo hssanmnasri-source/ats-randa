@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Layout, Menu, Typography, Button, Space, Avatar, Progress, Tooltip } from 'antd';
+import { Layout, Menu, Typography, Button, Space, Progress, Tooltip } from 'antd';
 import {
   HomeOutlined,
   UserOutlined,
@@ -76,6 +76,11 @@ export default function CandidateLayout() {
           borderBottom: '1px solid #5C1010',
           background: SIDEBAR_BG,
         }}>
+          {!collapsed && (
+            <Typography.Text style={{ display: 'block', color: GOLD_LIGHT, fontSize: 12, fontWeight: 600, marginBottom: 8 }}>
+              Espace Candidat
+            </Typography.Text>
+          )}
           <img
             src="/logo-randa.transparent.png"
             style={{
@@ -88,12 +93,23 @@ export default function CandidateLayout() {
             }}
             alt="ATS RANDA"
           />
-          {!collapsed && (
-            <Typography.Text style={{ display: 'block', color: GOLD_LIGHT, fontSize: 11, marginTop: 4 }}>
-              Espace Candidat
-            </Typography.Text>
-          )}
         </div>
+
+        {/* Role badge */}
+        {!collapsed && (
+          <div style={{
+            textAlign: 'center',
+            padding: '12px 16px',
+            borderBottom: '1px solid #5C1010',
+            background: 'rgba(0,0,0,0.2)',
+          }}>
+            <img src="/icon/candidat-icon.png" width={52} alt="Candidat" style={{ objectFit: 'contain', display: 'block', margin: '0 auto' }} />
+            <div style={{ color: GOLD_LIGHT, fontSize: 12, marginTop: 4, fontWeight: 600 }}>
+              {user?.prenom} {user?.nom}
+            </div>
+            <div style={{ color: GOLD, fontSize: 11 }}>Candidat</div>
+          </div>
+        )}
 
         {/* Profile completion widget */}
         {!collapsed && (
@@ -149,7 +165,7 @@ export default function CandidateLayout() {
         <div style={{ position: 'absolute', bottom: 24, width: '100%', padding: '0 12px' }}>
           {!collapsed && (
             <Space style={{ marginBottom: 8, width: '100%' }}>
-              <Avatar size="small" icon={<UserOutlined />} style={{ background: '#8B1A1A', flexShrink: 0 }} />
+              <img src="/icon/candidat-icon.png" width={28} height={28} style={{ objectFit: 'contain', flexShrink: 0 }} alt="Candidat" />
               <Typography.Text
                 style={{ color: GOLD_LIGHT, fontSize: 12 }}
                 ellipsis

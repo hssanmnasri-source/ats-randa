@@ -263,3 +263,18 @@ class CandidateDocument(Base):
     created_at   = Column(DateTime(timezone=True), server_default=func.now())
 
     candidate = relationship("Candidate", back_populates="documents")
+
+# ── AuditLog ──────────────────────────────────────
+class AuditLog(Base):
+    __tablename__ = "audit_logs"
+
+    id          = Column(Integer, primary_key=True, index=True)
+    user_id     = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    action      = Column(String(100), nullable=False, index=True)
+    resource    = Column(String(100), nullable=True)
+    resource_id = Column(Integer, nullable=True)
+    details     = Column(JSONB, default=dict)
+    ip_address  = Column(String(50), nullable=True)
+    created_at  = Column(DateTime(timezone=True), server_default=func.now(), index=True)
+
+    user = relationship("User", foreign_keys=[user_id])

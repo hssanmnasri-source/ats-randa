@@ -41,11 +41,16 @@ import OffersPage from '../pages/rh/OffersPage';
 import OfferFormPage from '../pages/rh/OfferFormPage';
 import MatchingPage from '../pages/rh/MatchingPage';
 import ResultsPage from '../pages/rh/ResultsPage';
+import CVthequePage from '../pages/rh/CVthequePage';
+import CandidaturesPage from '../pages/rh/CandidaturesPage';
 
 // Admin pages
 import AdminDashboard from '../pages/admin/DashboardPage';
 import UsersPage from '../pages/admin/UsersPage';
 import UserFormPage from '../pages/admin/UserFormPage';
+import AuditPage from '../pages/admin/AuditPage';
+import SystemHealthPage from '../pages/admin/SystemHealthPage';
+import AdminCVsPage from '../pages/admin/AdminCVsPage';
 
 export const router = createBrowserRouter([
   // Public
@@ -119,6 +124,8 @@ export const router = createBrowserRouter([
       { path: 'offers/:id/edit',    element: <OfferFormPage /> },
       { path: 'matching',           element: <MatchingPage /> },
       { path: 'results',            element: <ResultsPage /> },
+      { path: 'cvtheque',           element: <CVthequePage /> },
+      { path: 'candidatures',       element: <CandidaturesPage /> },
     ],
   },
 
@@ -131,9 +138,13 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true,       element: <AdminDashboard /> },
-      { path: 'users',     element: <UsersPage /> },
-      { path: 'users/new', element: <UserFormPage /> },
+      { index: true,              element: <AdminDashboard /> },
+      { path: 'dashboard',        element: <AdminDashboard /> },
+      { path: 'users',            element: <UsersPage /> },
+      { path: 'users/new',        element: <UserFormPage /> },
+      { path: 'audit',            element: <AuditPage /> },
+      { path: 'system/health',    element: <SystemHealthPage /> },
+      { path: 'cvs',              element: <AdminCVsPage /> },
     ],
   },
 ]);

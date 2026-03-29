@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { Layout, Menu, Typography, Button, Space, Avatar } from 'antd';
+import { Layout, Menu, Typography, Button, Space } from 'antd';
+import type { MenuProps } from 'antd';
 import {
   DashboardOutlined,
   TeamOutlined,
-  UserAddOutlined,
   LogoutOutlined,
-  UserOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  SettingOutlined,
+  HistoryOutlined,
+  DatabaseOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
@@ -18,11 +20,56 @@ const SIDEBAR_BG = '#3D0C02';
 const GOLD = '#C9A84C';
 const GOLD_LIGHT = '#F0D080';
 
-const menuItems = [
-  { key: '/admin', icon: <DashboardOutlined />, label: 'Dashboard' },
-  { key: '/admin/users', icon: <TeamOutlined />, label: 'Utilisateurs' },
-  { key: '/admin/users/new', icon: <UserAddOutlined />, label: 'Créer utilisateur' },
+const items: MenuProps['items'] = [
+  {
+    key: '/admin/dashboard',
+    icon: <DashboardOutlined />,
+    label: 'Tableau de bord',
+  },
+  {
+    key: 'users-group',
+    icon: <TeamOutlined />,
+    label: 'Utilisateurs',
+    children: [
+      { key: '/admin/users', label: 'Tous les utilisateurs' },
+      { key: '/admin/users/new', label: 'Creer un utilisateur' },
+    ],
+  },
+  {
+    key: 'system-group',
+    icon: <SettingOutlined />,
+    label: 'Systeme',
+    children: [
+      { key: '/admin/system/health', label: 'Sante systeme' },
+    ],
+  },
+  {
+    key: '/admin/audit',
+    icon: <HistoryOutlined />,
+    label: 'Logs & Audit',
+  },
+  {
+    key: 'data-group',
+    icon: <DatabaseOutlined />,
+    label: 'Donnees',
+    children: [
+      { key: '/admin/cvs', label: 'CVs' },
+    ],
+  },
 ];
+
+// Helper to find current page label
+function findLabel(path: string): string {
+  const flatItems: { key: string; label: string }[] = [
+    { key: '/admin/dashboard', label: 'Tableau de bord' },
+    { key: '/admin/users', label: 'Tous les utilisateurs' },
+    { key: '/admin/users/new', label: 'Creer un utilisateur' },
+    { key: '/admin/system/health', label: 'Sante systeme' },
+    { key: '/admin/audit', label: 'Logs & Audit' },
+    { key: '/admin/cvs', label: 'Gestion des CVs' },
+  ];
+  return flatItems.find((i) => i.key === path)?.label ?? 'Administration';
+}
 
 export default function AdminLayout() {
   const [collapsed, setCollapsed] = useState(false);
@@ -31,7 +78,16 @@ export default function AdminLayout() {
   const location = useLocation();
 
   const handleLogout = () => { logout(); navigate('/login'); };
-  const selectedKey = menuItems.find((m) => location.pathname === m.key)?.key ?? '/admin';
+
+  // Compute selected key based on current path
+  const currentPath = location.pathname;
+  const selectedKey = currentPath === '/admin' ? '/admin/dashboard' : currentPath;
+
+  // Compute open keys for groups
+  const openKeys: string[] = [];
+  if (currentPath.startsWith('/admin/users')) openKeys.push('users-group');
+  if (currentPath.startsWith('/admin/system')) openKeys.push('system-group');
+  if (currentPath.startsWith('/admin/cvs') || currentPath.startsWith('/admin/offers')) openKeys.push('data-group');
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -43,6 +99,11 @@ export default function AdminLayout() {
           borderBottom: `1px solid #5C1010`,
           background: SIDEBAR_BG,
         }}>
+          {!collapsed && (
+            <Typography.Text style={{ display: 'block', color: GOLD_LIGHT, fontSize: 12, fontWeight: 600, marginBottom: 8 }}>
+              Espace Administrateur
+            </Typography.Text>
+          )}
           <img
             src="/logo-randa.transparent.png"
             style={{
@@ -65,7 +126,7 @@ export default function AdminLayout() {
             borderBottom: '1px solid #5C1010',
             background: 'rgba(0,0,0,0.2)',
           }}>
-            <img src="/badge-admin.png" width={52} alt="Admin" style={{ objectFit: 'contain' }} />
+            <img src="/icon/admin-icon.png" width={52} alt="Admin" style={{ objectFit: 'contain', display: 'block', margin: '0 auto' }} />
             <div style={{ color: GOLD_LIGHT, fontSize: 12, marginTop: 4, fontWeight: 600 }}>
               {user?.prenom} {user?.nom}
             </div>
@@ -77,15 +138,16 @@ export default function AdminLayout() {
           theme="dark"
           mode="inline"
           selectedKeys={[selectedKey]}
+          defaultOpenKeys={openKeys}
           style={{ background: SIDEBAR_BG, borderRight: 'none', marginTop: 8 }}
-          items={menuItems}
+          items={items}
           onClick={({ key }) => navigate(key)}
         />
 
         <div style={{ position: 'absolute', bottom: 24, width: '100%', padding: '0 16px' }}>
           {collapsed && (
             <Space style={{ marginBottom: 8, justifyContent: 'center', width: '100%' }}>
-              <Avatar size="small" icon={<UserOutlined />} style={{ background: '#8B1A1A' }} />
+              <img src="/icon/admin-icon.png" width={24} height={24} style={{ objectFit: 'contain', borderRadius: '50%' }} alt="Admin" />
             </Space>
           )}
           <Button
@@ -95,7 +157,7 @@ export default function AdminLayout() {
             style={{ color: GOLD, width: '100%', textAlign: collapsed ? 'center' : 'left' }}
             size="small"
           >
-            {!collapsed && 'Déconnexion'}
+            {!collapsed && 'Deconnexion'}
           </Button>
         </div>
       </Sider>
@@ -118,7 +180,7 @@ export default function AdminLayout() {
             style={{ color: '#8B1A1A' }}
           />
           <Typography.Text strong style={{ fontSize: 16, color: '#1A1A1A' }}>
-            {menuItems.find((m) => location.pathname === m.key)?.label ?? 'Administration'}
+            {findLabel(currentPath)}
           </Typography.Text>
         </Header>
         <Content style={{ margin: '24px', background: '#fff', padding: '24px', borderRadius: 12 }}>

@@ -11,9 +11,11 @@ from app.api.routes.visitor.auth import router as auth_router
 from app.api.routes.visitor.offers import router as visitor_offers_router
 from app.api.routes.admin.users import router as admin_users_router
 from app.api.routes.admin.stats import router as admin_stats_router
+from app.api.routes.admin.system import router as admin_system_router
 from app.api.routes.rh.offers import router as rh_offers_router
 from app.api.routes.rh.dashboard import router as rh_dashboard_router
 from app.api.routes.rh.matching import router as rh_matching_router
+from app.api.routes.rh.cvs import router as rh_cvs_router
 from app.api.routes.candidate.profile import router as candidate_profile_router
 from app.api.routes.candidate.cvs import router as candidate_cvs_router
 from app.api.routes.candidate.applications import router as candidate_applications_router
@@ -208,9 +210,11 @@ app.include_router(agent_candidates_router)
 app.include_router(rh_offers_router)
 app.include_router(rh_matching_router)
 app.include_router(rh_dashboard_router)
+app.include_router(rh_cvs_router)
 # Admin
 app.include_router(admin_users_router)
 app.include_router(admin_stats_router)
+app.include_router(admin_system_router)
 
 # ── Static files (photos de profil, uploads) ──────────────────────────────────
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)

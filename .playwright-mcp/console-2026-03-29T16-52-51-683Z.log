@@ -1,0 +1,2 @@
+[      14ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost/:0
+[      32ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost/favicon.ico:0

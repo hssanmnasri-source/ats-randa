@@ -1,0 +1,1 @@
+[     402ms] [ERROR] Warning: [antd: Space] `split` is deprecated. Please use `separator` instead. @ http://localhost:3000/node_modules/.vite/deps/chunk-UIDPYNXV.js?v=ec53c783:1253
