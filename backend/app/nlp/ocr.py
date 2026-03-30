@@ -1,5 +1,6 @@
 import io
 import logging
+import re
 
 import pdfplumber
 import pytesseract
@@ -92,3 +93,80 @@ def extract_text(
     if content_type == "application/pdf":
         return extract_text_from_pdf(file_bytes, multi_column=multi_column)
     return ""
+
+
+def evaluate_ocr_quality(text: str) -> dict:
+    """
+    Évalue la qualité du texte extrait par OCR.
+    Retourne un score et des conseils.
+    """
+    if not text or len(text.strip()) < 10:
+        return {
+            "score": 0,
+            "niveau": "ECHEC",
+            "message": "❌ Texte non extrait — reprendre la photo",
+            "conseils": [
+                "Assurez-vous que le document est bien éclairé",
+                "Évitez les reflets et les ombres",
+                "Gardez le téléphone stable lors de la prise",
+            ],
+            "nb_caracteres": 0,
+            "nb_mots": 0,
+            "a_email": False,
+            "a_telephone": False,
+            "a_sections": False,
+        }
+
+    nb_chars = len(text.strip())
+    nb_mots = len(text.split())
+
+    has_email = bool(re.search(r'\b[\w.-]+@[\w.-]+\.\w+\b', text))
+    has_phone = bool(re.search(r'\+?[\d\s]{8,}', text))
+    has_sections = any(kw in text.upper() for kw in
+        ['EXPÉRIENCE', 'EXPERIENCE', 'COMPÉTENCE', 'FORMATION',
+         'DIPLÔME', 'LANGUE', 'COMPETENCE'])
+
+    score = 0
+    if nb_chars > 100:   score += 20
+    if nb_chars > 500:   score += 20
+    if nb_chars > 1000:  score += 20
+    if has_email:        score += 15
+    if has_phone:        score += 10
+    if has_sections:     score += 15
+
+    if score >= 80:
+        niveau = "EXCELLENT"
+    elif score >= 60:
+        niveau = "BON"
+    elif score >= 40:
+        niveau = "MOYEN"
+    else:
+        niveau = "FAIBLE"
+
+    messages = {
+        "EXCELLENT": "✅ Excellent — texte bien extrait",
+        "BON":       "✅ Bon — extraction réussie",
+        "MOYEN":     "⚠️ Qualité moyenne — résultats partiels",
+        "FAIBLE":    "❌ Qualité faible — reprendre la photo",
+    }
+
+    conseils = []
+    if score < 80:
+        if not has_email:
+            conseils.append("Email non détecté — vérifier la lisibilité")
+        if nb_chars < 500:
+            conseils.append("Peu de texte extrait — photo trop sombre ou floue")
+        if not has_sections:
+            conseils.append("Structure CV non reconnue — format inhabituel")
+
+    return {
+        "score": score,
+        "niveau": niveau,
+        "message": messages[niveau],
+        "conseils": conseils,
+        "nb_caracteres": nb_chars,
+        "nb_mots": nb_mots,
+        "a_email": has_email,
+        "a_telephone": has_phone,
+        "a_sections": has_sections,
+    }

@@ -233,6 +233,9 @@ class Resultat(Base):
     decision               = Column(SAEnum(Decision), default=Decision.PENDING)
     date_analyse           = Column(DateTime(timezone=True), server_default=func.now())
     last_score_updated_at  = Column(DateTime(timezone=True), server_default=func.now())
+    feedback_rh            = Column(Text, nullable=True)
+    feedback_visible       = Column(Boolean, default=False)
+    date_decision          = Column(DateTime(timezone=True), nullable=True)
 
     cv    = relationship("CV",       back_populates="resultats")
     offre = relationship("JobOffer", back_populates="resultats")

@@ -24,6 +24,7 @@ from app.api.routes.candidate.documents import router as candidate_documents_rou
 from app.api.routes.agent.cvs import router as agent_cvs_router
 from app.api.routes.agent.import_keejob import router as agent_keejob_router
 from app.api.routes.agent.candidates import router as agent_candidates_router
+from app.api.routes.agent.dashboard import router as agent_dashboard_router
 
 
 
@@ -206,6 +207,7 @@ app.include_router(candidate_documents_router)
 app.include_router(agent_cvs_router)
 app.include_router(agent_keejob_router)
 app.include_router(agent_candidates_router)
+app.include_router(agent_dashboard_router)
 # RH
 app.include_router(rh_offers_router)
 app.include_router(rh_matching_router)

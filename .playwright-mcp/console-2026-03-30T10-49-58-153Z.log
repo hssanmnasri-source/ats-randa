@@ -1,0 +1,2 @@
+[     295ms] [ERROR] Warning: [antd: Drawer] `width` is deprecated. Please use `size` instead. @ http://localhost:3000/node_modules/.vite/deps/chunk-UIDPYNXV.js?v=ec53c783:1253
+[     348ms] [ERROR] Warning: [antd: Statistic] `valueStyle` is deprecated. Please use `styles.content` instead. @ http://localhost:3000/node_modules/.vite/deps/chunk-UIDPYNXV.js?v=ec53c783:1253

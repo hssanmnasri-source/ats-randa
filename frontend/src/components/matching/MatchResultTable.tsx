@@ -1,12 +1,19 @@
-import { Table, Progress, Tag, Avatar, Tooltip, Space, Popconfirm, Button } from 'antd';
+import { useState } from 'react';
+import { Table, Progress, Tag, Avatar, Tooltip, Space, Button, Modal, Input, Switch, Form } from 'antd';
 import { UserOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import type { ResultatOut, Decision } from '../../types/matching';
 
+interface DecisionPayload {
+  decision: Decision
+  feedback_rh?: string
+  feedback_visible?: boolean
+}
+
 interface Props {
   data: ResultatOut[];
   loading?: boolean;
-  onDecision?: (resultId: number, decision: Decision) => void;
+  onDecision?: (resultId: number, payload: DecisionPayload) => void;
   updatingId?: number | null;
 }
 
@@ -45,7 +52,99 @@ function ScoreMini({ score }: { score: number }) {
 
 const HEADER_STYLE = { background: '#3D0C02', color: '#F0D080' };
 
+function FeedbackModal({
+  open,
+  decision,
+  candidatName,
+  onConfirm,
+  onCancel,
+  loading,
+}: {
+  open: boolean
+  decision: Decision
+  candidatName: string
+  onConfirm: (payload: DecisionPayload) => void
+  onCancel: () => void
+  loading?: boolean
+}) {
+  const [form] = Form.useForm()
+
+  const handleOk = () => {
+    const values = form.getFieldsValue()
+    onConfirm({
+      decision,
+      feedback_rh: values.feedback_rh || undefined,
+      feedback_visible: values.feedback_visible ?? false,
+    })
+  }
+
+  return (
+    <Modal
+      open={open}
+      title={
+        <span>
+          {decision === 'RETAINED' ? '✅ Retenir le candidat' : '❌ Refuser le candidat'} — {candidatName}
+        </span>
+      }
+      onOk={handleOk}
+      onCancel={onCancel}
+      okText="Confirmer"
+      cancelText="Annuler"
+      confirmLoading={loading}
+      okButtonProps={{
+        style: {
+          background: decision === 'RETAINED' ? '#52C41A' : '#8B1A1A',
+          borderColor: decision === 'RETAINED' ? '#52C41A' : '#8B1A1A',
+        }
+      }}
+    >
+      <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
+        <Form.Item
+          name="feedback_rh"
+          label="Message pour le candidat"
+          extra="Laissez vide pour ne pas envoyer de message."
+        >
+          <Input.TextArea
+            rows={4}
+            placeholder={
+              decision === 'RETAINED'
+                ? "Ex: Félicitations ! Votre profil correspond parfaitement à notre recherche..."
+                : "Ex: Nous avons bien étudié votre candidature, cependant..."
+            }
+          />
+        </Form.Item>
+        <Form.Item
+          name="feedback_visible"
+          label="Rendre visible au candidat"
+          valuePropName="checked"
+          initialValue={false}
+        >
+          <Switch />
+        </Form.Item>
+      </Form>
+    </Modal>
+  )
+}
+
 export default function MatchResultTable({ data, loading, onDecision, updatingId }: Props) {
+  const [feedbackModal, setFeedbackModal] = useState<{
+    open: boolean
+    resultId: number
+    decision: Decision
+    candidatName: string
+  } | null>(null)
+
+  const openFeedback = (resultId: number, decision: Decision, name: string) => {
+    setFeedbackModal({ open: true, resultId, decision, candidatName: name })
+  }
+
+  const handleConfirm = (payload: DecisionPayload) => {
+    if (feedbackModal && onDecision) {
+      onDecision(feedbackModal.resultId, payload)
+    }
+    setFeedbackModal(null)
+  }
+
   const columns: ColumnsType<ResultatOut> = [
     {
       title: <span style={HEADER_STYLE}>#</span>,
@@ -165,59 +264,63 @@ export default function MatchResultTable({ data, loading, onDecision, updatingId
     {
       title: 'Actions',
       key: 'actions',
-      width: 170,
-      render: (_, r) =>
-        onDecision ? (
+      width: 180,
+      render: (_, r) => {
+        if (!onDecision) return null
+        const name = [r.candidat_prenom, r.candidat_nom].filter(Boolean).join(' ') || `CV #${r.id_cv}`
+        return (
           <Space size="small">
-            <Popconfirm
-              title="Retenir ce candidat ?"
-              onConfirm={() => onDecision(r.id, 'RETAINED')}
-              okText="Oui"
-              cancelText="Non"
+            <Button
+              type="primary"
+              size="small"
+              icon={<CheckOutlined />}
+              loading={updatingId === r.id}
+              disabled={r.decision === 'RETAINED'}
+              style={{ background: '#52C41A', border: 'none' }}
+              onClick={() => openFeedback(r.id, 'RETAINED', name)}
             >
-              <Button
-                type="primary"
-                size="small"
-                icon={<CheckOutlined />}
-                loading={updatingId === r.id}
-                disabled={r.decision === 'RETAINED'}
-                style={{ background: '#52C41A', border: 'none' }}
-              >
-                Retenir
-              </Button>
-            </Popconfirm>
-            <Popconfirm
-              title="Refuser ce candidat ?"
-              onConfirm={() => onDecision(r.id, 'REFUSED')}
-              okText="Oui"
-              cancelText="Non"
+              Retenir
+            </Button>
+            <Button
+              size="small"
+              icon={<CloseOutlined />}
+              loading={updatingId === r.id}
+              disabled={r.decision === 'REFUSED'}
+              style={{ background: '#8B1A1A', color: '#fff', border: 'none' }}
+              onClick={() => openFeedback(r.id, 'REFUSED', name)}
             >
-              <Button
-                size="small"
-                icon={<CloseOutlined />}
-                loading={updatingId === r.id}
-                disabled={r.decision === 'REFUSED'}
-                style={{ background: '#8B1A1A', color: '#fff', border: 'none' }}
-              >
-                Refuser
-              </Button>
-            </Popconfirm>
+              Refuser
+            </Button>
           </Space>
-        ) : null,
+        )
+      },
     },
   ];
 
   return (
-    <Table
-      rowKey="id"
-      columns={columns}
-      dataSource={data}
-      loading={loading}
-      pagination={{ pageSize: 20, showTotal: (t) => `${t} résultats` }}
-      scroll={{ x: 1100 }}
-      size="middle"
-      rowClassName={(_, index) => (index % 2 === 0 ? 'match-row-even' : 'match-row-odd')}
-      style={{ borderRadius: 12, overflow: 'hidden' }}
-    />
+    <>
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={data}
+        loading={loading}
+        pagination={{ pageSize: 20, showTotal: (t) => `${t} résultats` }}
+        scroll={{ x: 1100 }}
+        size="middle"
+        rowClassName={(_, index) => (index % 2 === 0 ? 'match-row-even' : 'match-row-odd')}
+        style={{ borderRadius: 12, overflow: 'hidden' }}
+      />
+
+      {feedbackModal && (
+        <FeedbackModal
+          open={feedbackModal.open}
+          decision={feedbackModal.decision}
+          candidatName={feedbackModal.candidatName}
+          onConfirm={handleConfirm}
+          onCancel={() => setFeedbackModal(null)}
+          loading={updatingId === feedbackModal.resultId}
+        />
+      )}
+    </>
   );
 }

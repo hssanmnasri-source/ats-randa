@@ -1,0 +1,3 @@
+[     198ms] [ERROR] Warning: [antd: Drawer] `width` is deprecated. Please use `size` instead. @ http://localhost:3000/node_modules/.vite/deps/chunk-UIDPYNXV.js?v=ec53c783:1253
+[   21810ms] [ERROR] Warning: [antd: Steps] `direction` is deprecated. Please use `orientation` instead. @ http://localhost:3000/node_modules/.vite/deps/chunk-UIDPYNXV.js?v=ec53c783:1253
+[   21811ms] [ERROR] Warning: [antd: Steps] `items.description` is deprecated. Please use `items.content` instead. @ http://localhost:3000/node_modules/.vite/deps/chunk-UIDPYNXV.js?v=ec53c783:1253

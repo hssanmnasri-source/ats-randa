@@ -7,6 +7,8 @@ import {
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  InboxOutlined,
+  HistoryOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
@@ -18,9 +20,11 @@ const GOLD = '#C9A84C';
 const GOLD_LIGHT = '#F0D080';
 
 const menuItems = [
-  { key: '/agent', icon: <DashboardOutlined />, label: 'Dashboard' },
-  { key: '/agent/upload', icon: <UploadOutlined />, label: 'Upload CV' },
-  { key: '/agent/cvs', icon: <UnorderedListOutlined />, label: 'Liste CVs' },
+  { key: '/agent', icon: <DashboardOutlined />, label: 'Tableau de bord' },
+  { key: '/agent/upload', icon: <UploadOutlined />, label: 'Uploader un CV' },
+  { key: '/agent/batch', icon: <InboxOutlined />, label: 'Scan en masse' },
+  { key: '/agent/cvs', icon: <UnorderedListOutlined />, label: 'Mes candidats' },
+  { key: '/agent/history', icon: <HistoryOutlined />, label: 'Historique' },
 ];
 
 export default function AgentLayout() {
@@ -73,7 +77,7 @@ export default function AgentLayout() {
             <div style={{ color: GOLD_LIGHT, fontSize: 12, marginTop: 4, fontWeight: 600 }}>
               {user?.prenom} {user?.nom}
             </div>
-            <div style={{ color: GOLD, fontSize: 11 }}>Agent RH</div>
+            <div style={{ color: GOLD, fontSize: 11 }}>Agent</div>
           </div>
         )}
 

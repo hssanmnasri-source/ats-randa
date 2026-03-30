@@ -32,11 +32,15 @@ export function useUpdateDecision() {
       offerId,
       resultId,
       decision,
+      feedback_rh,
+      feedback_visible,
     }: {
       offerId: number;
       resultId: number;
       decision: Decision;
-    }) => matchingService.updateDecision(offerId, resultId, { decision }),
+      feedback_rh?: string;
+      feedback_visible?: boolean;
+    }) => matchingService.updateDecision(offerId, resultId, { decision, feedback_rh, feedback_visible }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['matching'] });
       message.success('Décision enregistrée.');

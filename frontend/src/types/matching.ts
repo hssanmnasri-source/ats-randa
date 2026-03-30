@@ -28,4 +28,6 @@ export interface MatchingResultsOut {
 
 export interface UpdateDecisionRequest {
   decision: Decision;
+  feedback_rh?: string;
+  feedback_visible?: boolean;
 }

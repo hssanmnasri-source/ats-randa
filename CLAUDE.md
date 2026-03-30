@@ -9,6 +9,8 @@ ATS RANDA is an Applicant Tracking System built with FastAPI (Python 3.11) + Rea
 ## Common Commands
 
 ### Docker (primary development environment)
+On Windows, use `docker.exe` instead of `docker` if the plain command fails.
+
 ```bash
 make up          # Start all services
 make down        # Stop all services
@@ -78,9 +80,9 @@ backend/app/
 ├── api/
 │   ├── routes/          # HTTP endpoints, organized by role
 │   │   ├── visitor/     # Auth (login/register), public job offers
-│   │   ├── agent/       # CV upload, Keejob bulk import, candidate management
-│   │   ├── candidate/   # Profile, CV form submission, applications
-│   │   ├── rh/          # Job offers CRUD, matching, dashboard
+│   │   ├── agent/       # CV upload/batch, dashboard, history, candidate management
+│   │   ├── candidate/   # Profile, CV form submission, applications + timeline
+│   │   ├── rh/          # Job offers CRUD, matching + feedback, dashboard
 │   │   └── admin/       # Users, stats, audit logs
 │   └── dependencies.py  # Role-based access control dependencies (require_agent, require_rh, etc.)
 ├── services/            # Business logic (mirrors routes/ structure)
@@ -93,7 +95,7 @@ backend/app/
 │   ├── keejob_importer.py  # Bulk import with OCR fallback
 │   ├── embedder.py         # sentence-transformers (paraphrase-multilingual-MiniLM-L12-v2, 384-dim)
 │   ├── scorer.py           # Multi-criteria scoring logic
-│   └── ocr.py              # Tesseract OCR (Arabic, French, English)
+│   └── ocr.py              # Tesseract OCR (Arabic, French, English) + evaluate_ocr_quality()
 ├── tasks/               # Celery async tasks
 │   ├── cv_tasks.py      # embed_cv(), embed_all_cvs()
 │   └── offer_tasks.py   # embed_offer()
@@ -107,13 +109,15 @@ backend/app/
 ### User Roles & Auth
 Roles: `VISITOR`, `CANDIDATE`, `AGENT`, `RH`, `ADMIN`. Route-level guards are FastAPI dependencies in `api/dependencies.py` (`require_candidate`, `require_agent`, `require_rh`, `require_admin`). JWT Bearer tokens validated on every protected request.
 
+The dependency returns a **User** object (from `users` table). For candidate routes that need the `Candidate` record, always resolve via `candidate_repository.get_by_email(db, user.email)` — do not use `user.id` as a candidate ID directly.
+
 ### Key Data Models (db_models.py)
 - `CV` — stores parsed text, `source` (`KEEJOB/AGENT/CANDIDAT`), `statut` (`UPLOADED/PARSING/INDEXED/ERROR`), and a 384-dim pgvector embedding
   - `source=KEEJOB` → bulk-imported, `id_agent=NULL`
   - `source=AGENT` → uploaded by a specific agent, `id_agent=agent.id`
   - `source=CANDIDAT` → submitted by the candidate themselves
 - `JobOffer` — has its own pgvector embedding for semantic matching
-- `Resultat` — links CV ↔ JobOffer with multi-criteria scores and `Decision` (`RETAINED/PENDING/REFUSED`)
+- `Resultat` — links CV ↔ JobOffer with multi-criteria scores, `Decision` (`RETAINED/PENDING/REFUSED`), and optional `feedback_rh` / `feedback_visible` / `date_decision` fields added via direct migration (not Alembic)
 - `Candidate` → `Competences` and `Experiences` (one-to-many)
 
 ### Matching/Scoring (nlp/scorer.py)
@@ -126,6 +130,9 @@ Matching flow: pgvector pre-filters top 200 CVs by cosine similarity → 4-crite
 
 ### CV Repositories Filter
 `candidate_repository.list_all()` accepts an optional `agent_id` parameter. When passed, it filters candidates to only those with at least one CV with `source=AGENT AND id_agent=agent_id`. Always pass `agent_id=agent.id` in agent routes — without it, all 4,000+ Keejob candidates are returned incorrectly.
+
+### Adding New Routes
+Register every new router in `main.py` with `app.include_router(...)`. Schema migrations that are low-risk (adding nullable columns) are done directly via `psql` in the running container rather than through Alembic, since there is no migration history for these columns.
 
 ## Frontend Architecture
 
@@ -148,11 +155,11 @@ Always import from `theme.ts` rather than hardcoding hex values.
 ```
 frontend/src/
 ├── pages/          # Route-level page components, one folder per role
-├── components/     # Reusable UI components (common/, cv/, offer/, matching/, dashboard/)
-├── hooks/          # Custom hooks wrapping TanStack Query (useCVs, useOffers, useMatching, etc.)
+├── components/     # Reusable UI components (common/, cv/, offer/, matching/, dashboard/, candidature/)
+├── hooks/          # Custom hooks wrapping TanStack Query
 ├── services/       # API layer: api.ts (axios + JWT interceptor), then per-role service files
 ├── store/          # Zustand: authStore (user/token, persisted), notificationStore (toasts)
-├── types/          # TypeScript interfaces
+├── types/          # TypeScript interfaces (agent.ts, candidature.ts, matching.ts, cv.ts, …)
 ├── layouts/        # Per-role layouts (AgentLayout, RHLayout, CandidateLayout, etc.)
 └── router/         # React Router 6 config with ProtectedRoute component
 ```
@@ -166,9 +173,11 @@ Axios instance with `baseURL: 'http://localhost:8000'`. All endpoint paths inclu
 Use TanStack Query in hooks, not directly in components. Query keys follow the pattern `['role', 'resource']` (e.g. `['candidate', 'profile']`, `['rh', 'offers']`). Default `staleTime` is 5 minutes.
 
 ### Candidate Portal (`/candidate`)
-Pages implemented: `DashboardPage`, `MyCVPage`, `CVGeneratorPage`, `ApplicationsPage`, `ProfilePage`, `CoverLettersPage`, `DocumentsPage`, `SettingsPage`, `FavoritesPage`, `OffresPage`, `OffreDetailPage`. The `CandidateLayout` sidebar has 10 menu items.
+Pages: `DashboardPage`, `MyCVPage`, `CVGeneratorPage`, `ApplicationsPage`, `ProfilePage`, `CoverLettersPage`, `DocumentsPage`, `SettingsPage`, `FavoritesPage`, `OffresPage`, `OffreDetailPage`.
 
-**Favorites** (`useFavorites` hook) — stored entirely in `localStorage` under key `ats_favorite_offers`. There is no backend endpoint for favorites; the hook is pure client-side state.
+**Favorites** (`useFavorites` hook) — stored entirely in `localStorage` under key `ats_favorite_offers`. No backend endpoint.
+
+**Application timeline** — `GET /api/candidate/applications/{id}/detail` returns a 4-step timeline (POSTULÉ → ANALYSE IA → EN EXAMEN → DÉCISION) plus per-criteria scores and optional RH feedback. Rendered in `components/candidature/CandidatureTimeline.tsx`, opened from `ApplicationsPage` via an Ant Design Drawer.
 
 Backend endpoints (via `candidateService`):
 - Profile: `GET/PUT /api/candidate/profile`, sub-routes `/personal`, `/professional`, `/visibility`, `/completion`, `/photo`
@@ -178,18 +187,34 @@ Backend endpoints (via `candidateService`):
 - CVs: `GET/POST /api/candidate/cvs`
 - Cover letters: `GET/POST /api/candidate/cover-letters`, `PUT/DELETE /api/candidate/cover-letters/{id}`
 - Documents: `GET /api/candidate/documents`, `POST /api/candidate/documents/upload`, `DELETE /api/candidate/documents/{id}`
-- Applications: `GET /api/candidate/applications`, `POST /api/candidate/offers/{id}/apply`, `DELETE /api/candidate/applications/{id}`
+- Applications: `GET /api/candidate/applications`, `GET /api/candidate/applications/{id}/detail`, `POST /api/candidate/offers/{id}/apply`, `DELETE /api/candidate/applications/{id}`
 
 #### CV Generator (`/candidate/cv-generator`)
-- **Component**: `frontend/src/components/cv/CVDocument.tsx` — `React.forwardRef` component rendering the CV in Keejob style (A4, inline CSS, brand colours).
+- **Component**: `frontend/src/components/cv/CVDocument.tsx` — `React.forwardRef` rendering CV in Keejob style (A4, inline CSS, brand colours).
 - **Page**: `frontend/src/pages/candidate/CVGeneratorPage.tsx` — uses `useFullProfile()` + `react-to-print` for PDF export.
 - **Data source**: `GET /api/candidate/profile/full` — returns `{ profile, completion, experiences, skills, langues, formations }`. `formations` and `langues` are extracted from `cv_entities` JSONB of the candidate's indexed CVs.
 - **formations structure** (from Keejob parser): `{ diplome, etablissement, type, statut, mention, date_debut, date_fin, pays }`.
-- **Print CSS**: `@page { size: A4; margin: 10mm }` + `print-color-adjust: exact` injected via `<style>` inside the component.
 - **Library**: `react-to-print ^3.3.0` (hook API: `useReactToPrint({ contentRef })`).
 
 #### `FullProfileOut` schema (backend + frontend)
-Both `candidate_schemas.py` and `types/cv.ts` include `formations: List[dict]` / `formations: FormationOut[]`. Always keep them in sync if adding new fields to the full profile response.
+Both `candidate_schemas.py` and `types/cv.ts` include `formations: List[dict]` / `formations: FormationOut[]`. Keep them in sync when adding fields.
+
+### Agent Portal (`/agent`)
+Pages: `DashboardPage`, `UploadCVPage`, `BatchUploadPage`, `CVListPage`, `HistoryPage`.
+
+Backend endpoints:
+- `GET /api/agent/dashboard` — stats (total CVs, indexed, pending, errors, retained/refused/pending decisions) + recent candidates list
+- `GET /api/agent/candidates/{cv_id}/results` — matching results for a specific CV owned by this agent
+- `POST /api/agent/cvs/upload` — single CV upload; accepts optional `offer_id` (Form field); response includes `ocr_quality` dict from `evaluate_ocr_quality()`
+- `POST /api/agent/cvs/batch` — upload up to 10 files at once; returns per-file OCR quality scores
+- `GET /api/agent/history` — paginated activity log with per-CV matching decisions
+- `GET /api/agent/cvs` — paginated list filtered to this agent's CVs
+- `GET /api/agent/cvs/{cv_id}` — CV detail
+
+**OCR quality** (`nlp/ocr.py::evaluate_ocr_quality`) — heuristic scoring 0–100 based on character count, presence of email/phone/section keywords. Returns `{ score, niveau, message, conseils, nb_caracteres, a_email, a_telephone, a_sections }`.
+
+### RH Portal (`/rh`)
+`PATCH /api/rh/offers/{offer_id}/matching/{result_id}` accepts `{ decision, feedback_rh?, feedback_visible? }`. When `feedback_visible=true`, the feedback text becomes visible to the candidate via the detail endpoint. The `MatchResultTable` component opens a Modal on Retenir/Refuser to collect feedback before confirming.
 
 ## Infrastructure
 

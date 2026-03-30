@@ -34,6 +34,8 @@ import OffreDetailPage from '../pages/candidate/OffreDetailPage';
 import AgentDashboard from '../pages/agent/DashboardPage';
 import UploadCVPage from '../pages/agent/UploadCVPage';
 import CVListPage from '../pages/agent/CVListPage';
+import BatchUploadPage from '../pages/agent/BatchUploadPage';
+import HistoryPage from '../pages/agent/HistoryPage';
 
 // RH pages
 import RHDashboard from '../pages/rh/DashboardPage';
@@ -103,9 +105,11 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true,     element: <AgentDashboard /> },
-      { path: 'upload',  element: <UploadCVPage /> },
-      { path: 'cvs',     element: <CVListPage /> },
+      { index: true,      element: <AgentDashboard /> },
+      { path: 'upload',   element: <UploadCVPage /> },
+      { path: 'batch',    element: <BatchUploadPage /> },
+      { path: 'cvs',      element: <CVListPage /> },
+      { path: 'history',  element: <HistoryPage /> },
     ],
   },
 

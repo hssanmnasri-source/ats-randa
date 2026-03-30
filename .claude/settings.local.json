@@ -11,7 +11,9 @@
       "Bash(find /c/pfe-dev/ats-randa/backend/app/models/schemas -type f -name *.py -not -path *__pycache__*)",
       "Bash(xargs ls:*)",
       "mcp__playwright__browser_type",
-      "Bash(find /c/pfe-dev/ats-randa/backend/app/models/schemas -type f -name *.py)"
+      "Bash(find /c/pfe-dev/ats-randa/backend/app/models/schemas -type f -name *.py)",
+      "Bash(docker.exe exec:*)",
+      "Bash(docker.exe ps:*)"
     ]
   }
 }

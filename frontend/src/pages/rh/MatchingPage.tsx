@@ -22,11 +22,11 @@ export default function MatchingPage() {
 
   const results = matchingData?.resultats ?? [];
 
-  const handleDecision = (resultId: number, decision: Decision) => {
+  const handleDecision = (resultId: number, payload: { decision: Decision; feedback_rh?: string; feedback_visible?: boolean }) => {
     if (!selectedOfferId) return;
     setUpdatingId(resultId);
     updateDecision(
-      { offerId: selectedOfferId, resultId, decision },
+      { offerId: selectedOfferId, resultId, ...payload },
       { onSettled: () => setUpdatingId(null) }
     );
   };

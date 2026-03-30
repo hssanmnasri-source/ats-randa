@@ -93,7 +93,7 @@ async def update_decision(
 ):
     """
     Met à jour la décision RH pour un résultat de matching.
-    Body : { "decision": "RETAINED" | "PENDING" | "REFUSED" }
+    Body : { "decision": "RETAINED" | "PENDING" | "REFUSED", "feedback_rh": "...", "feedback_visible": true }
     """
     decision_str = (body.get("decision") or "").upper()
     if decision_str not in Decision.__members__:
@@ -107,6 +107,23 @@ async def update_decision(
         raise HTTPException(status_code=404, detail="Résultat introuvable")
 
     updated = await result_repository.update_decision(db, result, Decision[decision_str])
+
+    # Enregistrer feedback RH
+    feedback_rh = body.get("feedback_rh")
+    feedback_visible = bool(body.get("feedback_visible", False))
+    if feedback_rh is not None or feedback_visible:
+        from datetime import datetime, timezone
+        updated.feedback_rh = feedback_rh
+        updated.feedback_visible = feedback_visible
+        if decision_str in ("RETAINED", "REFUSED"):
+            updated.date_decision = datetime.now(timezone.utc)
+        await db.commit()
+        await db.refresh(updated)
+    elif decision_str in ("RETAINED", "REFUSED") and not updated.date_decision:
+        from datetime import datetime, timezone
+        updated.date_decision = datetime.now(timezone.utc)
+        await db.commit()
+        await db.refresh(updated)
 
     # Notification email pour RETAINED / REFUSED (fire-and-forget)
     if decision_str in ("RETAINED", "REFUSED"):
@@ -127,10 +144,13 @@ async def update_decision(
                 ))
 
     return {
-        "id":       updated.id,
-        "decision": updated.decision.value,
-        "rang":     updated.rang,
-        "score_final": updated.score_final,
+        "id":               updated.id,
+        "decision":         updated.decision.value,
+        "rang":             updated.rang,
+        "score_final":      updated.score_final,
+        "feedback_rh":      updated.feedback_rh,
+        "feedback_visible": updated.feedback_visible,
+        "date_decision":    updated.date_decision.isoformat() if updated.date_decision else None,
     }
 
 

@@ -1,41 +1,57 @@
-import { Table, Tag, Button, Popconfirm, Empty, message } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { candidateService } from '../../services/candidateService';
-import type { ApplicationOut } from '../../services/candidateService';
-import PageHeader from '../../components/common/PageHeader';
-import dayjs from 'dayjs';
+import { useState } from 'react'
+import { Table, Tag, Button, Popconfirm, Empty, message, Drawer, Spin } from 'antd'
+import { EyeOutlined } from '@ant-design/icons'
+import type { ColumnsType } from 'antd/es/table'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { candidateService } from '../../services/candidateService'
+import type { ApplicationOut } from '../../services/candidateService'
+import PageHeader from '../../components/common/PageHeader'
+import CandidatureTimeline from '../../components/candidature/CandidatureTimeline'
+import { useCandidatureDetail } from '../../hooks/useCandidature'
+import { COLORS } from '../../theme'
+import dayjs from 'dayjs'
 
 const DECISION_COLOR: Record<string, string> = {
   RETAINED: 'success',
   REFUSED: 'error',
   PENDING: 'processing',
-};
+}
 
 const DECISION_LABEL: Record<string, string> = {
   RETAINED: 'Retenu ✓',
   REFUSED: 'Refusé',
   PENDING: 'En attente',
-};
+}
+
+function CandidatureDetailDrawer({ resultId }: { resultId: number }) {
+  const { data, isLoading, isError } = useCandidatureDetail(resultId)
+
+  if (isLoading) return <div style={{ textAlign: 'center', padding: 60 }}><Spin size="large" /></div>
+  if (isError || !data) return <div style={{ color: COLORS.primary, padding: 20 }}>Impossible de charger le détail.</div>
+
+  return <CandidatureTimeline candidature={data} />
+}
 
 export default function ApplicationsPage() {
-  const qc = useQueryClient();
+  const qc = useQueryClient()
+  const [selectedResultId, setSelectedResultId] = useState<number | null>(null)
+
   const { data, isLoading } = useQuery({
     queryKey: ['candidate', 'applications'],
     queryFn: () => candidateService.getMyApplications(),
-  });
+  })
 
   const { mutate: withdraw, isPending, variables: withdrawingId } = useMutation({
     mutationFn: (id: number) => candidateService.withdrawApplication(id),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['candidate', 'applications'] });
-      message.success('Candidature retirée.');
+      qc.invalidateQueries({ queryKey: ['candidate', 'applications'] })
+      message.success('Candidature retirée.')
     },
     onError: () => message.error('Erreur lors du retrait.'),
-  });
+  })
 
-  const applications = data?.candidatures ?? [];
-  const total = data?.total ?? 0;
+  const applications = data?.candidatures ?? []
+  const total = data?.total ?? 0
 
   const columns: ColumnsType<ApplicationOut> = [
     {
@@ -61,6 +77,21 @@ export default function ApplicationsPage() {
         r.date_candidature ? dayjs(r.date_candidature).format('DD/MM/YYYY') : '—',
     },
     {
+      title: 'Suivi',
+      key: 'suivi',
+      width: 100,
+      render: (_, r) => (
+        <Button
+          icon={<EyeOutlined />}
+          size="small"
+          style={{ color: COLORS.primary, borderColor: COLORS.primary }}
+          onClick={() => setSelectedResultId(r.id)}
+        >
+          Suivi
+        </Button>
+      ),
+    },
+    {
       title: 'Action',
       key: 'action',
       width: 110,
@@ -80,7 +111,7 @@ export default function ApplicationsPage() {
           <Tag color="default">—</Tag>
         ),
     },
-  ];
+  ]
 
   return (
     <div>
@@ -99,6 +130,22 @@ export default function ApplicationsPage() {
           pagination={{ pageSize: 10, showTotal: (t) => `${t} candidatures` }}
         />
       )}
+
+      <Drawer
+        title={
+          <span style={{ color: COLORS.primary, fontWeight: 700 }}>
+            📦 Suivi de candidature
+          </span>
+        }
+        open={!!selectedResultId}
+        onClose={() => setSelectedResultId(null)}
+        width={620}
+        destroyOnClose
+      >
+        {selectedResultId && (
+          <CandidatureDetailDrawer resultId={selectedResultId} />
+        )}
+      </Drawer>
     </div>
-  );
+  )
 }
