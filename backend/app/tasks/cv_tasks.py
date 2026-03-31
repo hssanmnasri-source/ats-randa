@@ -56,7 +56,7 @@ def embed_all_cvs(batch_size: int = 100) -> dict:
             rows = await db.execute(
                 select(CV)
                 .where(CV.embedding.is_(None))
-                .where(CV.statut == CVStatus.INDEXED)
+                .where(CV.statut != CVStatus.ERROR)
                 .limit(batch_size)
             )
             cvs = rows.scalars().all()
@@ -68,6 +68,7 @@ def embed_all_cvs(batch_size: int = 100) -> dict:
 
             for cv, vec in zip(cvs, vectors):
                 cv.embedding = vec
+                cv.statut = CVStatus.INDEXED
             await db.commit()
             return {"status": "ok", "embedded": len(cvs)}
 

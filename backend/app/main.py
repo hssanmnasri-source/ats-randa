@@ -79,8 +79,8 @@ Offre → embedding 384-dim
 pgvector cosinus (top 200 CVs)
                 ↓
 Scoring multi-critères :
-  40% sémantique  +  30% compétences
-  20% expérience  +  10% langue
+  40% sémantique  +  35% compétences
+  15% expérience  +  10% langue
                 ↓
 Top 50 résultats → table resultats
 ```
