@@ -95,7 +95,12 @@ backend/app/
 │   ├── keejob_importer.py  # Bulk import with OCR fallback
 │   ├── embedder.py         # sentence-transformers (paraphrase-multilingual-MiniLM-L12-v2, 384-dim)
 │   ├── scorer.py           # Multi-criteria scoring logic
-│   └── ocr.py              # Tesseract OCR (Arabic, French, English) + evaluate_ocr_quality()
+│   ├── ocr.py              # Tesseract OCR (Arabic, French, English) + evaluate_ocr_quality()
+│   ├── general_cv_parser.py # Generic CV parser for non-Keejob format CVs
+│   ├── generic_parser.py   # Fallback parser
+│   ├── extractor.py        # Field extraction utilities
+│   ├── language_detector.py # Language detection for multilingual CVs
+│   └── parser.py           # Unified parser entry point
 ├── tasks/               # Celery async tasks
 │   ├── cv_tasks.py      # embed_cv(), embed_all_cvs()
 │   └── offer_tasks.py   # embed_offer()
@@ -214,7 +219,36 @@ Backend endpoints:
 **OCR quality** (`nlp/ocr.py::evaluate_ocr_quality`) — heuristic scoring 0–100 based on character count, presence of email/phone/section keywords. Returns `{ score, niveau, message, conseils, nb_caracteres, a_email, a_telephone, a_sections }`.
 
 ### RH Portal (`/rh`)
-`PATCH /api/rh/offers/{offer_id}/matching/{result_id}` accepts `{ decision, feedback_rh?, feedback_visible? }`. When `feedback_visible=true`, the feedback text becomes visible to the candidate via the detail endpoint. The `MatchResultTable` component opens a Modal on Retenir/Refuser to collect feedback before confirming.
+Pages: `DashboardPage`, `OffersPage`, `OfferFormPage`, `MatchingPage`, `ResultsPage`, `CVthequePage`, `CandidaturesPage`.
+
+Backend endpoints:
+- `GET /api/rh/dashboard` — RH stats and recent activity
+- `GET /api/rh/dashboard/stats` — aggregated stats for charts
+- `GET /api/rh/offers` — paginated job offers list
+- `POST /api/rh/offers` — create offer (triggers async embedding via Celery)
+- `GET/PUT /api/rh/offers/{offer_id}` — get/update offer
+- `DELETE /api/rh/offers/{offer_id}` — archive offer (soft delete)
+- `POST /api/rh/offers/{offer_id}/matching` — launch matching (pgvector → scorer → top 50 stored)
+- `GET /api/rh/offers/{offer_id}/matching` — get matching results
+- `PATCH /api/rh/offers/{offer_id}/matching/{result_id}` — update decision; accepts `{ decision, feedback_rh?, feedback_visible? }`. When `feedback_visible=true`, feedback is visible to candidate.
+- `GET /api/rh/offers/{offer_id}/export/pdf` — export matching results as PDF
+- `GET /api/rh/cvs/search` — search CVs in the cvthèque
+
+The `MatchResultTable` component opens a Modal on Retenir/Refuser to collect feedback before confirming.
+
+### Admin Portal (`/admin`)
+Pages: `DashboardPage`, `UsersPage`, `UserFormPage`, `AdminCVsPage`, `AuditPage`, `SystemHealthPage`.
+
+Backend endpoints:
+- `GET /api/admin/stats` — global platform statistics
+- `GET /api/admin/system/health` — system health (DB, Redis, Celery, disk, memory)
+- `POST /api/admin/system/reindex` — trigger re-embedding of all CVs via Celery
+- `GET /api/admin/audit/logs` — paginated audit log
+- `GET /api/admin/cvs` — all CVs across all sources
+- `GET /api/admin/users` — user list
+- `POST /api/admin/users` — create user
+- `GET/PUT /api/admin/users/{user_id}` — get/update user
+- `PATCH /api/admin/users/{user_id}/toggle` — activate/deactivate user
 
 ## Infrastructure
 

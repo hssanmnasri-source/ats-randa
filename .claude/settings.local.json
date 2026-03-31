@@ -13,7 +13,10 @@
       "mcp__playwright__browser_type",
       "Bash(find /c/pfe-dev/ats-randa/backend/app/models/schemas -type f -name *.py)",
       "Bash(docker.exe exec:*)",
-      "Bash(docker.exe ps:*)"
+      "Bash(docker.exe ps:*)",
+      "Bash(curl -s \"http://localhost:9090/api/v1/targets\" -o /tmp/prom_targets.json)",
+      "Bash(node -e \":*)",
+      "Read(//tmp/**)"
     ]
   }
 }

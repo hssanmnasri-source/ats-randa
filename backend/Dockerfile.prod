@@ -1,0 +1,58 @@
+# ════════════════════════════════════════════════════
+# ATS RANDA — Dockerfile Production (multi-stage)
+# Stage 1 : builder — compile les dépendances Python
+# Stage 2 : runtime — image finale minimale
+# ════════════════════════════════════════════════════
+
+# ── Stage 1 : Builder ────────────────────────────
+FROM python:3.11-slim-bookworm AS builder
+
+WORKDIR /build
+
+RUN apt-get update -o Acquire::Check-Valid-Until=false \
+    && apt-get install -y --no-install-recommends \
+        gcc g++ libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+# ── Stage 2 : Runtime ────────────────────────────
+FROM python:3.11-slim-bookworm AS runtime
+
+WORKDIR /app
+
+# Dépendances système minimales
+RUN apt-get update -o Acquire::Check-Valid-Until=false \
+    && apt-get install -y --no-install-recommends \
+        libpq5 \
+        tesseract-ocr \
+        tesseract-ocr-fra \
+        tesseract-ocr-ara \
+        poppler-utils \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Packages Python depuis le builder
+COPY --from=builder /install /usr/local
+
+# Utilisateur non-root (sécurité)
+RUN useradd --create-home --shell /bin/bash ats_user \
+    && mkdir -p /app/uploads \
+    && chown -R ats_user:ats_user /app
+
+# Code source
+COPY --chown=ats_user:ats_user . .
+
+USER ats_user
+
+EXPOSE 8000
+
+# Production : 4 workers, uvloop, pas de --reload
+CMD ["uvicorn", "app.main:app", \
+     "--host", "0.0.0.0", \
+     "--port", "8000", \
+     "--workers", "4", \
+     "--loop", "uvloop", \
+     "--access-log"]
