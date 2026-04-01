@@ -85,6 +85,10 @@ class User(Base):
     created_at   = Column(DateTime(timezone=True), server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), onupdate=func.now())
 
+    google_id     = Column(String(255), unique=True, nullable=True)
+    avatar_url    = Column(Text, nullable=True)
+    auth_provider = Column(String(20), default='local')
+
     filiale      = relationship("Filiale", back_populates="users")
     cvs_registered = relationship("CV", back_populates="agent",
                                   foreign_keys="CV.id_agent")
@@ -213,6 +217,10 @@ class JobOffer(Base):
     statut               = Column(SAEnum(OfferStatus), default=OfferStatus.ACTIVE)
     last_matching_at     = Column(DateTime(timezone=True), nullable=True)
     details              = Column(JSONB, nullable=True)  # extended fields
+    seuil_alerte         = Column(Integer, nullable=True)
+    alerte_envoyee       = Column(Boolean, default=False)
+    date_alerte          = Column(DateTime(timezone=True), nullable=True)
+    matching_auto        = Column(Boolean, default=False)
 
     resultats = relationship("Resultat", back_populates="offre",
                              cascade="all, delete-orphan")
@@ -281,3 +289,27 @@ class AuditLog(Base):
     created_at  = Column(DateTime(timezone=True), server_default=func.now(), index=True)
 
     user = relationship("User", foreign_keys=[user_id])
+
+# ── Entretien ─────────────────────────────────────
+class Entretien(Base):
+    __tablename__ = "entretiens"
+
+    id                    = Column(Integer, primary_key=True, index=True)
+    id_resultat           = Column(Integer, ForeignKey("resultats.id"), nullable=True)
+    id_offre              = Column(Integer, ForeignKey("job_offers.id"), nullable=False)
+    id_rh                 = Column(Integer, ForeignKey("users.id"), nullable=True)
+    id_candidate_user     = Column(Integer, ForeignKey("users.id"), nullable=True)
+    date_entretien        = Column(DateTime(timezone=True), nullable=False)
+    duree_minutes         = Column(Integer, default=30)
+    lieu                  = Column(String(255), nullable=True)
+    type_entretien        = Column(String(50), default="presentiel")
+    lien_visio            = Column(Text, nullable=True)
+    notes_rh              = Column(Text, nullable=True)
+    statut                = Column(String(20), default="PLANIFIE")
+    email_candidat_envoye = Column(Boolean, default=False)
+    created_at            = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at            = Column(DateTime(timezone=True), onupdate=func.now())
+
+    offre    = relationship("JobOffer", foreign_keys=[id_offre])
+    rh       = relationship("User", foreign_keys=[id_rh])
+    candidat = relationship("User", foreign_keys=[id_candidate_user])

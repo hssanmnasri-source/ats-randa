@@ -25,7 +25,8 @@ from app.api.routes.agent.cvs import router as agent_cvs_router
 from app.api.routes.agent.import_keejob import router as agent_keejob_router
 from app.api.routes.agent.candidates import router as agent_candidates_router
 from app.api.routes.agent.dashboard import router as agent_dashboard_router
-
+from app.api.routes.auth.google import router as google_auth_router
+from app.api.routes.rh.calendar import router as rh_calendar_router
 
 
 logging.basicConfig(level=logging.INFO)
@@ -196,6 +197,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(auth_router)
+app.include_router(google_auth_router)
 app.include_router(visitor_offers_router)
 # Candidat
 app.include_router(candidate_profile_router)
@@ -213,6 +215,7 @@ app.include_router(rh_offers_router)
 app.include_router(rh_matching_router)
 app.include_router(rh_dashboard_router)
 app.include_router(rh_cvs_router)
+app.include_router(rh_calendar_router)
 # Admin
 app.include_router(admin_users_router)
 app.include_router(admin_stats_router)

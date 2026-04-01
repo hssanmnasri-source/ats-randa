@@ -163,6 +163,95 @@ async def send_application_received(
     )
 
 
+async def send_seuil_alerte(
+    rh_email: str,
+    rh_nom: str,
+    offre_titre: str,
+    offre_id: int,
+    nb_candidatures: int,
+    seuil: int,
+    matching_auto: bool,
+) -> bool:
+    """Envoi alerte RH quand le seuil de candidatures est atteint."""
+    frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:3000')
+    action_url = f"{frontend_url}/rh/matching?offer={offre_id}"
+
+    auto_block = (
+        "<div style='background: #F0FFF4; border: 1px solid #52C41A; padding: 12px; "
+        "border-radius: 8px; margin: 16px 0;'>"
+        "<p style='margin: 0; color: #52C41A; font-weight: 600;'>Matching automatique active.</p></div>"
+        if matching_auto else ""
+    )
+
+    body = f"""
+    <p>Bonjour <strong>{rh_nom}</strong>,</p>
+    <div style="background: #FFF8E6; border-left: 4px solid #C9A84C; padding: 16px; margin: 16px 0;">
+      <p>L'offre <strong>"{offre_titre}"</strong> a atteint
+         <strong style="color: #8B1A1A;">{nb_candidatures} candidatures</strong>
+         (seuil : {seuil}).</p>
+    </div>
+    {auto_block}
+    <div style="text-align: center; margin: 24px 0;">
+      <a href="{action_url}"
+         style="background: #8B1A1A; color: white; padding: 14px 32px;
+                border-radius: 8px; text-decoration: none; font-weight: 700;">
+        Lancer le Matching IA
+      </a>
+    </div>
+    <p>Cordialement,<br><span class="highlight">L'equipe ATS RANDA</span></p>
+    """
+    return await _send(
+        recipients=[rh_email],
+        subject=f"Seuil atteint : {nb_candidatures} candidatures pour '{offre_titre}'",
+        html_body=_html_wrapper("Seuil de candidatures atteint", body),
+    )
+
+
+async def send_entretien_invitation(
+    candidat_email: str,
+    candidat_nom: str,
+    offre_titre: str,
+    date_entretien,
+    lieu: str,
+    type_entretien: str,
+    rh_nom: str,
+    rh_email: str,
+) -> bool:
+    """Envoi invitation entretien au candidat retenu."""
+    from datetime import datetime
+    if isinstance(date_entretien, str):
+        dt = datetime.fromisoformat(date_entretien.replace("Z", "+00:00"))
+    else:
+        dt = date_entretien
+
+    date_str = dt.strftime("%A %d %B %Y a %H:%M")
+    type_label = {
+        "presentiel": "Entretien en presentiel",
+        "visio": "Visioconference",
+        "telephonique": "Telephonique",
+    }.get(type_entretien, "Entretien")
+
+    body = f"""
+    <p>Bonjour <strong>{candidat_nom}</strong>,</p>
+    <p>Suite a l'examen de votre candidature pour <strong>"{offre_titre}"</strong>,
+       nous avons le plaisir de vous inviter a un entretien.</p>
+    <div style="background: #FFF8E6; border: 2px solid #C9A84C; border-radius: 12px;
+                padding: 20px; margin: 20px 0;">
+      <h3 style="color: #8B1A1A;">Details de l'entretien</h3>
+      <p><strong>Type :</strong> {type_label}</p>
+      <p><strong>Date :</strong> <span style="color: #8B1A1A;">{date_str}</span></p>
+      <p><strong>Lieu :</strong> {lieu}</p>
+      <p><strong>Contact RH :</strong> {rh_nom} — {rh_email}</p>
+    </div>
+    <p>Cordialement,<br><span class="highlight">{rh_nom} — Equipe RH RANDA</span></p>
+    """
+    return await _send(
+        recipients=[candidat_email],
+        subject=f"Invitation entretien — {offre_titre}",
+        html_body=_html_wrapper("Invitation a un entretien", body),
+    )
+
+
 async def send_decision_notification(
     email: str, nom: str, prenom: str, titre_offre: str, decision: str
 ) -> bool:

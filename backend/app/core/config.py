@@ -50,6 +50,13 @@ class Settings(BaseSettings):
     MAIL_FROM_NAME: str = "ATS RANDA"
     MAIL_ENABLED: bool = False  # Mettre True + configurer MAIL_USERNAME/PASSWORD en .env
 
+    # Google OAuth
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
+    GOOGLE_REDIRECT_URI: str = "http://localhost:8000/api/auth/google/callback"
+    FRONTEND_URL: str = "http://localhost:3000"
+    BACKEND_URL: str = "http://localhost:8000"
+
     # CORS
     CORS_ORIGINS: List[str] = [
         "http://localhost:3000",

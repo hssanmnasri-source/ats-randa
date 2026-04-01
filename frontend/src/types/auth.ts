@@ -9,6 +9,7 @@ export interface User {
   is_active: boolean;
   departement?: string | null;
   id_filiale?: number | null;
+  avatar_url?: string;
 }
 
 export interface TokenOut {

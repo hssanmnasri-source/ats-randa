@@ -1,11 +1,13 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException, Body
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from typing import Optional
 from app.core.database import get_db
 from app.api.dependencies import require_rh
 from app.models.schemas.rh_schemas import (
     OfferCreateIn, OfferUpdateIn, OfferOut, OfferListOut
 )
+from app.models.db_models import JobOffer
 from app.services.rh import offer_service
 
 router = APIRouter(
@@ -57,3 +59,41 @@ async def archive_offer(
     db: AsyncSession = Depends(get_db)
 ):
     return await offer_service.archive_offer(db, offer_id, rh.id)
+
+
+@router.put("/offers/{offer_id}/seuil")
+async def set_seuil_alerte(
+    offer_id: int,
+    seuil: int = Body(..., ge=1, le=10000, embed=True),
+    matching_auto: bool = Body(False, embed=True),
+    rh=Depends(require_rh),
+    db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(
+        select(JobOffer).where(JobOffer.id == offer_id, JobOffer.id_rh == rh.id)
+    )
+    offer = result.scalar_one_or_none()
+    if not offer:
+        raise HTTPException(404, "Offre introuvable")
+    offer.seuil_alerte = seuil
+    offer.matching_auto = matching_auto
+    offer.alerte_envoyee = False
+    await db.commit()
+    return {"offre_id": offer_id, "seuil_alerte": seuil, "matching_auto": matching_auto}
+
+
+@router.post("/offers/{offer_id}/reset-alerte")
+async def reset_alerte(
+    offer_id: int,
+    rh=Depends(require_rh),
+    db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(
+        select(JobOffer).where(JobOffer.id == offer_id, JobOffer.id_rh == rh.id)
+    )
+    offer = result.scalar_one_or_none()
+    if not offer:
+        raise HTTPException(404, "Offre introuvable")
+    offer.alerte_envoyee = False
+    await db.commit()
+    return {"message": "Alerte reinitialisee"}

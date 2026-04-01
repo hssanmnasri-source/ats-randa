@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Form, Input, Button, Card, Typography, Divider, Alert } from 'antd';
-import { MailOutlined, LockOutlined } from '@ant-design/icons';
+import { MailOutlined, LockOutlined, GoogleOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLogin } from '../../hooks/useAuth';
 import { useAuthStore } from '../../store/authStore';
@@ -58,6 +58,30 @@ export default function LoginPage() {
         />
       )}
 
+      <Button
+        block
+        size="large"
+        icon={<GoogleOutlined />}
+        onClick={() => { window.location.href = 'http://localhost:8000/api/auth/google/login' }}
+        style={{
+          marginBottom: 16,
+          border: '1px solid #E8E8E8',
+          borderRadius: 8,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8,
+          fontWeight: 600,
+          color: '#444',
+        }}
+      >
+        Continuer avec Google
+      </Button>
+
+      <Divider style={{ margin: '12px 0', borderColor: '#E8E8E8' }}>
+        <span style={{ color: '#AAAAAA', fontSize: 12 }}>ou</span>
+      </Divider>
+
       <Form<LoginRequest>
         layout="vertical"
         onFinish={(values) => login(values)}
@@ -104,7 +128,7 @@ export default function LoginPage() {
         </Form.Item>
       </Form>
 
-      <Divider style={{ margin: '12px 0', borderColor: '#E8E8E8' }} />
+      <Divider style={{ margin: '4px 0 12px', borderColor: '#E8E8E8' }} />
       <Text style={{ display: 'block', textAlign: 'center' }}>
         Pas encore de compte ?{' '}
         <Link to="/register" style={{ color: '#C9A84C', fontWeight: 600 }}>

@@ -16,6 +16,7 @@ import OfferDetailPage from '../pages/public/OfferDetailPage';
 // Auth pages
 import LoginPage from '../pages/auth/LoginPage';
 import RegisterPage from '../pages/auth/RegisterPage';
+import GoogleCallbackPage from '../pages/auth/GoogleCallbackPage';
 
 // Candidate pages
 import CandidateDashboard from '../pages/candidate/DashboardPage';
@@ -45,6 +46,7 @@ import MatchingPage from '../pages/rh/MatchingPage';
 import ResultsPage from '../pages/rh/ResultsPage';
 import CVthequePage from '../pages/rh/CVthequePage';
 import CandidaturesPage from '../pages/rh/CandidaturesPage';
+import CalendarPage from '../pages/rh/CalendarPage';
 
 // Admin pages
 import AdminDashboard from '../pages/admin/DashboardPage';
@@ -72,6 +74,9 @@ export const router = createBrowserRouter([
       { path: '/register', element: <RegisterPage /> },
     ],
   },
+
+  // Google OAuth callback (pas de layout, pas de protection)
+  { path: '/auth/google/success', element: <GoogleCallbackPage /> },
 
   // Candidate
   {
@@ -130,6 +135,7 @@ export const router = createBrowserRouter([
       { path: 'results',            element: <ResultsPage /> },
       { path: 'cvtheque',           element: <CVthequePage /> },
       { path: 'candidatures',       element: <CandidaturesPage /> },
+      { path: 'calendar',           element: <CalendarPage /> },
     ],
   },
 

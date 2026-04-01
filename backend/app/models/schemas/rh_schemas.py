@@ -10,6 +10,8 @@ class OfferCreateIn(BaseModel):
     competences_requises: List[str] = []
     experience_requise: float = 0.0
     langue_requise: str = "fr"
+    seuil_alerte: Optional[int] = None
+    matching_auto: bool = False
     # Extended fields (stored in details JSONB)
     reference_interne: Optional[str] = None
     type_poste: Optional[Any] = None        # string or list
@@ -39,6 +41,8 @@ class OfferUpdateIn(BaseModel):
     competences_requises: Optional[List[str]] = None
     experience_requise: Optional[float] = None
     langue_requise: Optional[str] = None
+    seuil_alerte: Optional[int] = None
+    matching_auto: Optional[bool] = None
     reference_interne: Optional[str] = None
     type_poste: Optional[Any] = None
     disponibilite: Optional[str] = None
@@ -73,6 +77,9 @@ class OfferOut(BaseModel):
     statut: str
     id_rh: Optional[int] = None
     details: Optional[Dict[str, Any]] = None
+    seuil_alerte: Optional[int] = None
+    matching_auto: bool = False
+    alerte_envoyee: bool = False
 
     class Config:
         from_attributes = True
