@@ -100,6 +100,18 @@ async def run_matching(
     required_years  = float(offer.experience_requise or 0)
     required_langue = offer.langue_requise
 
+    # Poids personnalisés (ou valeurs par défaut si non définis)
+    custom_weights = {
+        "semantique":  float(getattr(offer, "poids_semantique",  None) or 0.40),
+        "competences": float(getattr(offer, "poids_competences", None) or 0.35),
+        "experience":  float(getattr(offer, "poids_experience",  None) or 0.15),
+        "langue":      float(getattr(offer, "poids_langue",      None) or 0.10),
+    }
+    # Normaliser au cas où ils ne somment pas à 1
+    total_w = sum(custom_weights.values())
+    if abs(total_w - 1.0) > 0.02:
+        custom_weights = {k: v / total_w for k, v in custom_weights.items()}
+
     scored: list[dict] = []
     for row in candidates:
         entities = row.cv_entities or {}
@@ -112,6 +124,7 @@ async def run_matching(
             required_skills=required_skills,
             required_years=required_years,
             required_langue=required_langue,
+            weights=custom_weights,
         )
         scored.append({
             "id_cv":        row.cv_id,

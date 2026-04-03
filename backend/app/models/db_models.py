@@ -25,9 +25,15 @@ class CVStatus(str, enum.Enum):
     ERROR     = "ERROR"
 
 class OfferStatus(str, enum.Enum):
-    ACTIVE    = "ACTIVE"
-    INACTIVE  = "INACTIVE"
-    ARCHIVED  = "ARCHIVED"
+    ACTIVE        = "ACTIVE"
+    INACTIVE      = "INACTIVE"
+    ARCHIVED      = "ARCHIVED"
+    BROUILLON     = "BROUILLON"
+    EN_VALIDATION = "EN_VALIDATION"
+    PROCHAINEMENT = "PROCHAINEMENT"
+    DESACTIVEE    = "DESACTIVEE"
+    EXPIREE       = "EXPIREE"
+    REFUSEE       = "REFUSEE"
 
 class Decision(str, enum.Enum):
     RETAINED  = "RETAINED"
@@ -107,6 +113,8 @@ class Candidate(Base):
     created_at      = Column(DateTime(timezone=True), server_default=func.now())
 
     # ── Extended profile fields ────────────────────
+    age                 = Column(Integer, nullable=True)
+    niveau_experience   = Column(String(50), nullable=True)
     photo_url           = Column(String(500))
     titre_poste         = Column(String(255))
     niveau_etude        = Column(String(50))
@@ -221,6 +229,15 @@ class JobOffer(Base):
     alerte_envoyee       = Column(Boolean, default=False)
     date_alerte          = Column(DateTime(timezone=True), nullable=True)
     matching_auto        = Column(Boolean, default=False)
+    # ── Poids scoring personnalisables ──────────────
+    poids_semantique     = Column(Float, default=0.40)
+    poids_competences    = Column(Float, default=0.35)
+    poids_experience     = Column(Float, default=0.15)
+    poids_langue         = Column(Float, default=0.10)
+    # ── Gestion statuts annonce ─────────────────────
+    date_expiration      = Column(DateTime(timezone=True), nullable=True)
+    raison_refus         = Column(Text, nullable=True)
+    date_mise_en_ligne   = Column(DateTime(timezone=True), nullable=True)
 
     resultats = relationship("Resultat", back_populates="offre",
                              cascade="all, delete-orphan")

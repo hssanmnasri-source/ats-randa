@@ -47,6 +47,7 @@ import ResultsPage from '../pages/rh/ResultsPage';
 import CVthequePage from '../pages/rh/CVthequePage';
 import CandidaturesPage from '../pages/rh/CandidaturesPage';
 import CalendarPage from '../pages/rh/CalendarPage';
+import StatsPage from '../pages/rh/StatsPage';
 
 // Admin pages
 import AdminDashboard from '../pages/admin/DashboardPage';
@@ -136,6 +137,7 @@ export const router = createBrowserRouter([
       { path: 'cvtheque',           element: <CVthequePage /> },
       { path: 'candidatures',       element: <CandidaturesPage /> },
       { path: 'calendar',           element: <CalendarPage /> },
+      { path: 'stats',              element: <StatsPage /> },
     ],
   },
 

@@ -102,6 +102,80 @@ async def delete_pending_by_offer(db: AsyncSession, offer_id: int) -> int:
     return r.rowcount
 
 
+async def list_by_offer_filtered(
+    db: AsyncSession,
+    offer_id: int,
+    decision: str | None = None,
+    limit: int = 50,
+    score_min: float | None = None,
+    age_min: int | None = None,
+    age_max: int | None = None,
+    region: str | None = None,
+    ville: str | None = None,
+    niveau_etude: str | None = None,
+    niveau_experience: str | None = None,
+    disponibilite: str | None = None,
+    has_driving_license: bool | None = None,
+) -> tuple[int, list[dict]]:
+    """Liste des résultats avec filtres avancés sur les candidats."""
+    query = (
+        select(Resultat, CV, Candidate)
+        .join(CV, CV.id == Resultat.id_cv)
+        .join(Candidate, Candidate.id == CV.id_candidate)
+        .where(Resultat.id_offre == offer_id)
+    )
+
+    if decision:
+        query = query.where(Resultat.decision == decision)
+    if score_min is not None:
+        query = query.where(Resultat.score_final >= score_min)
+    if age_min is not None:
+        query = query.where(Candidate.age >= age_min)
+    if age_max is not None:
+        query = query.where(Candidate.age <= age_max)
+    if region:
+        query = query.where(Candidate.region.ilike(f"%{region}%"))
+    if ville:
+        query = query.where(Candidate.ville.ilike(f"%{ville}%"))
+    if niveau_etude:
+        query = query.where(Candidate.niveau_etude == niveau_etude)
+    if niveau_experience:
+        query = query.where(Candidate.niveau_experience == niveau_experience)
+    if disponibilite:
+        query = query.where(Candidate.disponibilite.ilike(f"%{disponibilite}%"))
+    if has_driving_license is not None:
+        query = query.where(Candidate.has_driving_license == has_driving_license)
+
+    # Count total without limit
+    count_query = query.with_only_columns(func.count()).order_by(None)
+    total = await db.scalar(count_query) or 0
+
+    rows = await db.execute(query.order_by(Resultat.rang).limit(limit))
+
+    results = []
+    for r, cv, cand in rows.all():
+        results.append({
+            "id": r.id,
+            "id_cv": r.id_cv,
+            "rang": r.rang,
+            "score_final": r.score_final,
+            "score_matching": r.score_matching,
+            "score_skills": r.score_skills,
+            "score_experience": r.score_experience,
+            "score_langue": r.score_langue,
+            "decision": r.decision.value if r.decision else "PENDING",
+            "date_analyse": r.date_analyse.isoformat() if r.date_analyse else None,
+            "candidat_nom": cand.nom,
+            "candidat_prenom": cand.prenom,
+            "candidat_email": cand.email,
+            "candidat_telephone": cand.telephone,
+            "candidat_region": cand.region,
+            "candidat_age": cand.age,
+            "candidat_niveau_etude": cand.niveau_etude,
+        })
+    return total, results
+
+
 async def get_by_cv_offer(
     db: AsyncSession, cv_id: int, offer_id: int
 ) -> Resultat | None:

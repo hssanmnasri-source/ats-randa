@@ -12,6 +12,7 @@ import {
   DatabaseOutlined,
   TeamOutlined,
   CalendarOutlined,
+  BarChartOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
@@ -32,7 +33,8 @@ const menuItems = [
   { key: '/rh/results',    icon: <TrophyOutlined />,       label: 'Résultats & Décisions' },
   { key: '/rh/cvtheque',   icon: <DatabaseOutlined />,    label: 'CVthèque' },
   { key: '/rh/candidatures', icon: <TeamOutlined />,      label: 'Candidatures reçues' },
-  { key: '/rh/calendar',    icon: <CalendarOutlined />,  label: 'Calendrier entretiens' },
+  { key: '/rh/calendar',    icon: <CalendarOutlined />,   label: 'Calendrier entretiens' },
+  { key: '/rh/stats',      icon: <BarChartOutlined />,   label: 'Statistiques' },
 ];
 
 function SidebarWidget({ collapsed }: { collapsed: boolean }) {

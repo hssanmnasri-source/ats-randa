@@ -15,6 +15,7 @@ from app.models.db_models import Decision
 from app.services.rh.matching_service import run_matching
 from app.services.rh.pdf_export import generate_matching_pdf
 from app.repositories import result_repository, offer_repository
+from typing import Optional
 
 router = APIRouter(prefix="/api/rh/offers", tags=["🎯 RH — Matching"])
 
@@ -56,29 +57,63 @@ async def launch_matching(
 @router.get("/{offer_id}/matching", status_code=200)
 async def get_matching_results(
     offer_id: int,
-    decision: str | None = Query(default=None, description="Filtrer par décision : RETAINED / PENDING / REFUSED"),
+    decision: Optional[str] = Query(default=None),
     skip: int = Query(default=0, ge=0),
-    limit: int = Query(default=50, ge=1, le=200),
+    limit: int = Query(default=50, ge=1, le=500),
+    top_k: Optional[int] = Query(default=None, ge=1, le=500),
+    # Filtres avancés F4
+    score_min: Optional[float] = Query(default=None, ge=0.0, le=1.0),
+    age_min: Optional[int] = Query(default=None, ge=18, le=80),
+    age_max: Optional[int] = Query(default=None, ge=18, le=80),
+    region: Optional[str] = Query(default=None),
+    ville: Optional[str] = Query(default=None),
+    niveau_etude: Optional[str] = Query(default=None),
+    niveau_experience: Optional[str] = Query(default=None),
+    disponibilite: Optional[str] = Query(default=None),
+    has_driving_license: Optional[bool] = Query(default=None),
     db: AsyncSession = Depends(get_db),
     current_user=Depends(require_rh),
 ):
-    """
-    Récupère les résultats de matching déjà calculés pour une offre.
-    """
+    """Récupère les résultats de matching avec filtres avancés."""
     offer = await offer_repository.get_by_id(db, offer_id)
     if not offer:
         raise HTTPException(status_code=404, detail=f"Offre #{offer_id} introuvable")
 
-    total, rows = await result_repository.list_by_offer(
-        db, offer_id, decision=decision, skip=skip, limit=limit
-    )
+    effective_limit = top_k if top_k is not None else limit
+
+    # Utiliser la fonction filtrée si des filtres avancés sont demandés
+    has_advanced_filters = any([
+        score_min is not None, age_min is not None, age_max is not None,
+        region, ville, niveau_etude, niveau_experience,
+        disponibilite, has_driving_license is not None
+    ])
+
+    if has_advanced_filters:
+        total, rows = await result_repository.list_by_offer_filtered(
+            db, offer_id,
+            decision=decision,
+            limit=effective_limit,
+            score_min=score_min,
+            age_min=age_min,
+            age_max=age_max,
+            region=region,
+            ville=ville,
+            niveau_etude=niveau_etude,
+            niveau_experience=niveau_experience,
+            disponibilite=disponibilite,
+            has_driving_license=has_driving_license,
+        )
+    else:
+        total, rows = await result_repository.list_by_offer(
+            db, offer_id, decision=decision, skip=skip, limit=effective_limit
+        )
 
     return {
         "offer_id":  offer_id,
         "titre":     offer.titre,
         "total":     total,
         "skip":      skip,
-        "limit":     limit,
+        "limit":     effective_limit,
         "resultats": rows,
     }
 

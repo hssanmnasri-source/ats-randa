@@ -1,4 +1,7 @@
-export type OfferStatut = 'ACTIVE' | 'INACTIVE' | 'ARCHIVED';
+export type OfferStatut =
+  | 'ACTIVE' | 'INACTIVE' | 'ARCHIVED'
+  | 'BROUILLON' | 'EN_VALIDATION' | 'PROCHAINEMENT'
+  | 'DESACTIVEE' | 'EXPIREE' | 'REFUSEE';
 
 export interface OfferDetails {
   reference_interne?: string;
@@ -35,6 +38,13 @@ export interface JobOffer {
   statut: OfferStatut;
   id_rh?: number | null;
   details?: OfferDetails | null;
+  seuil_alerte?: number | null;
+  matching_auto?: boolean;
+  alerte_envoyee?: boolean;
+  poids_semantique?: number;
+  poids_competences?: number;
+  poids_experience?: number;
+  poids_langue?: number;
 }
 
 export interface OfferListOut {

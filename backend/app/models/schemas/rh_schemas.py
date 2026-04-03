@@ -80,6 +80,10 @@ class OfferOut(BaseModel):
     seuil_alerte: Optional[int] = None
     matching_auto: bool = False
     alerte_envoyee: bool = False
+    poids_semantique:  float = 0.40
+    poids_competences: float = 0.35
+    poids_experience:  float = 0.15
+    poids_langue:      float = 0.10
 
     class Config:
         from_attributes = True
