@@ -1,0 +1,83 @@
+# ════════════════════════════════════════════════
+# ATS RANDA — .gitignore
+# ════════════════════════════════════════════════
+
+# ── Python ───────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+dist/
+build/
+*.so
+
+# ── Node / React ──────────────────────────────────
+node_modules/
+frontend/dist/
+frontend/.vite/
+.npm/
+*.tsbuildinfo
+
+# ── Variables d'environnement ─────────────────────
+.env
+.env.local
+.env.production
+.env.prod
+!.env.example
+
+# ── Docker ────────────────────────────────────────
+.docker/
+
+# ── IDE ───────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs ──────────────────────────────────────────
+*.log
+logs/
+*.log.*
+
+# ── Uploads utilisateurs ──────────────────────────
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# ── Backups DB ────────────────────────────────────
+backups/
+*.sql.gz
+*.sql.bak
+
+# ── Fichiers temporaires ──────────────────────────
+*.tmp
+*.temp
+*.bak
+*.old
+/tmp/
+
+# ── Screenshots Playwright ────────────────────────
+.playwright-mcp/
+*.playwright-mcp/
+
+# ── Pages HTML téléchargées ───────────────────────
+*_files/
+*.html.bak
+
+# ── Données sensibles ─────────────────────────────
+*.pem
+*.key
+*.cert
+
+# ── Claude Code ───────────────────────────────────
+.claude/

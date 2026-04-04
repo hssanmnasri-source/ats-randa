@@ -1,3 +1,0 @@
-[     366ms] [ERROR] Warning: [antd: Statistic] `valueStyle` is deprecated. Please use `styles.content` instead. @ http://localhost:3000/node_modules/.vite/deps/chunk-UIDPYNXV.js?v=ec53c783:1253
-[   72194ms] [ERROR] Warning: [antd: Statistic] `valueStyle` is deprecated. Please use `styles.content` instead. @ http://localhost:3000/node_modules/.vite/deps/chunk-UIDPYNXV.js?v=ec53c783:1253
-[  103890ms] [ERROR] Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead. @ http://localhost:3000/node_modules/.vite/deps/chunk-UIDPYNXV.js?v=ec53c783:1253

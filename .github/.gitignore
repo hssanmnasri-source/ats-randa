@@ -1,0 +1,8 @@
+# Ignore local/temp GitHub config files
+*.local
+*.tmp
+*.bak
+
+# Ignore sensitive workflow overrides
+*.secret
+*.override

@@ -2,262 +2,107 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+---
 
-ATS RANDA is an Applicant Tracking System built with FastAPI (Python 3.11) + React 18 (TypeScript). It features NLP-powered CV parsing, semantic embedding-based matching via pgvector, role-based access control, and Celery async task queuing.
+## Commands
 
-## Common Commands
+All backend commands run **inside Docker** via `make` or `docker exec`.
 
-### Docker (primary development environment)
-On Windows, use `docker.exe` instead of `docker` if the plain command fails.
-
+### Start / Stop
 ```bash
-make up          # Start all services
-make down        # Stop all services
-make build       # Rebuild and start
-make logs        # Stream all logs
-make migrate     # Run Alembic migrations inside the backend container
-make db-shell    # PostgreSQL CLI
-make clean       # Remove containers + volumes
-make status      # Show container status
+make up          # Start all 10 services (detached)
+make down        # Stop
+make build       # Rebuild images + start
+make restart     # down + up
+make shell       # bash inside ats_backend container
+make db-shell    # psql interactive (ats_user / ats_db)
 ```
 
-Docker container names for `docker exec`: `ats_backend`, `ats_postgres`, `ats_redis`.
-
-### Backend (standalone)
+### Tests
 ```bash
-cd backend
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+make test                                                          # pytest + coverage (all)
+make test-unit                                                     # tests/unit/ only
+make test-integration                                              # tests/integration/ only
+docker exec ats_backend pytest tests/unit/test_scorer.py -v       # single test file
+docker exec ats_backend pytest tests/ -k "test_login" -v          # single test by name
 ```
 
-### Testing & Linting
+### Lint & Format (backend)
 ```bash
-make test              # Run pytest with coverage
-make test-unit         # Unit tests only
-make test-integration  # Integration tests only
-make lint              # flake8 + black checks
-make format            # Auto-format with black
+make lint        # flake8 + black --check (max-line-length=100)
+make format      # black auto-format
 ```
 
 ### Frontend
-The frontend runs **outside Docker** as a native npm process (not a container):
 ```bash
-cd frontend
-npm install
-npm run dev      # Dev server on port 3000 (required for nginx proxy to work)
-npm run build    # TypeScript check + Vite bundle
+cd frontend && npm run dev    # Dev server (port 5173)
+cd frontend && npm run build  # TypeScript check + Vite build
+cd frontend && npm run lint   # ESLint
 ```
-Nginx proxies `/` → `host.docker.internal:3000`, so `npm run dev` must be running for the frontend to be accessible at `http://localhost`.
 
-### Useful one-liners
+### DB Migrations
 ```bash
-# Backfill embeddings for all CVs without one
-docker exec ats_backend python -m app.nlp.embed_existing_cvs --batch-size 128
-
-# Bulk import Keejob CVs from a folder
-docker exec ats_backend python -m app.nlp.keejob_importer /app/uploads/keejob --all-files
-
-# Check DB row counts
-docker exec ats_backend python -c "
-import asyncio, sys; sys.path.insert(0, '/app')
-from app.core.database import AsyncSessionLocal
-from sqlalchemy import text
-async def main():
-    async with AsyncSessionLocal() as db:
-        for t in ['candidates','cvs','competences','experiences','job_offers','resultats']:
-            r = await db.execute(text(f'SELECT COUNT(*) FROM {t}')); print(f'{t}: {r.scalar()}')
-asyncio.run(main())"
+make migrate                          # alembic upgrade head
+make migrate-create name="add_field"  # generate new migration
 ```
 
-## Backend Architecture
-
-The backend follows a strict **Routes → Services → Repositories** layering, organized by user role.
-
-```
-backend/app/
-├── main.py              # App entry, lifespan context, router registration, custom OpenAPI
-├── api/
-│   ├── routes/          # HTTP endpoints, organized by role
-│   │   ├── visitor/     # Auth (login/register), public job offers
-│   │   ├── agent/       # CV upload/batch, dashboard, history, candidate management
-│   │   ├── candidate/   # Profile, CV form submission, applications + timeline
-│   │   ├── rh/          # Job offers CRUD, matching + feedback, dashboard
-│   │   └── admin/       # Users, stats, audit logs
-│   └── dependencies.py  # Role-based access control dependencies (require_agent, require_rh, etc.)
-├── services/            # Business logic (mirrors routes/ structure)
-├── repositories/        # All DB queries (SQLAlchemy async sessions)
-├── models/
-│   ├── db_models.py     # SQLAlchemy ORM — single source of truth for schema
-│   └── schemas/         # Pydantic request/response models, per role
-├── nlp/                 # NLP pipeline modules
-│   ├── keejob_parser.py    # Regex-based parser for Keejob-format CVs (15+ fields)
-│   ├── keejob_importer.py  # Bulk import with OCR fallback
-│   ├── embedder.py         # sentence-transformers (paraphrase-multilingual-MiniLM-L12-v2, 384-dim)
-│   ├── scorer.py           # Multi-criteria scoring logic
-│   ├── ocr.py              # Tesseract OCR (Arabic, French, English) + evaluate_ocr_quality()
-│   ├── general_cv_parser.py # Generic CV parser for non-Keejob format CVs
-│   ├── generic_parser.py   # Fallback parser
-│   ├── extractor.py        # Field extraction utilities
-│   ├── language_detector.py # Language detection for multilingual CVs
-│   └── parser.py           # Unified parser entry point
-├── tasks/               # Celery async tasks
-│   ├── cv_tasks.py      # embed_cv(), embed_all_cvs()
-│   └── offer_tasks.py   # embed_offer()
-└── core/
-    ├── config.py        # Settings loaded from .env (Pydantic BaseSettings)
-    ├── database.py      # Async SQLAlchemy session factory + pgvector init
-    ├── security.py      # JWT creation/validation + bcrypt password hashing
-    └── celery_app.py    # Celery + Redis task queue config
+### NLP / Embeddings
+```bash
+docker exec ats_backend python -m app.nlp.embed_existing_cvs  # backfill embeddings for all CVs
 ```
 
-### User Roles & Auth
-Roles: `VISITOR`, `CANDIDATE`, `AGENT`, `RH`, `ADMIN`. Route-level guards are FastAPI dependencies in `api/dependencies.py` (`require_candidate`, `require_agent`, `require_rh`, `require_admin`). JWT Bearer tokens validated on every protected request.
+### Monitoring URLs
+- API docs: http://localhost:8000/docs
+- Grafana: http://localhost:3001 (admin / admin123)
+- Prometheus: http://localhost:9090
+- Flower (Celery): http://localhost:5555
 
-The dependency returns a **User** object (from `users` table). For candidate routes that need the `Candidate` record, always resolve via `candidate_repository.get_by_email(db, user.email)` — do not use `user.id` as a candidate ID directly.
+---
 
-### Key Data Models (db_models.py)
-- `CV` — stores parsed text, `source` (`KEEJOB/AGENT/CANDIDAT`), `statut` (`UPLOADED/PARSING/INDEXED/ERROR`), and a 384-dim pgvector embedding
-  - `source=KEEJOB` → bulk-imported, `id_agent=NULL`
-  - `source=AGENT` → uploaded by a specific agent, `id_agent=agent.id`
-  - `source=CANDIDAT` → submitted by the candidate themselves
-- `JobOffer` — has its own pgvector embedding for semantic matching
-- `Resultat` — links CV ↔ JobOffer with multi-criteria scores, `Decision` (`RETAINED/PENDING/REFUSED`), and optional `feedback_rh` / `feedback_visible` / `date_decision` fields added via direct migration (not Alembic)
-- `Candidate` → `Competences` and `Experiences` (one-to-many)
+## Architecture
 
-### Matching/Scoring (nlp/scorer.py)
-- **40%** semantic similarity (pgvector cosine distance between CV and offer embeddings)
-- **35%** competency overlap (Jaccard similarity)
-- **15%** experience match (years required vs. actual, capped at 1.0)
-- **10%** language match
+### Services (docker-compose.yml)
+10 containers on `ats_network`: `postgres` (pgvector/pg16), `redis`, `backend` (FastAPI), `celery_worker`, `flower`, `nginx` (port 80), `prometheus`, `grafana`, `redis-exporter`, `postgres-exporter`.
 
-Matching flow: pgvector pre-filters top 200 CVs by cosine similarity → 4-criteria scoring → top 50 stored in `resultats` table.
+The `.env` at the repo root is the single env file; both `backend` and `celery_worker` use it via `env_file: .env`. `POSTGRES_HOST=postgres` and `REDIS_HOST=redis` are the internal Docker hostnames.
 
-### CV Repositories Filter
-`candidate_repository.list_all()` accepts an optional `agent_id` parameter. When passed, it filters candidates to only those with at least one CV with `source=AGENT AND id_agent=agent_id`. Always pass `agent_id=agent.id` in agent routes — without it, all 4,000+ Keejob candidates are returned incorrectly.
+### Backend — `backend/app/`
 
-### Adding New Routes
-Register every new router in `main.py` with `app.include_router(...)`. Schema migrations that are low-risk (adding nullable columns) are done directly via `psql` in the running container rather than through Alembic, since there is no migration history for these columns.
+**RBAC** is enforced via dependencies in `api/dependencies.py`. Use `require_candidate`, `require_rh`, `require_admin`, etc. as FastAPI `Depends`. `require_role(*roles)` is the underlying factory. The JWT payload contains `sub` (user id) and `role`.
 
-## Frontend Architecture
+**Route registration** is explicit in `main.py` — adding a new router requires an `app.include_router(...)` call there. Note: `admin/roles.py` and `admin/filiates.py` exist but are **not registered**.
 
-### Tech Stack
-- **UI**: Ant Design 5 (`antd`) with a custom dark-red/gold brand theme
-- **Data fetching**: TanStack React Query (`@tanstack/react-query`) — all server state goes through it
-- **Global state**: Zustand (auth token/user, notifications only)
-- **Routing**: React Router 6 with role-based `ProtectedRoute`
-- **Icons**: `@ant-design/icons`
+**Layered pattern**: `routes/` → `services/` → `repositories/` → DB. Routes only call service functions; services call repository functions; repositories own all SQLAlchemy queries.
 
-### Design System
-All brand colors and the Ant Design theme override live in `frontend/src/theme.ts`:
-- `COLORS.primary` = `#8B1A1A` (dark red — buttons, links)
-- `COLORS.gold` / `COLORS.goldLight` = `#C9A84C` / `#F0D080` (accents, table headers)
-- `COLORS.sidebarBg` / `COLORS.darkBrown` = `#3D0C02` (all sidebar backgrounds)
+**Two schema locations** — `models/schemas/` is the active one (Pydantic v2 models used by routes). `schemas/` at the same level is a legacy stub directory with empty files; ignore it.
 
-Always import from `theme.ts` rather than hardcoding hex values.
+**Async everywhere**: all DB access uses `AsyncSession` from `core/database.py`. All route handlers and service functions are `async def`.
 
-### Folder Structure
-```
-frontend/src/
-├── pages/          # Route-level page components, one folder per role
-├── components/     # Reusable UI components (common/, cv/, offer/, matching/, dashboard/, candidature/)
-├── hooks/          # Custom hooks wrapping TanStack Query
-├── services/       # API layer: api.ts (axios + JWT interceptor), then per-role service files
-├── store/          # Zustand: authStore (user/token, persisted), notificationStore (toasts)
-├── types/          # TypeScript interfaces (agent.ts, candidature.ts, matching.ts, cv.ts, …)
-├── layouts/        # Per-role layouts (AgentLayout, RHLayout, CandidateLayout, etc.)
-└── router/         # React Router 6 config with ProtectedRoute component
-```
+### NLP Pipeline
 
-### API Client (`services/api.ts`)
-Axios instance with `baseURL: 'http://localhost:8000'`. All endpoint paths include the `/api/` prefix (e.g. `/api/candidate/profile`). The request interceptor auto-attaches the JWT Bearer token from Zustand. A 401 response triggers automatic logout and redirect to `/login`.
+CV matching flow:
+1. A CV is uploaded → `tasks/cv_tasks.py::process_cv_on_upload` (Celery) runs OCR → parser → `embedder.py` → stores 384-dim vector in `cvs.embedding` (pgvector)
+2. RH triggers matching on an offer → `services/rh/matching_service.py` queries pgvector cosinus top 200 → `scorer.py::compute_final_score` (40% semantic + 35% skills Jaccard + 15% experience + 10% language) → stores top 50 in `resultats`
+3. **Immutability rule**: `RETAINED` and `REFUSED` decisions are never overwritten by re-matching. Only `PENDING` results are deleted and replaced.
 
-**Vite proxy:** `vite.config.ts` also proxies `/api` → `http://localhost:8000` as a fallback for build-time usage.
+Scoring weights are **per-offer customizable** via `PUT /api/rh/offers/{id}/poids`.
 
-### Data Fetching Pattern
-Use TanStack Query in hooks, not directly in components. Query keys follow the pattern `['role', 'resource']` (e.g. `['candidate', 'profile']`, `['rh', 'offers']`). Default `staleTime` is 5 minutes.
+### Frontend — `frontend/src/`
 
-### Candidate Portal (`/candidate`)
-Pages: `DashboardPage`, `MyCVPage`, `CVGeneratorPage`, `ApplicationsPage`, `ProfilePage`, `CoverLettersPage`, `DocumentsPage`, `SettingsPage`, `FavoritesPage`, `OffresPage`, `OffreDetailPage`.
+**Auth**: `store/authStore.ts` (Zustand + `persist`) stores `{token, user}` in localStorage under key `ats-randa-auth`. `services/api.ts` (axios) reads the token from Zustand on every request via an interceptor; 401 responses trigger logout + redirect.
 
-**Favorites** (`useFavorites` hook) — stored entirely in `localStorage` under key `ats_favorite_offers`. No backend endpoint.
+**RBAC on routes**: `router/ProtectedRoute.tsx` wraps role-restricted sections. Each role has its own Layout (`RHLayout`, `CandidateLayout`, etc.) with its own sidebar.
 
-**Application timeline** — `GET /api/candidate/applications/{id}/detail` returns a 4-step timeline (POSTULÉ → ANALYSE IA → EN EXAMEN → DÉCISION) plus per-criteria scores and optional RH feedback. Rendered in `components/candidature/CandidatureTimeline.tsx`, opened from `ApplicationsPage` via an Ant Design Drawer.
+**Data fetching**: custom hooks in `hooks/` wrap TanStack Query (`useQuery` / `useMutation`). Each hook calls a service function from `services/`. Do not call `api.ts` directly from pages — go through the hook → service chain.
 
-Backend endpoints (via `candidateService`):
-- Profile: `GET/PUT /api/candidate/profile`, sub-routes `/personal`, `/professional`, `/visibility`, `/completion`, `/photo`
-- Full profile: `GET /api/candidate/profile/full`
-- Experiences: `GET/POST /api/candidate/profile/experiences`, `DELETE /api/candidate/profile/experiences/{id}`
-- Skills: `GET/POST /api/candidate/profile/skills`, `DELETE /api/candidate/profile/skills/{id}`
-- CVs: `GET/POST /api/candidate/cvs`
-- Cover letters: `GET/POST /api/candidate/cover-letters`, `PUT/DELETE /api/candidate/cover-letters/{id}`
-- Documents: `GET /api/candidate/documents`, `POST /api/candidate/documents/upload`, `DELETE /api/candidate/documents/{id}`
-- Applications: `GET /api/candidate/applications`, `GET /api/candidate/applications/{id}/detail`, `POST /api/candidate/offers/{id}/apply`, `DELETE /api/candidate/applications/{id}`
+**Images/assets** live in `frontend/public/` (served at `/`) and `frontend/public/icon/`.
 
-#### CV Generator (`/candidate/cv-generator`)
-- **Component**: `frontend/src/components/cv/CVDocument.tsx` — `React.forwardRef` rendering CV in Keejob style (A4, inline CSS, brand colours).
-- **Page**: `frontend/src/pages/candidate/CVGeneratorPage.tsx` — uses `useFullProfile()` + `react-to-print` for PDF export.
-- **Data source**: `GET /api/candidate/profile/full` — returns `{ profile, completion, experiences, skills, langues, formations }`. `formations` and `langues` are extracted from `cv_entities` JSONB of the candidate's indexed CVs.
-- **formations structure** (from Keejob parser): `{ diplome, etablissement, type, statut, mention, date_debut, date_fin, pays }`.
-- **Library**: `react-to-print ^3.3.0` (hook API: `useReactToPrint({ contentRef })`).
+---
 
-#### `FullProfileOut` schema (backend + frontend)
-Both `candidate_schemas.py` and `types/cv.ts` include `formations: List[dict]` / `formations: FormationOut[]`. Keep them in sync when adding fields.
+## Key Constraints
 
-### Agent Portal (`/agent`)
-Pages: `DashboardPage`, `UploadCVPage`, `BatchUploadPage`, `CVListPage`, `HistoryPage`.
-
-Backend endpoints:
-- `GET /api/agent/dashboard` — stats (total CVs, indexed, pending, errors, retained/refused/pending decisions) + recent candidates list
-- `GET /api/agent/candidates/{cv_id}/results` — matching results for a specific CV owned by this agent
-- `POST /api/agent/cvs/upload` — single CV upload; accepts optional `offer_id` (Form field); response includes `ocr_quality` dict from `evaluate_ocr_quality()`
-- `POST /api/agent/cvs/batch` — upload up to 10 files at once; returns per-file OCR quality scores
-- `GET /api/agent/history` — paginated activity log with per-CV matching decisions
-- `GET /api/agent/cvs` — paginated list filtered to this agent's CVs
-- `GET /api/agent/cvs/{cv_id}` — CV detail
-
-**OCR quality** (`nlp/ocr.py::evaluate_ocr_quality`) — heuristic scoring 0–100 based on character count, presence of email/phone/section keywords. Returns `{ score, niveau, message, conseils, nb_caracteres, a_email, a_telephone, a_sections }`.
-
-### RH Portal (`/rh`)
-Pages: `DashboardPage`, `OffersPage`, `OfferFormPage`, `MatchingPage`, `ResultsPage`, `CVthequePage`, `CandidaturesPage`.
-
-Backend endpoints:
-- `GET /api/rh/dashboard` — RH stats and recent activity
-- `GET /api/rh/dashboard/stats` — aggregated stats for charts
-- `GET /api/rh/offers` — paginated job offers list
-- `POST /api/rh/offers` — create offer (triggers async embedding via Celery)
-- `GET/PUT /api/rh/offers/{offer_id}` — get/update offer
-- `DELETE /api/rh/offers/{offer_id}` — archive offer (soft delete)
-- `POST /api/rh/offers/{offer_id}/matching` — launch matching (pgvector → scorer → top 50 stored)
-- `GET /api/rh/offers/{offer_id}/matching` — get matching results
-- `PATCH /api/rh/offers/{offer_id}/matching/{result_id}` — update decision; accepts `{ decision, feedback_rh?, feedback_visible? }`. When `feedback_visible=true`, feedback is visible to candidate.
-- `GET /api/rh/offers/{offer_id}/export/pdf` — export matching results as PDF
-- `GET /api/rh/cvs/search` — search CVs in the cvthèque
-
-The `MatchResultTable` component opens a Modal on Retenir/Refuser to collect feedback before confirming.
-
-### Admin Portal (`/admin`)
-Pages: `DashboardPage`, `UsersPage`, `UserFormPage`, `AdminCVsPage`, `AuditPage`, `SystemHealthPage`.
-
-Backend endpoints:
-- `GET /api/admin/stats` — global platform statistics
-- `GET /api/admin/system/health` — system health (DB, Redis, Celery, disk, memory)
-- `POST /api/admin/system/reindex` — trigger re-embedding of all CVs via Celery
-- `GET /api/admin/audit/logs` — paginated audit log
-- `GET /api/admin/cvs` — all CVs across all sources
-- `GET /api/admin/users` — user list
-- `POST /api/admin/users` — create user
-- `GET/PUT /api/admin/users/{user_id}` — get/update user
-- `PATCH /api/admin/users/{user_id}/toggle` — activate/deactivate user
-
-## Infrastructure
-
-Docker Compose services: `postgres` (5432), `redis` (6379), `backend` (8000), `celery_worker`, `flower` (5555), `nginx` (80), `prometheus` (9090), `grafana` (3001).
-
-Nginx routes: `/api/*` and `/docs` → `backend:8000`, `/` → `host.docker.internal:3000` (host npm dev server).
-
-API docs: `http://localhost:8000/docs` (Swagger) and `/redoc`.
-
-## Environment Variables
-
-All config lives in `.env` at the repo root. Key variables: `POSTGRES_*`, `REDIS_*`, `SECRET_KEY`, `CORS_ORIGINS`, `UPLOAD_DIR`, `MAX_FILE_SIZE_MB`. The backend reads these via `app/core/config.py`. See `.env.example` for the full list.
+- **`backend/app/schemas/` is empty/legacy** — use `backend/app/models/schemas/` for all Pydantic schemas.
+- **`backend/app/services/shared/email_service.py` and `file_service.py` are empty** — email logic lives in `core/mailer.py`.
+- **`MAIL_ENABLED=false` by default** — emails are logged only; set `MAIL_ENABLED=true` + SMTP credentials to send real emails.
+- The frontend `baseURL` in `services/api.ts` is hardcoded to `http://localhost:8000`. In production, this must be updated or proxied via Nginx.
+- Black line length is **100** (not 88). CI uses `--max-line-length=100 --ignore=E501,W503`.
