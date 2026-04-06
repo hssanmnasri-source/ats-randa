@@ -9,7 +9,7 @@ ATS RANDA is an Applicant Tracking System built with FastAPI (Python 3.11) + Rea
 ## Common Commands
 
 ### Docker (primary development environment)
-On Windows, use `docker.exe` instead of `docker` if the plain command fails.
+A `Makefile` is available at the repo root. On Windows use `docker.exe` if the plain command fails.
 
 ```bash
 make up          # Start all services
@@ -20,9 +20,21 @@ make migrate     # Run Alembic migrations inside the backend container
 make db-shell    # PostgreSQL CLI
 make clean       # Remove containers + volumes
 make status      # Show container status
+make test        # Run pytest with coverage
+make test-unit   # Unit tests only
+make lint        # flake8 + black checks
+make format      # Auto-format with black
+make info        # DB row counts + container state
+make monitoring  # Print URLs for Grafana/Prometheus/Flower
 ```
 
 Docker container names for `docker exec`: `ats_backend`, `ats_postgres`, `ats_redis`.
+
+#### Database migrations
+Schema migrations that add nullable columns are done directly via psql rather than Alembic (no migration history for these columns):
+```bash
+make db-shell
+```
 
 ### Backend (standalone)
 ```bash
@@ -31,24 +43,17 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
-### Testing & Linting
-```bash
-make test              # Run pytest with coverage
-make test-unit         # Unit tests only
-make test-integration  # Integration tests only
-make lint              # flake8 + black checks
-make format            # Auto-format with black
-```
-
 ### Frontend
-The frontend runs **outside Docker** as a native npm process (not a container):
+The frontend runs **outside Docker** as a native npm process. Nginx proxies `/` → `host.docker.internal:3000`, so `npm run dev` must be running for the frontend to be accessible at `http://localhost`.
+
 ```bash
 cd frontend
 npm install
-npm run dev      # Dev server on port 3000 (required for nginx proxy to work)
+npm run dev      # Dev server on port 3000
 npm run build    # TypeScript check + Vite bundle
 ```
-Nginx proxies `/` → `host.docker.internal:3000`, so `npm run dev` must be running for the frontend to be accessible at `http://localhost`.
+
+The `@` alias in `vite.config.ts` resolves to `frontend/src/`.
 
 ### Useful one-liners
 ```bash
@@ -82,8 +87,8 @@ backend/app/
 │   │   ├── visitor/     # Auth (login/register), public job offers
 │   │   ├── agent/       # CV upload/batch, dashboard, history, candidate management
 │   │   ├── candidate/   # Profile, CV form submission, applications + timeline
-│   │   ├── rh/          # Job offers CRUD, matching + feedback, dashboard
-│   │   └── admin/       # Users, stats, audit logs
+│   │   ├── rh/          # Job offers CRUD, matching + feedback, dashboard, calendar, n8n
+│   │   └── admin/       # Users, stats, audit logs, system health
 │   └── dependencies.py  # Role-based access control dependencies (require_agent, require_rh, etc.)
 ├── services/            # Business logic (mirrors routes/ structure)
 ├── repositories/        # All DB queries (SQLAlchemy async sessions)
@@ -108,7 +113,8 @@ backend/app/
     ├── config.py        # Settings loaded from .env (Pydantic BaseSettings)
     ├── database.py      # Async SQLAlchemy session factory + pgvector init
     ├── security.py      # JWT creation/validation + bcrypt password hashing
-    └── celery_app.py    # Celery + Redis task queue config
+    ├── celery_app.py    # Celery + Redis task queue config
+    └── mailer.py        # SMTP email sending (send_entretien_invitation())
 ```
 
 ### User Roles & Auth
@@ -124,6 +130,7 @@ The dependency returns a **User** object (from `users` table). For candidate rou
 - `JobOffer` — has its own pgvector embedding for semantic matching
 - `Resultat` — links CV ↔ JobOffer with multi-criteria scores, `Decision` (`RETAINED/PENDING/REFUSED`), and optional `feedback_rh` / `feedback_visible` / `date_decision` fields added via direct migration (not Alembic)
 - `Candidate` → `Competences` and `Experiences` (one-to-many)
+- `Entretien` — interview scheduling table created by n8n workflow; statuts: `PROPOSE → CONFIRME → ENVOYE`, also `ANNULE`/`PLANIFIE`
 
 ### Matching/Scoring (nlp/scorer.py)
 - **40%** semantic similarity (pgvector cosine distance between CV and offer embeddings)
@@ -136,16 +143,26 @@ Matching flow: pgvector pre-filters top 200 CVs by cosine similarity → 4-crite
 ### CV Repositories Filter
 `candidate_repository.list_all()` accepts an optional `agent_id` parameter. When passed, it filters candidates to only those with at least one CV with `source=AGENT AND id_agent=agent_id`. Always pass `agent_id=agent.id` in agent routes — without it, all 4,000+ Keejob candidates are returned incorrectly.
 
+### n8n Interview Automation (docs/n8n.md)
+Business logic (slot generation, email sending) lives entirely in the **backend Python**. n8n is an optional trigger/dashboard at `http://localhost:5678`. The RH flow uses `/api/n8n/` routes:
+- `POST /api/n8n/declencher-generation` — generates interview slots for all RETAINED candidates
+- `POST /api/n8n/envoyer-emails-backend` — sends emails via `mailer.py`
+- Webhook routes (`/api/n8n/creneaux-generes`, `/api/n8n/entretiens/emails-envoyes`) are secured by `X-N8N-Secret` header
+
+n8n workflow JSONs live in `n8n/workflows/` and are imported via Settings → Import Workflow in the n8n UI.
+
 ### Adding New Routes
 Register every new router in `main.py` with `app.include_router(...)`. Schema migrations that are low-risk (adding nullable columns) are done directly via `psql` in the running container rather than through Alembic, since there is no migration history for these columns.
 
 ## Frontend Architecture
 
 ### Tech Stack
-- **UI**: Ant Design 5 (`antd`) with a custom dark-red/gold brand theme
+- **UI**: Ant Design 5 (`antd`) + Tailwind CSS 4 — both are active in this project
 - **Data fetching**: TanStack React Query (`@tanstack/react-query`) — all server state goes through it
 - **Global state**: Zustand (auth token/user, notifications only)
 - **Routing**: React Router 6 with role-based `ProtectedRoute`
+- **Charts**: Recharts
+- **Calendar**: FullCalendar (`@fullcalendar/react` + daygrid/timegrid/interaction)
 - **Icons**: `@ant-design/icons`
 
 ### Design System
@@ -184,21 +201,10 @@ Pages: `DashboardPage`, `MyCVPage`, `CVGeneratorPage`, `ApplicationsPage`, `Prof
 
 **Application timeline** — `GET /api/candidate/applications/{id}/detail` returns a 4-step timeline (POSTULÉ → ANALYSE IA → EN EXAMEN → DÉCISION) plus per-criteria scores and optional RH feedback. Rendered in `components/candidature/CandidatureTimeline.tsx`, opened from `ApplicationsPage` via an Ant Design Drawer.
 
-Backend endpoints (via `candidateService`):
-- Profile: `GET/PUT /api/candidate/profile`, sub-routes `/personal`, `/professional`, `/visibility`, `/completion`, `/photo`
-- Full profile: `GET /api/candidate/profile/full`
-- Experiences: `GET/POST /api/candidate/profile/experiences`, `DELETE /api/candidate/profile/experiences/{id}`
-- Skills: `GET/POST /api/candidate/profile/skills`, `DELETE /api/candidate/profile/skills/{id}`
-- CVs: `GET/POST /api/candidate/cvs`
-- Cover letters: `GET/POST /api/candidate/cover-letters`, `PUT/DELETE /api/candidate/cover-letters/{id}`
-- Documents: `GET /api/candidate/documents`, `POST /api/candidate/documents/upload`, `DELETE /api/candidate/documents/{id}`
-- Applications: `GET /api/candidate/applications`, `GET /api/candidate/applications/{id}/detail`, `POST /api/candidate/offers/{id}/apply`, `DELETE /api/candidate/applications/{id}`
-
 #### CV Generator (`/candidate/cv-generator`)
 - **Component**: `frontend/src/components/cv/CVDocument.tsx` — `React.forwardRef` rendering CV in Keejob style (A4, inline CSS, brand colours).
 - **Page**: `frontend/src/pages/candidate/CVGeneratorPage.tsx` — uses `useFullProfile()` + `react-to-print` for PDF export.
 - **Data source**: `GET /api/candidate/profile/full` — returns `{ profile, completion, experiences, skills, langues, formations }`. `formations` and `langues` are extracted from `cv_entities` JSONB of the candidate's indexed CVs.
-- **formations structure** (from Keejob parser): `{ diplome, etablissement, type, statut, mention, date_debut, date_fin, pays }`.
 - **Library**: `react-to-print ^3.3.0` (hook API: `useReactToPrint({ contentRef })`).
 
 #### `FullProfileOut` schema (backend + frontend)
@@ -207,52 +213,23 @@ Both `candidate_schemas.py` and `types/cv.ts` include `formations: List[dict]` /
 ### Agent Portal (`/agent`)
 Pages: `DashboardPage`, `UploadCVPage`, `BatchUploadPage`, `CVListPage`, `HistoryPage`.
 
-Backend endpoints:
-- `GET /api/agent/dashboard` — stats (total CVs, indexed, pending, errors, retained/refused/pending decisions) + recent candidates list
-- `GET /api/agent/candidates/{cv_id}/results` — matching results for a specific CV owned by this agent
-- `POST /api/agent/cvs/upload` — single CV upload; accepts optional `offer_id` (Form field); response includes `ocr_quality` dict from `evaluate_ocr_quality()`
-- `POST /api/agent/cvs/batch` — upload up to 10 files at once; returns per-file OCR quality scores
-- `GET /api/agent/history` — paginated activity log with per-CV matching decisions
-- `GET /api/agent/cvs` — paginated list filtered to this agent's CVs
-- `GET /api/agent/cvs/{cv_id}` — CV detail
-
 **OCR quality** (`nlp/ocr.py::evaluate_ocr_quality`) — heuristic scoring 0–100 based on character count, presence of email/phone/section keywords. Returns `{ score, niveau, message, conseils, nb_caracteres, a_email, a_telephone, a_sections }`.
 
 ### RH Portal (`/rh`)
-Pages: `DashboardPage`, `OffersPage`, `OfferFormPage`, `MatchingPage`, `ResultsPage`, `CVthequePage`, `CandidaturesPage`.
-
-Backend endpoints:
-- `GET /api/rh/dashboard` — RH stats and recent activity
-- `GET /api/rh/dashboard/stats` — aggregated stats for charts
-- `GET /api/rh/offers` — paginated job offers list
-- `POST /api/rh/offers` — create offer (triggers async embedding via Celery)
-- `GET/PUT /api/rh/offers/{offer_id}` — get/update offer
-- `DELETE /api/rh/offers/{offer_id}` — archive offer (soft delete)
-- `POST /api/rh/offers/{offer_id}/matching` — launch matching (pgvector → scorer → top 50 stored)
-- `GET /api/rh/offers/{offer_id}/matching` — get matching results
-- `PATCH /api/rh/offers/{offer_id}/matching/{result_id}` — update decision; accepts `{ decision, feedback_rh?, feedback_visible? }`. When `feedback_visible=true`, feedback is visible to candidate.
-- `GET /api/rh/offers/{offer_id}/export/pdf` — export matching results as PDF
-- `GET /api/rh/cvs/search` — search CVs in the cvthèque
+Pages: `DashboardPage`, `OffersPage`, `OfferFormPage`, `MatchingPage`, `ResultsPage`, `CVthequePage`, `CandidaturesPage`, `N8NCalendarPage`.
 
 The `MatchResultTable` component opens a Modal on Retenir/Refuser to collect feedback before confirming.
+
+`PATCH /api/rh/offers/{offer_id}/matching/{result_id}` accepts `{ decision, feedback_rh?, feedback_visible? }`. When `feedback_visible=true`, feedback is visible to candidate.
+
+**N8NCalendarPage** (`/rh/n8n-calendar`) — polls `['n8n', 'propose']` every 5s and `['n8n', 'calendrier']` every 10s. The frontend never contacts n8n directly; all requests go through backend `/api/n8n/` routes.
 
 ### Admin Portal (`/admin`)
 Pages: `DashboardPage`, `UsersPage`, `UserFormPage`, `AdminCVsPage`, `AuditPage`, `SystemHealthPage`.
 
-Backend endpoints:
-- `GET /api/admin/stats` — global platform statistics
-- `GET /api/admin/system/health` — system health (DB, Redis, Celery, disk, memory)
-- `POST /api/admin/system/reindex` — trigger re-embedding of all CVs via Celery
-- `GET /api/admin/audit/logs` — paginated audit log
-- `GET /api/admin/cvs` — all CVs across all sources
-- `GET /api/admin/users` — user list
-- `POST /api/admin/users` — create user
-- `GET/PUT /api/admin/users/{user_id}` — get/update user
-- `PATCH /api/admin/users/{user_id}/toggle` — activate/deactivate user
-
 ## Infrastructure
 
-Docker Compose services: `postgres` (5432), `redis` (6379), `backend` (8000), `celery_worker`, `flower` (5555), `nginx` (80), `prometheus` (9090), `grafana` (3001).
+Docker Compose services: `postgres` (5432), `redis` (6379), `backend` (8000), `celery_worker`, `flower` (5555), `nginx` (80), `prometheus` (9090), `grafana` (3001), `n8n` (5678), `redis-exporter`, `postgres-exporter`.
 
 Nginx routes: `/api/*` and `/docs` → `backend:8000`, `/` → `host.docker.internal:3000` (host npm dev server).
 
@@ -260,4 +237,4 @@ API docs: `http://localhost:8000/docs` (Swagger) and `/redoc`.
 
 ## Environment Variables
 
-All config lives in `.env` at the repo root. Key variables: `POSTGRES_*`, `REDIS_*`, `SECRET_KEY`, `CORS_ORIGINS`, `UPLOAD_DIR`, `MAX_FILE_SIZE_MB`. The backend reads these via `app/core/config.py`. See `.env.example` for the full list.
+All config lives in `.env` at the repo root. Key variables: `POSTGRES_*`, `REDIS_*`, `SECRET_KEY`, `CORS_ORIGINS`, `UPLOAD_DIR`, `MAX_FILE_SIZE_MB`, `MAIL_*`, `N8N_*`, `GRAFANA_*`. The backend reads these via `app/core/config.py` (Pydantic BaseSettings with `extra="ignore"` to allow extra vars like `GRAFANA_*`). See `.env.example` for the full list.
