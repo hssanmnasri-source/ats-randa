@@ -2,11 +2,11 @@ import React, { useState } from 'react'
 import {
   Card, Row, Col, Button, Table, Tag, Select,
   DatePicker, Space, Alert, Modal,
-  Statistic, message, Badge, Drawer, Input,
+  Statistic, message, Badge, Drawer, Input, Popconfirm,
 } from 'antd'
 import {
   ThunderboltOutlined, CheckCircleOutlined,
-  MailOutlined, EditOutlined,
+  MailOutlined, EditOutlined, DeleteOutlined,
 } from '@ant-design/icons'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/services/api'
@@ -83,6 +83,16 @@ const N8NCalendarPage: React.FC = () => {
     }
   }
 
+  // ── Supprimer un entretien ────────────────────────────
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => api.delete(`/api/rh/calendar/${id}`),
+    onSuccess: () => {
+      message.success('Rendez-vous supprimé')
+      qc.invalidateQueries({ queryKey: ['n8n'] })
+    },
+    onError: () => message.error('Erreur lors de la suppression'),
+  })
+
   // ── Modifier un entretien ──────────────────────────────
   const updateMutation = useMutation({
     mutationFn: (data: Partial<Entretien> & { id: number }) =>
@@ -108,7 +118,13 @@ const N8NCalendarPage: React.FC = () => {
           confirmed: data.confirmed,
         })
         const { nb_sent, nb_total } = emailRes.data
-        message.success(`📧 ${nb_sent}/${nb_total} emails envoyés avec succès !`)
+        if (nb_sent === 0) {
+          message.warning(`⚠️ Aucun email envoyé (${nb_total} entretiens confirmés) — vérifiez MAIL_ENABLED dans .env`)
+        } else if (nb_sent < nb_total) {
+          message.warning(`📧 ${nb_sent}/${nb_total} emails envoyés — vérifiez les logs pour les échecs`)
+        } else {
+          message.success(`📧 ${nb_sent}/${nb_total} emails envoyés avec succès !`)
+        }
       } catch {
         message.warning('⚠️ Entretiens confirmés — vérifiez MAIL_ENABLED dans .env pour les emails')
       }
@@ -273,14 +289,32 @@ const N8NCalendarPage: React.FC = () => {
                   {
                     title: '',
                     render: (_: unknown, r: Entretien) => (
-                      <Button
-                        size="small"
-                        icon={<EditOutlined />}
-                        onClick={() => setEditingEntretien(r)}
-                        style={{ color: COLORS.primary }}
-                      >
-                        Modifier
-                      </Button>
+                      <Space>
+                        <Button
+                          size="small"
+                          icon={<EditOutlined />}
+                          onClick={() => setEditingEntretien(r)}
+                          style={{ color: COLORS.primary }}
+                        >
+                          Modifier
+                        </Button>
+                        <Popconfirm
+                          title="Supprimer ce rendez-vous ?"
+                          description="Cette action est irréversible."
+                          okText="Supprimer"
+                          cancelText="Annuler"
+                          okButtonProps={{ danger: true, loading: deleteMutation.isPending }}
+                          onConfirm={() => deleteMutation.mutate(r.id)}
+                        >
+                          <Button
+                            size="small"
+                            danger
+                            icon={<DeleteOutlined />}
+                          >
+                            Supprimer
+                          </Button>
+                        </Popconfirm>
+                      </Space>
                     ),
                   },
                 ]}
