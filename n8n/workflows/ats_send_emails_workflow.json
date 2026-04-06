@@ -1,0 +1,72 @@
+{
+  "name": "ATS RANDA — Envoi Emails Entretiens",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ats-envoyer-emails",
+        "responseMode": "responseNode"
+      },
+      "id": "webhook-email",
+      "name": "📧 Déclencheur Email",
+      "type": "n8n-nodes-base.webhook",
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extraire la liste des entretiens confirmés du body\nconst body = $input.first().json.body || $input.first().json;\nconst confirmed = body.confirmed || [];\nreturn confirmed.map(item => ({ json: item }));"
+      },
+      "id": "split",
+      "name": "🔀 Diviser par candidat",
+      "type": "n8n-nodes-base.code",
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "ats@randa.tn",
+        "toEmail": "={{ $json.candidat_email }}",
+        "subject": "={{ '📅 Invitation entretien — ' + $json.offre_titre }}",
+        "emailType": "html",
+        "message": "={{ `<div style=\"font-family:Arial,sans-serif;max-width:600px;margin:0 auto\"><div style=\"background:linear-gradient(135deg,#3D0C02,#8B1A1A);padding:30px;border-radius:12px 12px 0 0;text-align:center\"><h1 style=\"color:#F0D080;margin:0\">📅 Invitation à un entretien</h1><p style=\"color:#C9A84C\">ATS RANDA</p></div><div style=\"background:white;padding:30px;border:1px solid #E8E8E8\"><p>Bonjour <strong>${$json.candidat_nom}</strong>,</p><p>Votre candidature pour le poste <strong>${$json.offre_titre}</strong> a été retenue.</p><div style=\"background:#FFF8E6;border:2px solid #C9A84C;border-radius:12px;padding:20px;margin:20px 0\"><h3 style=\"color:#8B1A1A;margin:0 0 12px\">📋 Détails de l'entretien</h3><p>📅 <strong>Date :</strong> ${$json.date}</p><p>⏱️ <strong>Durée :</strong> ${$json.duree} minutes</p><p>📍 <strong>Lieu :</strong> ${$json.lieu}</p><p>👤 <strong>Contact RH :</strong> ${$json.rh_nom} — ${$json.rh_email}</p></div><p>Merci de confirmer votre présence.</p></div><div style=\"background:#F5F5F5;padding:16px;border-radius:0 0 12px 12px;text-align:center\"><p style=\"color:#8B8B8B;font-size:12px\">RANDA — ATS Applicant Tracking System</p></div></div>` }}",
+        "options": {}
+      },
+      "id": "send-email",
+      "name": "📨 Envoyer Email",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://backend:8000/api/n8n/entretiens/emails-envoyes",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "x-n8n-secret", "value": "ats-randa-n8n-secret-2026" }]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ entretien_ids: [$json.entretien_id], n8n_execution_id: $execution.id }) }}"
+      },
+      "id": "mark-sent",
+      "name": "✅ Marquer comme envoyé",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"success\": true}"
+      },
+      "id": "respond",
+      "name": "✅ Répondre",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [1120, 300]
+    }
+  ],
+  "connections": {
+    "📧 Déclencheur Email": { "main": [[{ "node": "🔀 Diviser par candidat", "type": "main", "index": 0 }]] },
+    "🔀 Diviser par candidat": { "main": [[{ "node": "📨 Envoyer Email", "type": "main", "index": 0 }]] },
+    "📨 Envoyer Email": { "main": [[{ "node": "✅ Marquer comme envoyé", "type": "main", "index": 0 }]] },
+    "✅ Marquer comme envoyé": { "main": [[{ "node": "✅ Répondre", "type": "main", "index": 0 }]] }
+  }
+}

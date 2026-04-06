@@ -40,6 +40,7 @@ import HistoryPage from '../pages/agent/HistoryPage';
 
 // RH pages
 import RHDashboard from '../pages/rh/DashboardPage';
+import N8NCalendarPage from '../pages/rh/N8NCalendarPage';
 import OffersPage from '../pages/rh/OffersPage';
 import OfferFormPage from '../pages/rh/OfferFormPage';
 import MatchingPage from '../pages/rh/MatchingPage';
@@ -137,6 +138,7 @@ export const router = createBrowserRouter([
       { path: 'cvtheque',           element: <CVthequePage /> },
       { path: 'candidatures',       element: <CandidaturesPage /> },
       { path: 'calendar',           element: <CalendarPage /> },
+      { path: 'n8n-calendar',       element: <N8NCalendarPage /> },
       { path: 'stats',              element: <StatsPage /> },
     ],
   },

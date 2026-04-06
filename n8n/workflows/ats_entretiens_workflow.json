@@ -1,0 +1,91 @@
+{
+  "name": "ATS RANDA — Génération Entretiens",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ats-generer-entretiens",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "🚀 Déclencheur Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [240, 300],
+      "webhookId": "ats-generer-entretiens"
+    },
+    {
+      "parameters": {
+        "url": "http://backend:8000/api/n8n/retained-candidates",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $json.body.token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-retained",
+      "name": "📋 Récupérer RETAINED",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Générer les créneaux automatiquement\nconst data = $input.first().json;\nconst offres = data.offres || [];\nconst rhId = data.rh_id;\n\nconst creneaux = [];\n\n// Date de début : prochain lundi à 9h00\nconst now = new Date();\nconst dayOfWeek = now.getDay();\nconst daysUntilMonday = dayOfWeek === 0 ? 1 : (8 - dayOfWeek) % 7 || 7;\nnow.setDate(now.getDate() + daysUntilMonday);\nnow.setHours(9, 0, 0, 0);\n\nlet currentSlot = new Date(now);\nconst DUREE = 30; // minutes\nconst PAUSE = 15; // pause entre entretiens\n\nfor (const offre of offres) {\n  for (const candidat of offre.candidats) {\n    creneaux.push({\n      resultat_id: candidat.resultat_id,\n      offre_id: offre.offre_id,\n      candidat_email: candidat.email,\n      candidat_nom: `${candidat.prenom} ${candidat.nom}`,\n      date_entretien: currentSlot.toISOString(),\n      duree_minutes: DUREE,\n      type_entretien: 'presentiel',\n      lieu: 'RANDA — ZI BIR EL KASAA BEN AROUS, BEN AROUS'\n    });\n\n    currentSlot = new Date(currentSlot.getTime() + (DUREE + PAUSE) * 60000);\n\n    // Pause déjeuner 12h → 14h\n    if (currentSlot.getHours() >= 12 && currentSlot.getHours() < 14) {\n      currentSlot.setHours(14, 0, 0, 0);\n    }\n\n    // Fin de journée 18h → lendemain 9h\n    if (currentSlot.getHours() >= 18) {\n      currentSlot.setDate(currentSlot.getDate() + 1);\n      currentSlot.setHours(9, 0, 0, 0);\n      if (currentSlot.getDay() === 6) currentSlot.setDate(currentSlot.getDate() + 2);\n      if (currentSlot.getDay() === 0) currentSlot.setDate(currentSlot.getDate() + 1);\n    }\n  }\n}\n\nreturn [{\n  json: {\n    n8n_execution_id: $execution.id,\n    rh_id: rhId,\n    creneaux: creneaux,\n    total: creneaux.length\n  }\n}];"
+      },
+      "id": "generate-slots",
+      "name": "🗓️ Générer Créneaux",
+      "type": "n8n-nodes-base.code",
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://backend:8000/api/n8n/creneaux-generes",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-n8n-secret", "value": "ats-randa-n8n-secret-2026" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "save-slots",
+      "name": "💾 Sauvegarder en DB",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, message: 'Créneaux générés', total: $('🗓️ Générer Créneaux').first().json.total }) }}"
+      },
+      "id": "respond",
+      "name": "✅ Répondre",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [1120, 300]
+    }
+  ],
+  "connections": {
+    "🚀 Déclencheur Webhook": {
+      "main": [[{ "node": "📋 Récupérer RETAINED", "type": "main", "index": 0 }]]
+    },
+    "📋 Récupérer RETAINED": {
+      "main": [[{ "node": "🗓️ Générer Créneaux", "type": "main", "index": 0 }]]
+    },
+    "🗓️ Générer Créneaux": {
+      "main": [[{ "node": "💾 Sauvegarder en DB", "type": "main", "index": 0 }]]
+    },
+    "💾 Sauvegarder en DB": {
+      "main": [[{ "node": "✅ Répondre", "type": "main", "index": 0 }]]
+    }
+  }
+}

@@ -13,6 +13,7 @@ import {
   TeamOutlined,
   CalendarOutlined,
   BarChartOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
@@ -33,8 +34,9 @@ const menuItems = [
   { key: '/rh/results',    icon: <TrophyOutlined />,       label: 'Résultats & Décisions' },
   { key: '/rh/cvtheque',   icon: <DatabaseOutlined />,    label: 'CVthèque' },
   { key: '/rh/candidatures', icon: <TeamOutlined />,      label: 'Candidatures reçues' },
-  { key: '/rh/calendar',    icon: <CalendarOutlined />,   label: 'Calendrier entretiens' },
-  { key: '/rh/stats',      icon: <BarChartOutlined />,   label: 'Statistiques' },
+  { key: '/rh/calendar',      icon: <CalendarOutlined />,     label: 'Calendrier entretiens' },
+  { key: '/rh/n8n-calendar', icon: <ThunderboltOutlined />, label: '🤖 Entretiens Auto (n8n)' },
+  { key: '/rh/stats',        icon: <BarChartOutlined />,    label: 'Statistiques' },
 ];
 
 function SidebarWidget({ collapsed }: { collapsed: boolean }) {

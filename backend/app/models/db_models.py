@@ -324,6 +324,8 @@ class Entretien(Base):
     notes_rh              = Column(Text, nullable=True)
     statut                = Column(String(20), default="PLANIFIE")
     email_candidat_envoye = Column(Boolean, default=False)
+    email_envoye          = Column(Boolean, default=False)
+    n8n_execution_id      = Column(String(255), nullable=True)
     created_at            = Column(DateTime(timezone=True), server_default=func.now())
     updated_at            = Column(DateTime(timezone=True), onupdate=func.now())
 
