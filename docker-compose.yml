@@ -174,9 +174,39 @@ services:
     networks:
       - ats_network
 
+  # ── n8n Workflow Automation ────────────────────
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: ats_n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      N8N_HOST: localhost
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      WEBHOOK_URL: http://localhost:5678
+      GENERIC_TIMEZONE: Africa/Tunis
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: ${POSTGRES_DB}
+      DB_POSTGRESDB_USER: ${POSTGRES_USER}
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ats_network
+
 volumes:
   postgres_data:
   redis_data:
+  n8n_data:
   uploads_data:
   prometheus_data:
   grafana_data:

@@ -27,6 +27,7 @@ from app.api.routes.agent.candidates import router as agent_candidates_router
 from app.api.routes.agent.dashboard import router as agent_dashboard_router
 from app.api.routes.auth.google import router as google_auth_router
 from app.api.routes.rh.calendar import router as rh_calendar_router
+from app.api.routes.rh.n8n_webhook import router as n8n_router
 
 
 logging.basicConfig(level=logging.INFO)
@@ -216,6 +217,7 @@ app.include_router(rh_matching_router)
 app.include_router(rh_dashboard_router)
 app.include_router(rh_cvs_router)
 app.include_router(rh_calendar_router)
+app.include_router(n8n_router)
 # Admin
 app.include_router(admin_users_router)
 app.include_router(admin_stats_router)
