@@ -1,5 +1,6 @@
 import React from 'react'
-import { Card, Row, Col, Badge, Button, Statistic, Spin, message, Popconfirm, Typography } from 'antd'
+import { Card, Row, Col, Badge, Button, Statistic, Spin, Popconfirm, Typography } from 'antd'
+import { msg as message } from '@/services/messageService';
 import {
   CheckCircleOutlined, CloseCircleOutlined,
   SyncOutlined, DatabaseOutlined, ThunderboltOutlined

@@ -9,8 +9,8 @@ import {
   Pagination,
   Empty,
   Spin,
-  message,
 } from 'antd';
+import { msg as message } from '@/services/messageService';
 import { SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { usePublicOffers } from '../../hooks/useOffers';

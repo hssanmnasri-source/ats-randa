@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import {
   Select, Card, Empty, Spin, Row, Col, Statistic,
-  Button, InputNumber, Badge, Progress,
-  message, Drawer, Space,
+  Button, InputNumber, Badge, Progress, Drawer, Space,
 } from 'antd';
+import { msg as message } from '@/services/messageService';
 import {
   CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined,
   FilterOutlined, DownloadOutlined, ReloadOutlined,

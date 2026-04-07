@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import {
   Card, Row, Col, Button, Table, Tag, Select,
   DatePicker, Space, Alert, Modal,
-  Statistic, message, Badge, Drawer, Input, Popconfirm,
+  Statistic, Badge, Drawer, Input, Popconfirm,
 } from 'antd'
+import { msg as message } from '@/services/messageService';
 import {
   ThunderboltOutlined, CheckCircleOutlined,
   MailOutlined, EditOutlined, DeleteOutlined,

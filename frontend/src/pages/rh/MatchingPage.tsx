@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import {
   Select, Button, Card, Empty, Spin, Space, Alert,
-  Typography, Tag, message, Slider, InputNumber,
+  Typography, Tag, Slider, InputNumber,
   Row, Col, Popover, Badge,
 } from 'antd';
+import { msg as message } from '@/services/messageService';
 import { AimOutlined, ReloadOutlined, FilePdfOutlined, SettingOutlined } from '@ant-design/icons';
 import { useRHOffers } from '../../hooks/useOffers';
 import { useMatchResults, useRunMatching, useUpdateDecision } from '../../hooks/useMatching';

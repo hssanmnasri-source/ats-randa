@@ -7,8 +7,9 @@ import frLocale from '@fullcalendar/core/locales/fr'
 import {
   Card, Modal, Select, InputNumber, DatePicker,
   Button, Table, Tag, Space, Alert,
-  Row, Col, message, Drawer
+  Row, Col, Drawer
 } from 'antd'
+import { msg as message } from '@/services/messageService';
 import {
   CalendarOutlined, SendOutlined,
   DeleteOutlined, PlusOutlined,

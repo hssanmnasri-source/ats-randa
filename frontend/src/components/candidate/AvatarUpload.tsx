@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Avatar, Spin, Tooltip, message } from 'antd';
+import { Avatar, Spin, Tooltip } from 'antd';
+import { msg as message } from '@/services/messageService';
 import { CameraOutlined, UserOutlined } from '@ant-design/icons';
 import ImgCrop from 'antd-img-crop';
 import { Upload } from 'antd';

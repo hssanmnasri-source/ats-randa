@@ -1,4 +1,5 @@
-import { Tag, Button, Card, Typography, Space, Divider, Spin, message } from 'antd';
+import { Tag, Button, Card, Typography, Space, Divider, Spin } from 'antd';
+import { msg as message } from '@/services/messageService';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   GlobalOutlined,

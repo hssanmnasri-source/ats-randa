@@ -1,8 +1,9 @@
 import React from 'react'
 import {
   Row, Col, Card, Alert, Button,
-  Table, Tag, Space, Spin, message
+  Table, Tag, Space, Spin
 } from 'antd'
+import { msg as message } from '@/services/messageService';
 import {
   DatabaseOutlined, TeamOutlined, FileTextOutlined,
   ThunderboltOutlined, WarningOutlined, CheckCircleOutlined,

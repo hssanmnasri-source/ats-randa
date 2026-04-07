@@ -12,23 +12,37 @@ ATS RANDA is an Applicant Tracking System built with FastAPI (Python 3.11) + Rea
 A `Makefile` is available at the repo root. On Windows use `docker.exe` if the plain command fails.
 
 ```bash
-make up          # Start all services
-make down        # Stop all services
-make build       # Rebuild and start
-make logs        # Stream all logs
-make migrate     # Run Alembic migrations inside the backend container
-make db-shell    # PostgreSQL CLI
-make clean       # Remove containers + volumes
-make status      # Show container status
-make test        # Run pytest with coverage
-make test-unit   # Unit tests only
-make lint        # flake8 + black checks
-make format      # Auto-format with black
-make info        # DB row counts + container state
-make monitoring  # Print URLs for Grafana/Prometheus/Flower
+make up              # Start all services
+make down            # Stop all services
+make restart         # Stop then start
+make build           # Rebuild and start
+make logs            # Stream all logs
+make logs-backend    # Backend logs only
+make logs-db         # Postgres logs only
+make shell           # bash inside ats_backend container
+make migrate         # Run Alembic migrations inside the backend container
+make migrate-create name="my_migration"  # Generate new Alembic revision
+make db-shell        # PostgreSQL CLI
+make clean           # Remove containers + volumes (destructive)
+make status          # Show container status
+make test            # Run pytest with coverage
+make test-unit       # Unit tests only
+make test-integration  # Integration tests only
+make lint            # flake8 + black checks
+make format          # Auto-format with black
+make security-scan   # bandit + safety checks
+make info            # DB row counts + container state
+make monitoring      # Print URLs for Grafana/Prometheus/Flower
+make backup          # Dump PostgreSQL to backups/
+make restore FILE=backups/ats_randa_*.sql.gz  # Restore a dump
 ```
 
 Docker container names for `docker exec`: `ats_backend`, `ats_postgres`, `ats_redis`.
+
+#### Running a single test
+```bash
+docker exec ats_backend pytest tests/path/to/test_file.py::test_function_name -v
+```
 
 #### Database migrations
 Schema migrations that add nullable columns are done directly via psql rather than Alembic (no migration history for these columns):
@@ -85,10 +99,11 @@ backend/app/
 ├── api/
 │   ├── routes/          # HTTP endpoints, organized by role
 │   │   ├── visitor/     # Auth (login/register), public job offers
+│   │   ├── auth/        # Google OAuth2 login (/api/auth/google/login, /callback)
 │   │   ├── agent/       # CV upload/batch, dashboard, history, candidate management
 │   │   ├── candidate/   # Profile, CV form submission, applications + timeline
 │   │   ├── rh/          # Job offers CRUD, matching + feedback, dashboard, calendar, n8n
-│   │   └── admin/       # Users, stats, audit logs, system health
+│   │   └── admin/       # Users, stats, audit logs, system health, roles, filiates
 │   └── dependencies.py  # Role-based access control dependencies (require_agent, require_rh, etc.)
 ├── services/            # Business logic (mirrors routes/ structure)
 ├── repositories/        # All DB queries (SQLAlchemy async sessions)

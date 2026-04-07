@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Table, Button, Space, Popconfirm, Tag, Typography, Select, message } from 'antd';
+import { Table, Button, Space, Popconfirm, Tag, Typography, Select } from 'antd';
+import { msg as message } from '@/services/messageService';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined, AimOutlined,
 } from '@ant-design/icons';

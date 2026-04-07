@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Card, Table, Tag, Select, Space, Typography, Row, Col, Statistic, Button, message } from 'antd'
+import { Card, Table, Tag, Select, Space, Typography, Row, Col, Statistic, Button } from 'antd'
+import { msg as message } from '@/services/messageService';
 import { DatabaseOutlined, SyncOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { useQuery } from '@tanstack/react-query'
 import api from '@/services/api'

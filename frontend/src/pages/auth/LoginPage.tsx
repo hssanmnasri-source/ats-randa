@@ -51,7 +51,7 @@ export default function LoginPage() {
 
       {isError && (
         <Alert
-          message="Email ou mot de passe incorrect."
+          title="Email ou mot de passe incorrect."
           type="error"
           showIcon
           style={{ marginBottom: 16 }}

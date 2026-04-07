@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Table, Tag, Button, Popconfirm, Empty, message, Drawer, Spin } from 'antd'
+import { Table, Tag, Button, Popconfirm, Empty, Drawer, Spin } from 'antd'
+import { msg as message } from '@/services/messageService';
 import { EyeOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'

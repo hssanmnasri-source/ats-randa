@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Upload, Button, Typography, Form, Input, message, Row, Col, Result } from 'antd';
+import { Upload, Button, Typography, Form, Input, Row, Col, Result } from 'antd';
+import { msg as message } from '@/services/messageService';
 import { InboxOutlined, FilePdfOutlined, FileImageOutlined, SwapOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import type { RcFile } from 'antd/es/upload';
 import { useNavigate } from 'react-router-dom';
