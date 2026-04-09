@@ -19,9 +19,11 @@ async def search_cvs(
     db: AsyncSession = Depends(get_db),
 ):
     """Recherche sémantique dans la CVthèque — trouve les CVs proches de la requête."""
+    import asyncio
     from app.nlp.embedder import encode
 
-    query_embedding = encode(q)
+    loop = asyncio.get_event_loop()
+    query_embedding = await loop.run_in_executor(None, encode, q)
     embedding_str = "[" + ",".join(str(float(v)) for v in query_embedding) + "]"
 
     results = await db.execute(

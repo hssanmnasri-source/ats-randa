@@ -41,6 +41,17 @@ async def lifespan(app: FastAPI):
     from app.models import db_models  # noqa: F401
 
     await init_db()
+
+    # ── Pré-charger le modèle NLP dans un thread (évite de bloquer l'event loop au 1er appel) ──
+    import asyncio
+    loop = asyncio.get_event_loop()
+    try:
+        from app.nlp.embedder import _get_model
+        await loop.run_in_executor(None, _get_model)
+        logger.info("✅ Modèle NLP chargé.")
+    except Exception as e:
+        logger.warning(f"⚠️  Impossible de pré-charger le modèle NLP: {e}")
+
     logger.info("✅ Ready!")
     yield
     logger.info("🛑 Shutting down...")

@@ -66,9 +66,10 @@ export default function CandidateLayout() {
       <Sider
         collapsed={collapsed}
         width={230}
-        style={{ background: SIDEBAR_BG, position: 'relative' }}
+        style={{ background: SIDEBAR_BG }}
         trigger={null}
       >
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Logo */}
         <div style={{
           padding: collapsed ? '12px 8px' : '16px',
@@ -156,13 +157,13 @@ export default function CandidateLayout() {
           theme="dark"
           mode="inline"
           selectedKeys={[selectedKey]}
-          style={{ background: SIDEBAR_BG, borderRight: 'none', marginTop: 4 }}
+          style={{ background: SIDEBAR_BG, borderRight: 'none', marginTop: 4, flex: 1 }}
           items={menuItems}
           onClick={({ key }) => navigate(key)}
         />
 
         {/* User info + logout */}
-        <div style={{ position: 'absolute', bottom: 24, width: '100%', padding: '0 12px' }}>
+        <div style={{ padding: '12px 12px 16px', borderTop: '1px solid #5C1010' }}>
           {!collapsed && (
             <Space style={{ marginBottom: 8, width: '100%' }}>
               <img src="/icon/candidat-icon.png" width={28} height={28} style={{ objectFit: 'contain', flexShrink: 0 }} alt="Candidat" />
@@ -183,6 +184,7 @@ export default function CandidateLayout() {
           >
             {!collapsed && 'Déconnexion'}
           </Button>
+        </div>
         </div>
       </Sider>
 

@@ -169,6 +169,18 @@ n8n workflow JSONs live in `n8n/workflows/` and are imported via Settings → Im
 ### Adding New Routes
 Register every new router in `main.py` with `app.include_router(...)`. Schema migrations that are low-risk (adding nullable columns) are done directly via `psql` in the running container rather than through Alembic, since there is no migration history for these columns.
 
+### NLP Embedder — critical async rule
+`nlp/embedder.py::encode()` and `encode_batch()` are **synchronous** and load a CPU-bound PyTorch model. Calling them directly inside an async route or service **blocks the entire event loop**, freezing all concurrent requests (including login) until the model finishes.
+
+**Always wrap in `run_in_executor`:**
+```python
+import asyncio
+loop = asyncio.get_event_loop()
+embedding = await loop.run_in_executor(None, encode, text)
+```
+
+The model is pre-warmed at startup in `main.py::lifespan()` via `run_in_executor` so the first real request doesn't pay the cold-start cost (~5–10s on CPU).
+
 ## Frontend Architecture
 
 ### Tech Stack
@@ -206,6 +218,12 @@ Axios instance with `baseURL: 'http://localhost:8000'`. All endpoint paths inclu
 
 **Vite proxy:** `vite.config.ts` also proxies `/api` → `http://localhost:8000` as a fallback for build-time usage.
 
+### Ant Design `message` API (`services/messageService.ts`)
+A singleton wrapper around Ant Design's `message` API. Components import `{ msg }` from `@/services/messageService` and call `msg.success(...)`, `msg.error(...)`, etc. The `MessageInstance` is registered once at app root via `setMessageInstance`. Always use `msg` instead of calling `message` directly from `antd` to avoid the "can only be used inside React component" warning.
+
+### Route Lazy Loading
+All page components in `router/index.tsx` are loaded with `React.lazy()` + `Suspense`. Only `LoginPage` and `RegisterPage` are eagerly imported (needed at startup). When adding a new page, always use `lazy(() => import('...'))` — never add a static import at the top of the router file. Heavy deps (FullCalendar, Recharts, `@ant-design/icons`) are pre-bundled via `optimizeDeps.include` in `vite.config.ts`.
+
 ### Data Fetching Pattern
 Use TanStack Query in hooks, not directly in components. Query keys follow the pattern `['role', 'resource']` (e.g. `['candidate', 'profile']`, `['rh', 'offers']`). Default `staleTime` is 5 minutes.
 
@@ -225,19 +243,28 @@ Pages: `DashboardPage`, `MyCVPage`, `CVGeneratorPage`, `ApplicationsPage`, `Prof
 #### `FullProfileOut` schema (backend + frontend)
 Both `candidate_schemas.py` and `types/cv.ts` include `formations: List[dict]` / `formations: FormationOut[]`. Keep them in sync when adding fields.
 
+### Public Pages (`/`)
+`HomePage` — public job listings (no auth). `OfferDetailPage` — public offer detail with apply button that redirects to login if not authenticated.
+
 ### Agent Portal (`/agent`)
 Pages: `DashboardPage`, `UploadCVPage`, `BatchUploadPage`, `CVListPage`, `HistoryPage`.
 
 **OCR quality** (`nlp/ocr.py::evaluate_ocr_quality`) — heuristic scoring 0–100 based on character count, presence of email/phone/section keywords. Returns `{ score, niveau, message, conseils, nb_caracteres, a_email, a_telephone, a_sections }`.
 
+**Single Keejob import**: `POST /api/agent/import/keejob` (`routes/agent/import_keejob.py`) — uploads one PDF, parses it synchronously with `keejob_parser`, creates Candidate + CV with `statut=INDEXED`, returns extracted entities immediately.
+
 ### RH Portal (`/rh`)
-Pages: `DashboardPage`, `OffersPage`, `OfferFormPage`, `MatchingPage`, `ResultsPage`, `CVthequePage`, `CandidaturesPage`, `N8NCalendarPage`.
+Pages: `DashboardPage`, `OffersPage`, `OfferFormPage`, `MatchingPage`, `ResultsPage`, `CVthequePage`, `CandidaturesPage`, `CalendarPage`, `N8NCalendarPage`, `StatsPage`.
 
 The `MatchResultTable` component opens a Modal on Retenir/Refuser to collect feedback before confirming.
 
 `PATCH /api/rh/offers/{offer_id}/matching/{result_id}` accepts `{ decision, feedback_rh?, feedback_visible? }`. When `feedback_visible=true`, feedback is visible to candidate.
 
+**CalendarPage** (`/rh/calendar`) — standalone FullCalendar for manual interview scheduling via `GET /api/rh/calendar`. Distinct from N8NCalendarPage.
+
 **N8NCalendarPage** (`/rh/n8n-calendar`) — polls `['n8n', 'propose']` every 5s and `['n8n', 'calendrier']` every 10s. The frontend never contacts n8n directly; all requests go through backend `/api/n8n/` routes.
+
+**StatsPage** (`/rh/stats`) — per-offer analytics (line + pie charts via Recharts). Fetches data per selected offer.
 
 ### Admin Portal (`/admin`)
 Pages: `DashboardPage`, `UsersPage`, `UserFormPage`, `AdminCVsPage`, `AuditPage`, `SystemHealthPage`.

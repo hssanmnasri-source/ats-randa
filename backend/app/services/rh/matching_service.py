@@ -14,6 +14,7 @@ Flux :
   6. Mettre à jour last_matching_at sur l'offre
 """
 from __future__ import annotations
+import asyncio
 import json
 from datetime import datetime, timezone
 
@@ -34,7 +35,8 @@ async def _ensure_offer_embedding(db: AsyncSession, offer: JobOffer) -> list[flo
     """Génère et sauvegarde l'embedding de l'offre si absent."""
     if offer.embedding is not None:
         return list(offer.embedding)
-    embedding = encode(offer_to_embed_text(offer))
+    loop = asyncio.get_event_loop()
+    embedding = await loop.run_in_executor(None, encode, offer_to_embed_text(offer))
     await offer_repository.update(db, offer, {"embedding": embedding})
     logger.info(f"Embedding généré pour l'offre #{offer.id}")
     return embedding

@@ -11,9 +11,9 @@ import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 
-const DOC_TYPES = ['CV', 'Diplôme', 'CIN', 'Attestation', 'Autre'];
+const DOC_TYPES = ['Diplôme', 'CIN', 'Attestation', 'Autre'];
 const TYPE_COLORS: Record<string, string> = {
-  CV: 'blue', Diplôme: 'purple', CIN: 'cyan', Attestation: 'green', Autre: 'default',
+  Diplôme: 'purple', CIN: 'cyan', Attestation: 'green', Autre: 'default',
 };
 
 function formatSize(bytes?: number | null): string {

@@ -1,7 +1,9 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
+import { Spin } from 'antd';
 import ProtectedRoute from './ProtectedRoute';
 
-// Layouts
+// Layouts (small, always needed — keep eager)
 import PublicLayout from '../layouts/PublicLayout';
 import AuthLayout from '../layouts/AuthLayout';
 import RHLayout from '../layouts/RHLayout';
@@ -9,62 +11,69 @@ import AdminLayout from '../layouts/AdminLayout';
 import CandidateLayout from '../layouts/CandidateLayout';
 import AgentLayout from '../layouts/AgentLayout';
 
-// Public pages
-import HomePage from '../pages/public/HomePage';
-import OfferDetailPage from '../pages/public/OfferDetailPage';
-
-// Auth pages
+// Auth pages (needed at startup)
 import LoginPage from '../pages/auth/LoginPage';
 import RegisterPage from '../pages/auth/RegisterPage';
-import GoogleCallbackPage from '../pages/auth/GoogleCallbackPage';
 
-// Candidate pages
-import CandidateDashboard from '../pages/candidate/DashboardPage';
-import MyCVPage from '../pages/candidate/MyCVPage';
-import ApplicationsPage from '../pages/candidate/ApplicationsPage';
-import CandidateProfilePage from '../pages/candidate/ProfilePage';
-import CoverLettersPage from '../pages/candidate/CoverLettersPage';
-import DocumentsPage from '../pages/candidate/DocumentsPage';
-import SettingsPage from '../pages/candidate/SettingsPage';
-import FavoritesPage from '../pages/candidate/FavoritesPage';
-import CVGeneratorPage from '../pages/candidate/CVGeneratorPage';
-import OffresPage from '../pages/candidate/OffresPage';
-import OffreDetailPage from '../pages/candidate/OffreDetailPage';
+// Lazy-loaded pages
+const GoogleCallbackPage  = lazy(() => import('../pages/auth/GoogleCallbackPage'));
 
-// Agent pages
-import AgentDashboard from '../pages/agent/DashboardPage';
-import UploadCVPage from '../pages/agent/UploadCVPage';
-import CVListPage from '../pages/agent/CVListPage';
-import BatchUploadPage from '../pages/agent/BatchUploadPage';
-import HistoryPage from '../pages/agent/HistoryPage';
+const HomePage            = lazy(() => import('../pages/public/HomePage'));
+const OfferDetailPage     = lazy(() => import('../pages/public/OfferDetailPage'));
 
-// RH pages
-import RHDashboard from '../pages/rh/DashboardPage';
-import N8NCalendarPage from '../pages/rh/N8NCalendarPage';
-import OffersPage from '../pages/rh/OffersPage';
-import OfferFormPage from '../pages/rh/OfferFormPage';
-import MatchingPage from '../pages/rh/MatchingPage';
-import ResultsPage from '../pages/rh/ResultsPage';
-import CVthequePage from '../pages/rh/CVthequePage';
-import CandidaturesPage from '../pages/rh/CandidaturesPage';
-import CalendarPage from '../pages/rh/CalendarPage';
-import StatsPage from '../pages/rh/StatsPage';
+const CandidateDashboard  = lazy(() => import('../pages/candidate/DashboardPage'));
+const MyCVPage            = lazy(() => import('../pages/candidate/MyCVPage'));
+const ApplicationsPage    = lazy(() => import('../pages/candidate/ApplicationsPage'));
+const CandidateProfilePage = lazy(() => import('../pages/candidate/ProfilePage'));
+const CoverLettersPage    = lazy(() => import('../pages/candidate/CoverLettersPage'));
+const DocumentsPage       = lazy(() => import('../pages/candidate/DocumentsPage'));
+const SettingsPage        = lazy(() => import('../pages/candidate/SettingsPage'));
+const FavoritesPage       = lazy(() => import('../pages/candidate/FavoritesPage'));
+const CVGeneratorPage     = lazy(() => import('../pages/candidate/CVGeneratorPage'));
+const OffresPage          = lazy(() => import('../pages/candidate/OffresPage'));
+const OffreDetailPage     = lazy(() => import('../pages/candidate/OffreDetailPage'));
 
-// Admin pages
-import AdminDashboard from '../pages/admin/DashboardPage';
-import UsersPage from '../pages/admin/UsersPage';
-import UserFormPage from '../pages/admin/UserFormPage';
-import AuditPage from '../pages/admin/AuditPage';
-import SystemHealthPage from '../pages/admin/SystemHealthPage';
-import AdminCVsPage from '../pages/admin/AdminCVsPage';
+const AgentDashboard      = lazy(() => import('../pages/agent/DashboardPage'));
+const UploadCVPage        = lazy(() => import('../pages/agent/UploadCVPage'));
+const CVListPage          = lazy(() => import('../pages/agent/CVListPage'));
+const BatchUploadPage     = lazy(() => import('../pages/agent/BatchUploadPage'));
+const HistoryPage         = lazy(() => import('../pages/agent/HistoryPage'));
+
+const RHDashboard         = lazy(() => import('../pages/rh/DashboardPage'));
+const N8NCalendarPage     = lazy(() => import('../pages/rh/N8NCalendarPage'));
+const OffersPage          = lazy(() => import('../pages/rh/OffersPage'));
+const OfferFormPage       = lazy(() => import('../pages/rh/OfferFormPage'));
+const MatchingPage        = lazy(() => import('../pages/rh/MatchingPage'));
+const ResultsPage         = lazy(() => import('../pages/rh/ResultsPage'));
+const CVthequePage        = lazy(() => import('../pages/rh/CVthequePage'));
+const CandidaturesPage    = lazy(() => import('../pages/rh/CandidaturesPage'));
+const CalendarPage        = lazy(() => import('../pages/rh/CalendarPage'));
+const StatsPage           = lazy(() => import('../pages/rh/StatsPage'));
+
+const AdminDashboard      = lazy(() => import('../pages/admin/DashboardPage'));
+const UsersPage           = lazy(() => import('../pages/admin/UsersPage'));
+const UserFormPage        = lazy(() => import('../pages/admin/UserFormPage'));
+const AuditPage           = lazy(() => import('../pages/admin/AuditPage'));
+const SystemHealthPage    = lazy(() => import('../pages/admin/SystemHealthPage'));
+const AdminCVsPage        = lazy(() => import('../pages/admin/AdminCVsPage'));
+
+const PageLoader = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    <Spin size="large" />
+  </div>
+);
+
+const S = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<PageLoader />}>{children}</Suspense>
+);
 
 export const router = createBrowserRouter([
   // Public
   {
     element: <PublicLayout />,
     children: [
-      { path: '/', element: <HomePage /> },
-      { path: '/offers/:id', element: <OfferDetailPage /> },
+      { path: '/',           element: <S><HomePage /></S> },
+      { path: '/offers/:id', element: <S><OfferDetailPage /></S> },
     ],
   },
 
@@ -72,13 +81,13 @@ export const router = createBrowserRouter([
   {
     element: <AuthLayout />,
     children: [
-      { path: '/login', element: <LoginPage /> },
+      { path: '/login',    element: <LoginPage /> },
       { path: '/register', element: <RegisterPage /> },
     ],
   },
 
-  // Google OAuth callback (pas de layout, pas de protection)
-  { path: '/auth/google/success', element: <GoogleCallbackPage /> },
+  // Google OAuth callback
+  { path: '/auth/google/success', element: <S><GoogleCallbackPage /></S> },
 
   // Candidate
   {
@@ -89,17 +98,17 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true,                 element: <CandidateDashboard /> },
-      { path: 'cv',                  element: <MyCVPage /> },
-      { path: 'cv-generator',        element: <CVGeneratorPage /> },
-      { path: 'applications',        element: <ApplicationsPage /> },
-      { path: 'profile',             element: <CandidateProfilePage /> },
-      { path: 'favorites',           element: <FavoritesPage /> },
-      { path: 'cover-letters',       element: <CoverLettersPage /> },
-      { path: 'documents',           element: <DocumentsPage /> },
-      { path: 'settings',            element: <SettingsPage /> },
-      { path: 'offres',              element: <OffresPage /> },
-      { path: 'offres/:id',          element: <OffreDetailPage /> },
+      { index: true,          element: <S><CandidateDashboard /></S> },
+      { path: 'cv',           element: <S><MyCVPage /></S> },
+      { path: 'cv-generator', element: <S><CVGeneratorPage /></S> },
+      { path: 'applications', element: <S><ApplicationsPage /></S> },
+      { path: 'profile',      element: <S><CandidateProfilePage /></S> },
+      { path: 'favorites',    element: <S><FavoritesPage /></S> },
+      { path: 'cover-letters',element: <S><CoverLettersPage /></S> },
+      { path: 'documents',    element: <S><DocumentsPage /></S> },
+      { path: 'settings',     element: <S><SettingsPage /></S> },
+      { path: 'offres',       element: <S><OffresPage /></S> },
+      { path: 'offres/:id',   element: <S><OffreDetailPage /></S> },
     ],
   },
 
@@ -112,11 +121,11 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true,      element: <AgentDashboard /> },
-      { path: 'upload',   element: <UploadCVPage /> },
-      { path: 'batch',    element: <BatchUploadPage /> },
-      { path: 'cvs',      element: <CVListPage /> },
-      { path: 'history',  element: <HistoryPage /> },
+      { index: true,    element: <S><AgentDashboard /></S> },
+      { path: 'upload', element: <S><UploadCVPage /></S> },
+      { path: 'batch',  element: <S><BatchUploadPage /></S> },
+      { path: 'cvs',    element: <S><CVListPage /></S> },
+      { path: 'history',element: <S><HistoryPage /></S> },
     ],
   },
 
@@ -129,17 +138,17 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true,                element: <RHDashboard /> },
-      { path: 'offers',             element: <OffersPage /> },
-      { path: 'offers/new',         element: <OfferFormPage /> },
-      { path: 'offers/:id/edit',    element: <OfferFormPage /> },
-      { path: 'matching',           element: <MatchingPage /> },
-      { path: 'results',            element: <ResultsPage /> },
-      { path: 'cvtheque',           element: <CVthequePage /> },
-      { path: 'candidatures',       element: <CandidaturesPage /> },
-      { path: 'calendar',           element: <CalendarPage /> },
-      { path: 'n8n-calendar',       element: <N8NCalendarPage /> },
-      { path: 'stats',              element: <StatsPage /> },
+      { index: true,              element: <S><RHDashboard /></S> },
+      { path: 'offers',           element: <S><OffersPage /></S> },
+      { path: 'offers/new',       element: <S><OfferFormPage /></S> },
+      { path: 'offers/:id/edit',  element: <S><OfferFormPage /></S> },
+      { path: 'matching',         element: <S><MatchingPage /></S> },
+      { path: 'results',          element: <S><ResultsPage /></S> },
+      { path: 'cvtheque',         element: <S><CVthequePage /></S> },
+      { path: 'candidatures',     element: <S><CandidaturesPage /></S> },
+      { path: 'calendar',         element: <S><CalendarPage /></S> },
+      { path: 'n8n-calendar',     element: <S><N8NCalendarPage /></S> },
+      { path: 'stats',            element: <S><StatsPage /></S> },
     ],
   },
 
@@ -152,13 +161,13 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true,              element: <AdminDashboard /> },
-      { path: 'dashboard',        element: <AdminDashboard /> },
-      { path: 'users',            element: <UsersPage /> },
-      { path: 'users/new',        element: <UserFormPage /> },
-      { path: 'audit',            element: <AuditPage /> },
-      { path: 'system/health',    element: <SystemHealthPage /> },
-      { path: 'cvs',              element: <AdminCVsPage /> },
+      { index: true,         element: <S><AdminDashboard /></S> },
+      { path: 'dashboard',   element: <S><AdminDashboard /></S> },
+      { path: 'users',       element: <S><UsersPage /></S> },
+      { path: 'users/new',   element: <S><UserFormPage /></S> },
+      { path: 'audit',       element: <S><AuditPage /></S> },
+      { path: 'system/health',element: <S><SystemHealthPage /></S> },
+      { path: 'cvs',         element: <S><AdminCVsPage /></S> },
     ],
   },
 ]);

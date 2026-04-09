@@ -35,7 +35,7 @@ const menuItems = [
   { key: '/rh/cvtheque',   icon: <DatabaseOutlined />,    label: 'CVthèque' },
   { key: '/rh/candidatures', icon: <TeamOutlined />,      label: 'Candidatures reçues' },
   { key: '/rh/calendar',      icon: <CalendarOutlined />,     label: 'Calendrier entretiens' },
-  { key: '/rh/n8n-calendar', icon: <ThunderboltOutlined />, label: '🤖 Entretiens Auto (n8n)' },
+  { key: '/rh/n8n-calendar', icon: <ThunderboltOutlined />, label: 'Entretiens Auto (n8n)' },
   { key: '/rh/stats',        icon: <BarChartOutlined />,    label: 'Statistiques' },
 ];
 
