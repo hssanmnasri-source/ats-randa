@@ -204,6 +204,8 @@ except ImportError:
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
+    # Allow any localhost port so Flutter web (random port) and other local dev tools work
+    allow_origin_regex=r"http://(localhost|10\.0\.2\.2):\d+",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

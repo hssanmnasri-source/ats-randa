@@ -13,6 +13,18 @@ router = APIRouter(
 )
 
 
+@router.get("/me")
+async def get_current_rh(rh=Depends(require_rh)):
+    """Retourne les informations du RH connecté."""
+    return {
+        "id": rh.id,
+        "email": rh.email,
+        "nom": rh.nom or "",
+        "prenom": rh.prenom or "",
+        "role": rh.role.value if hasattr(rh.role, 'value') else str(rh.role),
+    }
+
+
 @router.get("/dashboard")
 async def dashboard(
     rh=Depends(require_rh),

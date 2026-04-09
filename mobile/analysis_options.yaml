@@ -1,0 +1,9 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    # False-positive from analyzer/SDK version mismatch with freezed @JsonKey.
+    # build_runner generates the code correctly; the analyzer doesn't understand
+    # that freezed places @JsonKey inside const factory constructors.
+    invalid_annotation_target: ignore
+    deprecated_member_use: ignore
