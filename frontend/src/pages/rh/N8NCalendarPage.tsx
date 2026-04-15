@@ -148,7 +148,7 @@ const N8NCalendarPage: React.FC = () => {
         <Row align="middle" justify="space-between">
           <Col>
             <div style={{ color: 'white', fontSize: 22, fontWeight: 800 }}>
-              🤖 Calendrier Automatique — n8n
+               Calendrier Automatique — n8n
             </div>
             <div style={{ color: COLORS.goldLight, marginTop: 4 }}>
               Génération automatique des entretiens pour tous les candidats retenus

@@ -4,7 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ATS RANDA is an Applicant Tracking System built with FastAPI (Python 3.11) + React 18 (TypeScript). It features NLP-powered CV parsing, semantic embedding-based matching via pgvector, role-based access control, and Celery async task queuing.
+ATS RANDA is an Applicant Tracking System with three client surfaces:
+- **Backend**: FastAPI (Python 3.11) — NLP CV parsing, pgvector semantic matching, Celery async tasks, role-based JWT auth
+- **Web frontend**: React 18 (TypeScript) — multi-role SPA (Candidate, Agent, RH, Admin)
+- **Mobile**: Flutter — multi-role app (RH + Candidate) targeting Android/iOS/web
 
 ## Common Commands
 
@@ -122,8 +125,9 @@ backend/app/
 │   ├── language_detector.py # Language detection for multilingual CVs
 │   └── parser.py           # Unified parser entry point
 ├── tasks/               # Celery async tasks
-│   ├── cv_tasks.py      # embed_cv(), embed_all_cvs()
-│   └── offer_tasks.py   # embed_offer()
+│   ├── cv_tasks.py      # process_cv_on_upload() [main], embed_cv(), embed_all_cvs()
+│   ├── offer_tasks.py   # embed_offer()
+│   └── alert_tasks.py   # check_seuil_alerte() — emails RH when match threshold reached
 └── core/
     ├── config.py        # Settings loaded from .env (Pydantic BaseSettings)
     ├── database.py      # Async SQLAlchemy session factory + pgvector init
@@ -138,7 +142,7 @@ Roles: `VISITOR`, `CANDIDATE`, `AGENT`, `RH`, `ADMIN`. Route-level guards are Fa
 The dependency returns a **User** object (from `users` table). For candidate routes that need the `Candidate` record, always resolve via `candidate_repository.get_by_email(db, user.email)` — do not use `user.id` as a candidate ID directly.
 
 ### Key Data Models (db_models.py)
-- `CV` — stores parsed text, `source` (`KEEJOB/AGENT/CANDIDAT`), `statut` (`UPLOADED/PARSING/INDEXED/ERROR`), and a 384-dim pgvector embedding
+- `CV` — stores parsed text, `source` (`KEEJOB/AGENT/CANDIDAT`), `statut` (`UPLOADED/PARSING/INDEXED/ERROR`), a 384-dim pgvector embedding, and `cv_version` (integer, starts at 1, incremented on every upload/modification)
   - `source=KEEJOB` → bulk-imported, `id_agent=NULL`
   - `source=AGENT` → uploaded by a specific agent, `id_agent=agent.id`
   - `source=CANDIDAT` → submitted by the candidate themselves
@@ -149,11 +153,15 @@ The dependency returns a **User** object (from `users` table). For candidate rou
 
 ### Matching/Scoring (nlp/scorer.py)
 - **40%** semantic similarity (pgvector cosine distance between CV and offer embeddings)
-- **35%** competency overlap (Jaccard similarity)
+- **35%** competency overlap (Jaccard similarity — `score_skills=1.0` when no skills required)
 - **15%** experience match (years required vs. actual, capped at 1.0)
 - **10%** language match
 
 Matching flow: pgvector pre-filters top 200 CVs by cosine similarity → 4-criteria scoring → top 50 stored in `resultats` table.
+
+**RH Decision Immutability (critical business rule):** `Decision.RETAINED` and `Decision.REFUSED` on `Resultat` records are **permanently immutable**. The Celery task `process_cv_on_upload` and the RH manual matching both skip (never overwrite) any result with those decisions — only `PENDING` results are recalculated or created. When the RH triggers matching manually: `force=False` returns existing results if available; `force=True` recalculates scores but still preserves all RETAINED/REFUSED decisions. See `backend/BUSINESS_RULES.md` for the full rules.
+
+**Primary Celery task — `tasks.process_cv_on_upload`:** Auto-triggered after every CV upload or modification. Steps: (1) extract PDF text if `cv_text` is empty, (2) parse entities via `keejob_parser` (KEEJOB source) or `generic_parser` (AGENT/CANDIDAT), (3) generate embedding + increment `cv_version`, (4) match against all ACTIVE offers — create PENDING results for new pairs, update scores for existing PENDING, skip RETAINED/REFUSED.
 
 ### CV Repositories Filter
 `candidate_repository.list_all()` accepts an optional `agent_id` parameter. When passed, it filters candidates to only those with at least one CV with `source=AGENT AND id_agent=agent_id`. Always pass `agent_id=agent.id` in agent routes — without it, all 4,000+ Keejob candidates are returned incorrectly.
@@ -262,12 +270,98 @@ The `MatchResultTable` component opens a Modal on Retenir/Refuser to collect fee
 
 **CalendarPage** (`/rh/calendar`) — standalone FullCalendar for manual interview scheduling via `GET /api/rh/calendar`. Distinct from N8NCalendarPage.
 
-**N8NCalendarPage** (`/rh/n8n-calendar`) — polls `['n8n', 'propose']` every 5s and `['n8n', 'calendrier']` every 10s. The frontend never contacts n8n directly; all requests go through backend `/api/n8n/` routes.
+**N8NCalendarPage** (`/rh/n8n-calendar`) — polls `['n8n', 'propose']` every 5s and `['n8n', 'calendrier']` every 10s. Supports inline edit (`PUT /api/n8n/entretiens/{id}` via Drawer) and delete (`DELETE /api/rh/calendar/{id}` via Popconfirm) of PROPOSE-status interviews before confirmation. The frontend never contacts n8n directly; all requests go through backend `/api/n8n/` routes.
 
 **StatsPage** (`/rh/stats`) — per-offer analytics (line + pie charts via Recharts). Fetches data per selected offer.
 
 ### Admin Portal (`/admin`)
 Pages: `DashboardPage`, `UsersPage`, `UserFormPage`, `AdminCVsPage`, `AuditPage`, `SystemHealthPage`.
+
+## Mobile App (Flutter — Multi-role)
+
+A Flutter app in `mobile/lib/` supporting two roles after login: **RH** and **CANDIDATE**. The same `/api/visitor/login` endpoint is used; the returned `role` field drives all routing decisions.
+
+### Stack
+- **State**: Riverpod (`flutter_riverpod`) — `AsyncNotifierProvider` for auth, `FutureProvider.autoDispose` everywhere else
+- **Navigation**: `go_router` with two separate `ShellRoute`s (one per role) and detail routes outside shells
+- **HTTP**: `dio` with JWT Bearer interceptor (`lib/core/api_client.dart`)
+- **Auth storage**: `flutter_secure_storage` (keys: `access_token`, `refresh_token`)
+- **Models**: RH models use `freezed` + `json_serializable`; **candidate models are plain Dart classes** (no code generation needed)
+
+### Two-role architecture
+
+After login the router redirect checks `user.role`:
+- `'rh'` → `/dashboard` (RH `AppShell` — 4 tabs: Tableau de bord, Offres, CVthèque, Calendrier)
+- `'candidate'` → `/candidate/dashboard` (Candidate `CandidateShell` — 4 tabs: Accueil, Offres, Candidatures, Profil)
+
+Cross-role navigation is blocked by the redirect guard in `router.dart`. `auth_repository.dart::getProfile(role)` calls `/api/rh/me` for RH and `/api/candidate/profile` for candidates, both returning a `RhUser` (the shared auth model) populated with the relevant fields.
+
+### Structure
+```
+mobile/lib/
+├── core/
+│   ├── api_client.dart        # Dio singleton, _AuthInterceptor, saveTokens/clearTokens/hasToken
+│   └── theme.dart             # kPrimary, kGold, kGoldLight, kDarkBrown + buildAppTheme()
+├── models/
+│   ├── rh_user.dart           # Freezed — shared auth user for both roles (id, email, nom, prenom, role)
+│   ├── job_offer.dart         # Freezed — RH offer model
+│   ├── matching_result.dart   # Freezed — RH matching result
+│   ├── calendar_event.dart    # Freezed — RH interview event
+│   ├── dashboard_stats.dart   # Plain class — RH dashboard stats (from /api/rh/dashboard)
+│   ├── candidate_profile.dart # Plain class — CandidateProfile, FullProfile, Experience, Skill
+│   ├── candidate_cv.dart      # Plain class — CandidateCV
+│   ├── application.dart       # Plain class — Application, ApplicationDetail, TimelineStep
+│   ├── cover_letter.dart      # Plain class — CoverLetter
+│   └── public_offer.dart      # Plain class — PublicOffer (from /api/visitor/offers)
+├── repositories/              # Thin API wrappers, one file per domain
+├── providers/                 # Riverpod providers, one file per domain
+├── ui/
+│   ├── screens/
+│   │   ├── (rh screens)       # DashboardScreen, OffersScreen, CvthequeScreen, CalendarScreen, …
+│   │   └── candidate/         # CandidateDashboardScreen, CandidateOffersScreen,
+│   │                          #   CandidateApplicationsScreen, CandidateApplicationDetailScreen,
+│   │                          #   CandidateProfileScreen, CandidateCvsScreen,
+│   │                          #   CandidateOfferDetailScreen, CandidateCoverLettersScreen
+│   └── widgets/
+│       ├── app_shell.dart         # RH bottom nav (4 tabs)
+│       ├── candidate_shell.dart   # Candidate bottom nav (4 tabs)
+│       └── status_badge.dart      # Shared interview status chip
+├── main.dart    # ProviderScope → AtsRandaApp → MaterialApp.router
+└── router.dart  # routerProvider: two ShellRoutes + _AuthChangeNotifier + role-based redirect
+```
+
+### Key architectural patterns
+- **Router auth redirect**: `_AuthChangeNotifier` listens to `authStateProvider` and calls `notifyListeners()`, feeding GoRouter's `refreshListenable`. Login/logout automatically triggers re-evaluation of redirect rules — no manual `context.go` calls needed anywhere.
+- **Plain vs. freezed models**: Only RH models (`RhUser`, `JobOffer`, `MatchingResult`, `CalendarEvent`) use `freezed`. All candidate models are plain Dart classes with `fromJson` factories and manual `copyWith` where needed. When adding new RH models, run `dart run build_runner build --delete-conflicting-outputs`; candidate models need no code generation.
+- **`DashboardStats`**: plain class in `repositories/stats_repository.dart` (not in `models/`) — aggregated from `/api/rh/dashboard`. Import directly from the repository file.
+- **Live search**: `candidateOfferSearchProvider` (`StateProvider<String>`) is watched by `candidateOffersProvider` (`FutureProvider.autoDispose`) — changing the query auto-refetches without any manual trigger.
+- **Apply flow**: `CandidateOfferDetailScreen` calls `CandidateApplicationRepository().apply(offerId)` directly (no provider) since it's a one-shot mutation. The response may include `cv_required` if no CV is registered.
+
+### API base URL
+Configured via compile-time `--dart-define`:
+```bash
+flutter run -d chrome                                          # http://localhost:8000 (default)
+flutter run -d emulator-5554 --dart-define=API_URL=http://10.0.2.2:8000  # Android emulator
+```
+
+### Mobile commands
+```bash
+cd mobile
+flutter pub get
+flutter run -d chrome          # web dev (no emulator needed)
+flutter run                    # auto-select connected device
+flutter build apk              # release APK
+flutter analyze                # static analysis (must show "No issues found")
+dart run build_runner build --delete-conflicting-outputs   # only needed after editing freezed RH models
+```
+
+### CORS for Flutter web
+`main.py` uses `allow_origin_regex=r"http://localhost:\d+"` — any localhost port works, so Flutter web's random port is always accepted.
+
+### Stale scaffold files (ignore)
+Old empty scaffolding at the `mobile/` root — all real code is under `mobile/lib/`:
+- `mobile/main.dart`, `mobile/router.dart`
+- `mobile/repositories/` (5 files), `mobile/viewmodels/` (5 files)
 
 ## Infrastructure
 

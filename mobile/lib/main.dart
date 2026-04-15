@@ -15,7 +15,7 @@ class AtsRandaApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
     return MaterialApp.router(
-      title: 'ATS RANDA — RH',
+      title: 'ATS RANDA',
       theme: buildAppTheme(),
       routerConfig: router,
       debugShowCheckedModeBanner: false,

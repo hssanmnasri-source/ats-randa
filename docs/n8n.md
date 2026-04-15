@@ -231,7 +231,7 @@ MAIL_FROM_NAME=ATS RANDA
 
 - **Page** : `frontend/src/pages/rh/N8NCalendarPage.tsx`
 - **Route** : `/rh/n8n-calendar`
-- **Menu** : "🤖 Entretiens Auto (n8n)" dans le sidebar RH (`RHLayout.tsx`)
+- **Menu** : "Entretiens Auto" dans le sidebar RH (`RHLayout.tsx`)
 
 ### Queries TanStack
 

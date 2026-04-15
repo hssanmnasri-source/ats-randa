@@ -16,7 +16,15 @@ class AuthNotifier extends AsyncNotifier<RhUser?> {
   Future<RhUser?> build() async {
     if (await hasToken()) {
       try {
-        return await ref.read(authRepositoryProvider).getProfile();
+        // Role is embedded in the stored user — try RH first, then candidate.
+        // We attempt RH; if it fails, the 401 interceptor handles token cleanup.
+        // On resume, we re-fetch via the role stored in the last login attempt.
+        // Simplified: try rh profile; if 403, try candidate profile.
+        try {
+          return await ref.read(authRepositoryProvider).getProfile('rh');
+        } catch (_) {
+          return await ref.read(authRepositoryProvider).getProfile('candidate');
+        }
       } catch (_) {
         await clearTokens();
         return null;
@@ -29,8 +37,12 @@ class AuthNotifier extends AsyncNotifier<RhUser?> {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final data = await ref.read(authRepositoryProvider).login(email, password);
-      await saveTokens(accessToken: data['access_token'] as String);
-      return await ref.read(authRepositoryProvider).getProfile();
+      await saveTokens(
+        accessToken: data['access_token'] as String,
+        refreshToken: data['refresh_token'] as String?,
+      );
+      final role = (data['role'] as String? ?? '').toLowerCase();
+      return await ref.read(authRepositoryProvider).getProfile(role);
     });
   }
 

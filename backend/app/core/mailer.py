@@ -390,7 +390,7 @@ def _html_wrapper(title: str, body: str) -> str:
 <body>
   <div class="container">
     <div class="header">
-      <img src="data:image/png;base64,{_LOGO_B64}" alt="ATS RANDA" style="height:80px; display:block; margin:0 auto;">
+      <img src="http://localhost/icon/logo-randa-200x133.png" alt="ATS RANDA" style="height:80px; display:block; margin:0 auto;">
     </div>
     <div class="content">
       <h2 style="color:#8B1A1A">{title}</h2>
@@ -572,8 +572,13 @@ async def send_entretien_invitation(
       <h3 style="color: #8B1A1A;">Details de l'entretien</h3>
       <p><strong>Type :</strong> {type_label}</p>
       <p><strong>Date :</strong> <span style="color: #8B1A1A;">{date_str}</span></p>
-      <p><strong>Lieu :</strong> {lieu}</p>
-      <p><strong>Contact RH :</strong> {rh_nom} — {rh_email}</p>
+      <p><strong>Lieu :</strong> {lieu} —
+        <a href="https://www.google.com/maps/search/?api=1&amp;query=P6MJ%2BP49+Rue+Ahmed+Chaouchi+Ben+Arous"
+           style="color: #8B1A1A;" target="_blank">
+          RANDA — P6MJ+P49, Rue Ahmed Chaouki, Ben Arous
+        </a>
+      </p>
+      <p><strong>Contact RH :</strong> {rh_nom} — <a href="mailto:{rh_email}" style="color:#8B1A1A;">{rh_email}</a></p>
     </div>
     <p>Cordialement,<br><span class="highlight">{rh_nom} — Equipe RH RANDA</span></p>
     """
