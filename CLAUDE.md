@@ -133,7 +133,7 @@ backend/app/
     ├── database.py      # Async SQLAlchemy session factory + pgvector init
     ├── security.py      # JWT creation/validation + bcrypt password hashing
     ├── celery_app.py    # Celery + Redis task queue config
-    └── mailer.py        # SMTP email sending (send_entretien_invitation())
+    └── mailer.py        # SMTP email sending — send_cv_received(), send_application_received(), send_decision_notification(), send_entretien_invitation(). Controlled by MAIL_ENABLED env var (defaults to false — logs without sending)
 ```
 
 ### User Roles & Auth
@@ -266,7 +266,11 @@ Pages: `DashboardPage`, `OffersPage`, `OfferFormPage`, `MatchingPage`, `ResultsP
 
 The `MatchResultTable` component opens a Modal on Retenir/Refuser to collect feedback before confirming.
 
-`PATCH /api/rh/offers/{offer_id}/matching/{result_id}` accepts `{ decision, feedback_rh?, feedback_visible? }`. When `feedback_visible=true`, feedback is visible to candidate.
+`GET /api/rh/offers/{offer_id}/matching` supports advanced candidate filters: `score_min`, `age_min/max`, `region`, `ville`, `niveau_etude`, `niveau_experience`, `disponibilite`, `has_driving_license`. When any advanced filter is present, `result_repository.list_by_offer_filtered()` is used instead of the plain `list_by_offer()`.
+
+`PATCH /api/rh/offers/{offer_id}/matching/{result_id}` accepts `{ decision, feedback_rh?, feedback_visible? }`. When `feedback_visible=true`, feedback is visible to candidate. Setting RETAINED or REFUSED also fires `send_decision_notification()` (fire-and-forget) to the candidate's email.
+
+`GET /api/rh/offers/{offer_id}/export/pdf` generates and returns a PDF matching report (all ranked candidates) via `services/rh/pdf_export.py`.
 
 **CalendarPage** (`/rh/calendar`) — standalone FullCalendar for manual interview scheduling via `GET /api/rh/calendar`. Distinct from N8NCalendarPage.
 

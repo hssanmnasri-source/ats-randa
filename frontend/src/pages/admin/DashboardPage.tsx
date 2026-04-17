@@ -73,13 +73,13 @@ const AdminDashboardPage: React.FC = () => {
            role === 'AGENT' ? COLORS.gold : role === 'CANDIDATE' ? '#1677ff' : '#8B8B8B',
   })) : []
 
-  const decisionData = stats?.matching ? [
-    { name: 'En attente', value: stats.matching.par_decision?.['PENDING'] || 0, color: COLORS.gold },
-    { name: 'Retenus', value: stats.matching.par_decision?.['RETAINED'] || 0, color: '#52C41A' },
-    { name: 'Refuses', value: stats.matching.par_decision?.['REFUSED'] || 0, color: COLORS.primary },
+  const decisionData = stats?.matching?.par_decision ? [
+    { name: 'En attente', value: stats.matching.par_decision['PENDING'] || 0, color: COLORS.gold },
+    { name: 'Retenus', value: stats.matching.par_decision['RETAINED'] || 0, color: '#52C41A' },
+    { name: 'Refuses', value: stats.matching.par_decision['REFUSED'] || 0, color: COLORS.primary },
   ] : []
 
-  if (statsLoading || healthLoading) {
+  if (statsLoading || healthLoading || !stats) {
     return <div style={{ textAlign: 'center', padding: 80 }}><Spin size="large" /></div>
   }
 
