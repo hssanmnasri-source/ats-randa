@@ -17,6 +17,7 @@ import { usePublicOffers } from '../../hooks/useOffers';
 import { useAuthStore } from '../../store/authStore';
 import OfferCard from '../../components/offer/OfferCard';
 import { candidateService } from '../../services/candidateService';
+import ProjectSections from '../../components/visitor/ProjectSections';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -100,6 +101,8 @@ export default function HomePage() {
           />
         </Space>
       </div>
+
+      <ProjectSections />
 
       {isLoading ? (
         <div style={{ textAlign: 'center', padding: 60 }}>
