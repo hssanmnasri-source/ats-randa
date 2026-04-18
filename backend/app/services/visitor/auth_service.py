@@ -26,6 +26,10 @@ async def register(db: AsyncSession, data) -> dict:
 
     return _build_tokens(user)
 
+async def get_user_id_by_email(db: AsyncSession, email: str) -> int | None:
+    user = await get_by_email(db, email)
+    return user.id if user else None
+
 async def login(db: AsyncSession, data) -> dict:
     user = await get_by_email(db, data.email)
 

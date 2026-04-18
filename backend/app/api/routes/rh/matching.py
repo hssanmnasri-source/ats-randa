@@ -15,6 +15,7 @@ from app.models.db_models import Decision
 from app.services.rh.matching_service import run_matching
 from app.services.rh.pdf_export import generate_matching_pdf
 from app.repositories import result_repository, offer_repository
+from app.core.audit import log_action
 from typing import Optional
 
 router = APIRouter(prefix="/api/rh/offers", tags=["🎯 RH — Matching"])
@@ -159,6 +160,12 @@ async def update_decision(
         updated.date_decision = datetime.now(timezone.utc)
         await db.commit()
         await db.refresh(updated)
+
+    # Audit log
+    action_key = "DECISION_RETAINED" if decision_str == "RETAINED" else ("DECISION_REFUSED" if decision_str == "REFUSED" else "DECISION_PENDING")
+    await log_action(db, action_key, user_id=current_user.id,
+                     resource="resultat", resource_id=result_id,
+                     details={"offer_id": offer_id, "decision": decision_str})
 
     # Notification email pour RETAINED / REFUSED (fire-and-forget)
     if decision_str in ("RETAINED", "REFUSED"):

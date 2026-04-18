@@ -46,11 +46,12 @@ async def list_users(
     role: Optional[str] = None,
     is_active: Optional[bool] = None,
     page: int = 1,
-    limit: int = 20
+    limit: int = 20,
+    search: Optional[str] = None,
 ) -> dict:
     skip = (page - 1) * limit
     total, users = await user_repository.list_all(
-        db, role, is_active, skip, limit
+        db, role, is_active, skip, limit, search=search
     )
     return {"total": total, "users": users}
 

@@ -41,7 +41,8 @@ async def list_all(
     role: Optional[str] = None,
     is_active: Optional[bool] = None,
     skip: int = 0,
-    limit: int = 20
+    limit: int = 20,
+    search: Optional[str] = None,
 ) -> tuple[int, list[User]]:
     query = select(User)
 
@@ -49,6 +50,11 @@ async def list_all(
         query = query.where(User.role == role)
     if is_active is not None:
         query = query.where(User.is_active == is_active)
+    if search:
+        term = f"%{search}%"
+        query = query.where(
+            User.email.ilike(term) | User.nom.ilike(term) | User.prenom.ilike(term)
+        )
 
     # Total
     count_query = select(func.count()).select_from(query.subquery())
