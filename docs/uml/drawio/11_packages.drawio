@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-04-15T00:00:00.000Z" agent="Claude Code" version="24.0.0" type="device">
+
+  <!-- PAGE 1 — Backend Python -->
+  <diagram id="pkg_backend" name="11a — Packages Backend">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="2" value="Organisation des packages — Backend Python (backend/app/)" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1"><mxGeometry x="200" y="10" width="900" height="25" as="geometry"/></mxCell>
+
+        <!-- Main -->
+        <mxCell id="3" value="main.py&#xa;lifespan, CORS, montage routeurs&#xa;Prometheus instrumentator" style="shape=component;align=left;spacingLeft=36;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="630" y="40" width="300" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- api/ package -->
+        <mxCell id="4" value="api/" style="swimlane;fontStyle=1;startSize=24;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="30" y="130" width="900" height="420" as="geometry"/>
+        </mxCell>
+        <mxCell id="5" value="dependencies.py&#xa;get_current_user()&#xa;require_role(*roles)&#xa;require_candidate/agent/rh/admin" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="4">
+          <mxGeometry x="20" y="35" width="250" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- routes/ -->
+        <mxCell id="6" value="routes/" style="swimlane;fontStyle=1;startSize=22;fillColor=#EAF4FB;strokeColor=#6c8ebf;" vertex="1" parent="4">
+          <mxGeometry x="310" y="30" width="570" height="370" as="geometry"/>
+        </mxCell>
+        <mxCell id="7" value="visitor/&#xa;auth.py (login, register)&#xa;offers.py (offres publiques)" style="shape=component;align=left;spacingLeft=36;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="6">
+          <mxGeometry x="15" y="35" width="250" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="8" value="auth/&#xa;google.py (OAuth2 callback)" style="shape=component;align=left;spacingLeft=36;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="6">
+          <mxGeometry x="285" y="35" width="250" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="9" value="candidate/&#xa;profile.py | cvs.py&#xa;applications.py | cover_letters.py" style="shape=component;align=left;spacingLeft=36;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="6">
+          <mxGeometry x="15" y="115" width="250" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="10" value="agent/&#xa;cvs.py | import_keejob.py&#xa;candidates.py | dashboard.py" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="6">
+          <mxGeometry x="285" y="115" width="250" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="11" value="rh/&#xa;offers.py | matching.py&#xa;dashboard.py | cvs.py&#xa;calendar.py | n8n_webhook.py" style="shape=component;align=left;spacingLeft=36;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="6">
+          <mxGeometry x="15" y="200" width="250" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="12" value="admin/&#xa;users.py | stats.py | system.py" style="shape=component;align=left;spacingLeft=36;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="6">
+          <mxGeometry x="285" y="200" width="250" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="13" value="n8n/ (routes n8n webhook)" style="shape=component;align=left;spacingLeft=36;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="6">
+          <mxGeometry x="15" y="300" width="250" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- services/ -->
+        <mxCell id="14" value="services/" style="swimlane;fontStyle=1;startSize=22;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="30" y="580" width="430" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="15" value="matching_service.py&#xa;(matching pgvector + scorer)" style="shape=component;align=left;spacingLeft=36;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="14">
+          <mxGeometry x="15" y="35" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="16" value="cv_service.py" style="shape=component;align=left;spacingLeft=36;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="14">
+          <mxGeometry x="220" y="35" width="190" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="17" value="candidate_service.py" style="shape=component;align=left;spacingLeft=36;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="14">
+          <mxGeometry x="15" y="115" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="18" value="offer_service.py" style="shape=component;align=left;spacingLeft=36;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="14">
+          <mxGeometry x="220" y="115" width="190" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- repositories/ -->
+        <mxCell id="19" value="repositories/" style="swimlane;fontStyle=1;startSize=22;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="500" y="580" width="430" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="20" value="cv_repository.py" style="shape=component;align=left;spacingLeft=36;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="19">
+          <mxGeometry x="15" y="35" width="185" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="21" value="candidate_repository.py&#xa;(list_all avec agent_id filter)" style="shape=component;align=left;spacingLeft=36;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="19">
+          <mxGeometry x="215" y="35" width="195" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="22" value="offer_repository.py" style="shape=component;align=left;spacingLeft=36;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="19">
+          <mxGeometry x="15" y="100" width="185" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="23" value="resultat_repository.py&#xa;user_repository.py" style="shape=component;align=left;spacingLeft=36;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="19">
+          <mxGeometry x="215" y="100" width="195" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- models/ -->
+        <mxCell id="24" value="models/" style="swimlane;fontStyle=1;startSize=22;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="970" y="130" width="400" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="25" value="db_models.py&#xa;User, Filiale, Candidate, CV&#xa;Competence, Experience, JobOffer&#xa;Resultat, Entretien, AuditLog&#xa;+ Enums (UserRole, CVStatus, etc.)" style="shape=component;align=left;spacingLeft=36;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="24">
+          <mxGeometry x="15" y="35" width="180" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="26" value="schemas/&#xa;candidate_schemas.py | cv_schemas.py&#xa;offer_schemas.py | resultat_schemas.py" style="shape=component;align=left;spacingLeft=36;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="24">
+          <mxGeometry x="205" y="35" width="180" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- nlp/ -->
+        <mxCell id="27" value="nlp/" style="swimlane;fontStyle=1;startSize=22;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="970" y="360" width="400" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="28" value="embedder.py&#xa;_get_model() lru_cache&#xa;encode(text) → list[float]&#xa;cv_to_embed_text() | offer_to_embed_text()" style="shape=component;align=left;spacingLeft=36;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="27">
+          <mxGeometry x="15" y="35" width="180" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="29" value="scorer.py&#xa;score_semantique() 40%&#xa;score_competences() Jaccard 35%&#xa;score_experience() ratio 15%&#xa;score_langue() binary 10%" style="shape=component;align=left;spacingLeft=36;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="27">
+          <mxGeometry x="205" y="35" width="180" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="30" value="ocr.py&#xa;extract_text_from_pdf()&#xa;evaluate_ocr_quality()" style="shape=component;align=left;spacingLeft=36;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="27">
+          <mxGeometry x="15" y="130" width="180" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="31" value="keejob_parser.py&#xa;generic_parser.py&#xa;general_cv_parser.py" style="shape=component;align=left;spacingLeft=36;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="27">
+          <mxGeometry x="205" y="150" width="180" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- tasks/ -->
+        <mxCell id="32" value="tasks/" style="swimlane;fontStyle=1;startSize=22;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="970" y="650" width="400" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="33" value="cv_tasks.py&#xa;embed_cv(cv_id)&#xa;embed_all_cvs(batch)&#xa;process_cv_on_upload(cv_id)" style="shape=component;align=left;spacingLeft=36;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="32">
+          <mxGeometry x="15" y="35" width="180" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="34" value="offer_tasks.py&#xa;embed_offer(offer_id)" style="shape=component;align=left;spacingLeft=36;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="32">
+          <mxGeometry x="205" y="35" width="180" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- core/ -->
+        <mxCell id="35" value="core/" style="swimlane;fontStyle=1;startSize=22;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="30" y="810" width="900" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="36" value="config.py&#xa;Settings (Pydantic BaseSettings)&#xa;.env loading" style="shape=component;align=left;spacingLeft=36;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="35">
+          <mxGeometry x="15" y="35" width="160" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="37" value="database.py&#xa;AsyncSessionLocal&#xa;pgvector init" style="shape=component;align=left;spacingLeft=36;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="35">
+          <mxGeometry x="190" y="35" width="160" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="38" value="security.py&#xa;create_access_token()&#xa;decode_token() | verify_password()" style="shape=component;align=left;spacingLeft=36;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="35">
+          <mxGeometry x="365" y="35" width="180" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="39" value="celery_app.py&#xa;Celery + Redis config" style="shape=component;align=left;spacingLeft=36;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="35">
+          <mxGeometry x="560" y="35" width="160" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="40" value="mailer.py&#xa;send_entretien_invitation()&#xa;SMTP asyncio" style="shape=component;align=left;spacingLeft=36;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="35">
+          <mxGeometry x="735" y="35" width="150" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- DEPENDENCY ARROWS -->
+        <mxCell id="50" value="Routes → Services" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#82b366;" edge="1" source="11" target="15" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="51" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#82b366;" edge="1" source="9" target="16" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="52" value="Services → Repos" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#9673a6;" edge="1" source="15" target="20" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="53" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#9673a6;" edge="1" source="15" target="22" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="54" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#9673a6;" edge="1" source="15" target="23" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="55" value="Repos → Models" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#d6b656;" edge="1" source="20" target="25" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="56" value="Tasks → NLP" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#b85450;" edge="1" source="33" target="28" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="57" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#b85450;" edge="1" source="33" target="30" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="58" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#b85450;" edge="1" source="33" target="29" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="59" value="Routes → Core" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#666666;" edge="1" source="5" target="38" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="60" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#666666;" edge="1" source="3" target="36" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- PAGE 2 — Frontend React -->
+  <diagram id="pkg_frontend" name="11b — Packages Frontend">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="2" value="Organisation des packages — Frontend React (frontend/src/)" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1"><mxGeometry x="200" y="10" width="900" height="25" as="geometry"/></mxCell>
+
+        <!-- pages/ -->
+        <mxCell id="3" value="pages/" style="swimlane;fontStyle=1;startSize=22;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="30" y="50" width="600" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="4" value="candidate/&#xa;DashboardPage | MyCVPage&#xa;CVGeneratorPage | ApplicationsPage&#xa;ProfilePage | OffresPage" style="shape=component;align=left;spacingLeft=36;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="3">
+          <mxGeometry x="15" y="35" width="265" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="5" value="agent/&#xa;DashboardPage | UploadCVPage&#xa;BatchUploadPage | CVListPage" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="3">
+          <mxGeometry x="295" y="35" width="285" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="6" value="rh/&#xa;DashboardPage | OffersPage&#xa;MatchingPage | ResultsPage&#xa;CalendarPage | N8NCalendarPage | StatsPage" style="shape=component;align=left;spacingLeft=36;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="3">
+          <mxGeometry x="15" y="135" width="265" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="7" value="admin/&#xa;DashboardPage | UsersPage&#xa;AuditPage | SystemHealthPage" style="shape=component;align=left;spacingLeft=36;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="3">
+          <mxGeometry x="295" y="135" width="285" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="8" value="LoginPage | RegisterPage (eager imports)" style="shape=component;align=left;spacingLeft=36;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="3">
+          <mxGeometry x="15" y="230" width="560" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- components/ -->
+        <mxCell id="9" value="components/" style="swimlane;fontStyle=1;startSize=22;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="680" y="50" width="460" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="10" value="common/ | cv/ | offer/&#xa;matching/ | dashboard/&#xa;candidature/CandidatureTimeline.tsx" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="9">
+          <mxGeometry x="15" y="35" width="210" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="11" value="cv/CVDocument.tsx&#xa;(react-to-print, Keejob style&#xa;forwardRef, A4 inline CSS)" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="9">
+          <mxGeometry x="235" y="35" width="210" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- hooks/ -->
+        <mxCell id="12" value="hooks/" style="swimlane;fontStyle=1;startSize=22;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="30" y="380" width="460" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="13" value="useFullProfile()&#xa;useApplications()&#xa;useFavorites() — localStorage&#xa;useMatching() | useOffres()" style="shape=component;align=left;spacingLeft=36;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="12">
+          <mxGeometry x="15" y="35" width="430" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- services/ -->
+        <mxCell id="14" value="services/" style="swimlane;fontStyle=1;startSize=22;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="530" y="380" width="460" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="15" value="api.ts&#xa;Axios + JWT interceptor&#xa;baseURL: localhost:8000&#xa;401 → authStore.logout()" style="shape=component;align=left;spacingLeft=36;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="14">
+          <mxGeometry x="15" y="35" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="16" value="messageService.ts&#xa;msg.success/error/warning&#xa;(singleton Ant Design)" style="shape=component;align=left;spacingLeft=36;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="14">
+          <mxGeometry x="230" y="35" width="210" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- store/ -->
+        <mxCell id="17" value="store/" style="swimlane;fontStyle=1;startSize=22;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="30" y="560" width="460" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="18" value="authStore (Zustand, persisted)&#xa;user, token, setToken, logout" style="shape=component;align=left;spacingLeft=36;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="17">
+          <mxGeometry x="15" y="35" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="19" value="notificationStore (Zustand)&#xa;toasts" style="shape=component;align=left;spacingLeft=36;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="17">
+          <mxGeometry x="230" y="35" width="210" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- router/ -->
+        <mxCell id="20" value="router/" style="swimlane;fontStyle=1;startSize=22;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="530" y="560" width="330" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="21" value="index.tsx&#xa;React Router 6 | lazy() pour toutes les pages&#xa;ProtectedRoute (rôle)" style="shape=component;align=left;spacingLeft=36;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="20">
+          <mxGeometry x="15" y="28" width="300" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- layouts/ -->
+        <mxCell id="22" value="layouts/" style="swimlane;fontStyle=1;startSize=22;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="900" y="380" width="340" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="23" value="AgentLayout | RHLayout&#xa;CandidateLayout | AdminLayout&#xa;(sidebar COLORS.sidebarBg)" style="shape=component;align=left;spacingLeft=36;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="22">
+          <mxGeometry x="15" y="28" width="310" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- theme.ts -->
+        <mxCell id="24" value="theme.ts&#xa;COLORS.primary #8B1A1A&#xa;COLORS.gold #C9A84C&#xa;COLORS.sidebarBg #3D0C02&#xa;Ant Design token override" style="shape=component;align=left;spacingLeft=36;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="900" y="560" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- ARROWS -->
+        <mxCell id="30" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#b85450;" edge="1" source="4" target="13" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="31" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#b85450;" edge="1" source="4" target="10" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="32" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#82b366;" edge="1" source="13" target="15" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="33" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#82b366;" edge="1" source="13" target="18" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="34" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#d6b656;" edge="1" source="15" target="18" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="35" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#666666;" edge="1" source="21" target="4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="36" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#666666;" edge="1" source="21" target="23" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="37" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#666666;" edge="1" source="23" target="24" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="38" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#6c8ebf;" edge="1" source="10" target="24" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- PAGE 3 — Mobile Flutter -->
+  <diagram id="pkg_mobile" name="11c — Packages Mobile Flutter">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="2" value="Organisation des packages — Mobile Flutter (mobile/lib/)" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1"><mxGeometry x="200" y="10" width="900" height="25" as="geometry"/></mxCell>
+
+        <!-- main.dart + router.dart -->
+        <mxCell id="3" value="main.dart&#xa;ProviderScope → AtsRandaApp (ConsumerWidget) → MaterialApp.router" style="shape=component;align=left;spacingLeft=36;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="30" y="50" width="500" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="4" value="router.dart&#xa;routerProvider (Provider&lt;GoRouter&gt;): ShellRoute + _AuthChangeNotifier" style="shape=component;align=left;spacingLeft=36;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="560" y="50" width="500" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- core/ -->
+        <mxCell id="5" value="core/" style="swimlane;fontStyle=1;startSize=22;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="30" y="130" width="500" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="6" value="api_client.dart&#xa;Dio singleton&#xa;_AuthInterceptor&#xa;saveTokens/clearTokens/hasToken helpers" style="shape=component;align=left;spacingLeft=36;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="5">
+          <mxGeometry x="15" y="35" width="225" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="7" value="theme.dart&#xa;kPrimary #8B1A1A | kGold #C9A84C&#xa;kGoldLight #F0D080 | kDarkBrown #3D0C02&#xa;buildAppTheme()" style="shape=component;align=left;spacingLeft=36;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="5">
+          <mxGeometry x="255" y="35" width="225" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- models/ -->
+        <mxCell id="8" value="models/ (freezed + json_serializable)" style="swimlane;fontStyle=1;startSize=22;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="560" y="130" width="500" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="9" value="User | CandidateProfile | FullProfile&#xa;CvModel | Application | ApplicationDetail&#xa;TimelineStep | JobOffer | Experience | Skill&#xa;(freezed + json_serializable)" style="shape=component;align=left;spacingLeft=36;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="8">
+          <mxGeometry x="15" y="35" width="460" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- repositories/ -->
+        <mxCell id="10" value="repositories/" style="swimlane;fontStyle=1;startSize=22;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="30" y="320" width="500" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="11" value="auth_repository.dart&#xa;cv_repository.dart&#xa;matching_repository.dart&#xa;offers_repository.dart&#xa;stats_repository.dart" style="shape=component;align=left;spacingLeft=36;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="10">
+          <mxGeometry x="15" y="35" width="460" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- providers/ -->
+        <mxCell id="12" value="providers/" style="swimlane;fontStyle=1;startSize=22;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="560" y="320" width="500" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="13" value="auth_provider.dart&#xa;authStateProvider (AsyncNotifier&lt;User?&gt;)" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="12">
+          <mxGeometry x="15" y="35" width="225" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="14" value="cv_provider.dart&#xa;cvListProvider | fullProfileProvider" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="12">
+          <mxGeometry x="255" y="35" width="225" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="15" value="matching_provider.dart&#xa;applicationsProvider&#xa;applicationDetailProvider(id)" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="12">
+          <mxGeometry x="15" y="115" width="225" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="16" value="dashboard_provider.dart&#xa;dashboardStatsProvider&#xa;(parallel fetch)" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="12">
+          <mxGeometry x="255" y="115" width="225" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="17" value="offers_provider.dart&#xa;offersProvider (autoDispose)&#xa;offersSearchQueryProvider (StateProvider)" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="12">
+          <mxGeometry x="15" y="200" width="460" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- ui/screens -->
+        <mxCell id="18" value="ui/screens/" style="swimlane;fontStyle=1;startSize=22;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="30" y="510" width="500" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="19" value="LoginScreen | DashboardScreen&#xa;ProfileScreen | CVScreen&#xa;ApplicationsScreen | ApplicationDetailScreen&#xa;OffersScreen | OfferDetailScreen" style="shape=component;align=left;spacingLeft=36;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="18">
+          <mxGeometry x="15" y="35" width="460" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- ui/widgets -->
+        <mxCell id="20" value="ui/widgets/" style="swimlane;fontStyle=1;startSize=22;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="560" y="610" width="500" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="21" value="AppShell (bottom nav 5 tabs)&#xa;StatusBadge | ScoreRing&#xa;TimelineStepWidget | CVCard | OfferCard" style="shape=component;align=left;spacingLeft=36;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="20">
+          <mxGeometry x="15" y="35" width="460" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- ARROWS -->
+        <mxCell id="30" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#82b366;" edge="1" source="3" target="12" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="31" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#82b366;" edge="1" source="4" target="13" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="32" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#b85450;" edge="1" source="19" target="12" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="33" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#6c8ebf;" edge="1" source="13" target="11" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="34" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#9673a6;" edge="1" source="11" target="6" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="35" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#b85450;" edge="1" source="19" target="21" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="36" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#82b366;" edge="1" source="21" target="7" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+</mxfile>

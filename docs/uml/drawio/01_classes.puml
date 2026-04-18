@@ -1,0 +1,228 @@
+@startuml 01_Classes_ATS_RANDA
+skinparam classAttributeIconSize 0
+skinparam classFontSize 11
+skinparam classFontName Arial
+skinparam classBackgroundColor #FEFECE
+skinparam classBorderColor #A80036
+skinparam arrowColor #A80036
+skinparam packageBackgroundColor #EEEEEE
+hide empty methods
+
+class Filiale {
+  +id : Integer <<PK>>
+  +nom_filiale : String
+  +adresse : Text
+  +ville : String
+  +created_at : DateTime
+}
+
+class User {
+  +id : Integer <<PK>>
+  +nom : String
+  +prenom : String
+  +email : String <<UNIQUE>>
+  +hashed_pwd : String
+  +role : UserRole
+  +departement : String
+  +id_filiale : Integer <<FK>>
+  +is_active : Boolean
+  +google_id : String <<UNIQUE>>
+  +auth_provider : String
+  +avatar_url : Text
+}
+
+class Candidate {
+  +id : Integer <<PK>>
+  +nom : String
+  +prenom : String
+  +email : String <<UNIQUE>>
+  +telephone : String
+  +titre_poste : String
+  +niveau_experience : String
+  +niveau_etude : String
+  +visibility_status : VisibilityStatus
+  +secteurs_recherche : JSONB
+  +metiers_recherche : JSONB
+  +mobilite_tn : Boolean
+  +mobilite_intl : Boolean
+}
+
+class CV {
+  +id : Integer <<PK>>
+  +id_candidate : Integer <<FK>>
+  +id_agent : Integer <<FK, nullable>>
+  +statut : CVStatus
+  +source : CVSource
+  +fichier_pdf : String
+  +cv_text : Text
+  +cv_entities : JSONB
+  +embedding : Vector(384)
+  +score_final : Float
+  +cv_version : Integer
+}
+
+class Competence {
+  +id : Integer <<PK>>
+  +id_cv : Integer <<FK>>
+  +nom_competence : String
+  +niveau : SkillLevel
+}
+
+class Experience {
+  +id : Integer <<PK>>
+  +id_cv : Integer <<FK>>
+  +poste : String
+  +entreprise : String
+  +date_debut : String
+  +date_fin : String
+  +description : Text
+  +type_contrat : String
+  +is_current : Boolean
+}
+
+class JobOffer {
+  +id : Integer <<PK>>
+  +id_rh : Integer <<FK, nullable>>
+  +titre : String
+  +description : Text
+  +competences_requises : JSONB
+  +experience_requise : Float
+  +langue_requise : String
+  +embedding : Vector(384)
+  +statut : OfferStatus
+  +poids_semantique : Float (0.40)
+  +poids_competences : Float (0.35)
+  +poids_experience : Float (0.15)
+  +poids_langue : Float (0.10)
+  +date_expiration : DateTime
+}
+
+class Resultat {
+  +id : Integer <<PK>>
+  +id_cv : Integer <<FK>>
+  +id_offre : Integer <<FK>>
+  +score_matching : Float
+  +score_skills : Float
+  +score_experience : Float
+  +score_langue : Float
+  +score_final : Float
+  +rang : Integer
+  +decision : Decision
+  +feedback_rh : Text <<nullable>>
+  +feedback_visible : Boolean
+  +date_decision : DateTime <<nullable>>
+}
+
+class Entretien {
+  +id : Integer <<PK>>
+  +id_resultat : Integer <<FK, nullable>>
+  +id_offre : Integer <<FK>>
+  +id_rh : Integer <<FK, nullable>>
+  +id_candidate_user : Integer <<FK, nullable>>
+  +date_entretien : DateTime
+  +duree_minutes : Integer
+  +lieu : String
+  +type_entretien : String
+  +lien_visio : Text
+  +statut : String
+  +email_envoye : Boolean
+  +n8n_execution_id : String
+}
+
+class AuditLog {
+  +id : Integer <<PK>>
+  +user_id : Integer <<FK, nullable>>
+  +action : String <<INDEX>>
+  +resource : String
+  +resource_id : Integer
+  +details : JSONB
+  +ip_address : String
+  +created_at : DateTime <<INDEX>>
+}
+
+class CoverLetter {
+  +id : Integer <<PK>>
+  +id_candidate : Integer <<FK>>
+  +titre : String
+  +contenu : Text
+}
+
+class CandidateDocument {
+  +id : Integer <<PK>>
+  +id_candidate : Integer <<FK>>
+  +nom : String
+  +fichier : String
+  +type_doc : String
+  +taille : Integer
+}
+
+enum UserRole {
+  VISITOR
+  CANDIDATE
+  AGENT
+  RH
+  ADMIN
+}
+
+enum CVStatus {
+  UPLOADED
+  PARSING
+  INDEXED
+  ERROR
+}
+
+enum CVSource {
+  KEEJOB
+  AGENT
+  CANDIDAT
+  EMAIL
+  LINKEDIN
+}
+
+enum OfferStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+  BROUILLON
+  EN_VALIDATION
+  PROCHAINEMENT
+  DESACTIVEE
+  EXPIREE
+  REFUSEE
+}
+
+enum Decision {
+  RETAINED
+  PENDING
+  REFUSED
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  EXPERT
+}
+
+Filiale "1" --> "0..*" User : id_filiale
+User "1" --> "0..*" CV : id_agent (CVs importés)
+User "1" --> "0..*" AuditLog : user_id
+User "1" --> "0..*" JobOffer : id_rh
+User "1" --> "0..*" Entretien : id_rh
+User "1" --> "0..*" Entretien : id_candidate_user
+Candidate "1" --> "0..*" CV : id_candidate
+Candidate "1" --> "0..*" CoverLetter : id_candidate
+Candidate "1" --> "0..*" CandidateDocument : id_candidate
+CV "1" --> "0..*" Competence : id_cv
+CV "1" --> "0..*" Experience : id_cv
+CV "1" --> "0..*" Resultat : id_cv
+JobOffer "1" --> "0..*" Resultat : id_offre
+JobOffer "1" --> "0..*" Entretien : id_offre
+Resultat "1" --> "0..1" Entretien : id_resultat
+CV ..> CVStatus
+CV ..> CVSource
+User ..> UserRole
+JobOffer ..> OfferStatus
+Resultat ..> Decision
+Competence ..> SkillLevel
+
+@enduml

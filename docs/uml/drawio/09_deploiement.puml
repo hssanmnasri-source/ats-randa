@@ -1,0 +1,104 @@
+@startuml 09_Deploiement_ATS_RANDA
+skinparam nodeFontSize 11
+skinparam componentFontSize 10
+skinparam componentBackgroundColor #FEFECE
+skinparam componentBorderColor #A80036
+skinparam nodeBackgroundColor #E8F4F8
+skinparam nodeBorderColor #336699
+skinparam arrowColor #555555
+skinparam packageBackgroundColor #F5F5F5
+
+title Diagramme de Déploiement — ATS RANDA
+
+node "Machine Hôte (Windows 11 / Linux)" as HOST {
+
+  node "Serveur de dev frontend\n(hors Docker)" as NPM_NODE {
+    [React 18 SPA\nnpm run dev\nVite :3000\nTypeScript + Ant Design 5\n+ TanStack Query + Zustand] as REACT
+  }
+
+  node "App Flutter (hors Docker)" as FLUTTER_NODE {
+    [Flutter Web\nflutter run -d chrome\nPort aléatoire\nRiverpod + GoRouter + Dio] as FLUTTER
+  }
+
+  node "Docker Engine" as DOCKER {
+
+    node "Réseau bridge: ats_network" as NET {
+
+      package "Couche Entrée" {
+        [ats_nginx\nnginx:1.25-alpine\nPort: 80:80\nConfig: ./nginx/nginx.conf] as NGINX_C
+      }
+
+      package "Couche Application" {
+        [ats_backend\nBuild: ./backend/Dockerfile\nPort: 8000:8000\nVol: uploads_data:/app/uploads\nDepends: postgres(healthy) redis(healthy)] as BACK_C
+
+        [ats_celery\nBuild: ./backend/Dockerfile\ncmd: celery worker --concurrency=4\nVol: uploads_data:/app/uploads\nDepends: backend, redis] as CEL_C
+
+        [ats_flower\nBuild: ./backend/Dockerfile\ncmd: celery flower --port=5555\nPort: 5555:5555\nDepends: redis, celery_worker] as FLOWER_C
+      }
+
+      package "Couche Données" {
+        database "ats_postgres\npgvector/pgvector:pg16\nPort: 5432:5432\nVol: postgres_data\nInit: ./scripts/init.sql\nHealthcheck: pg_isready" as PG_C
+
+        database "ats_redis\nredis:7.2-alpine\nPort: 6379:6379\ncmd: redis-server --requirepass\nVol: redis_data\nHealthcheck: redis-cli ping" as RDS_C
+      }
+
+      package "Automatisation" {
+        [ats_n8n\nn8nio/n8n:latest\nPort: 5678:5678\nDB: PostgreSQL partagée\nVol: n8n_data:/home/node/.n8n\nDepends: postgres(healthy) redis(healthy)] as N8N_C
+      }
+
+      package "Monitoring" {
+        [ats_prometheus\nprom/prometheus:v2.52.0\nPort: 9090:9090\nRetention: 15j\nVol: prometheus_data] as PROM_C
+
+        [ats_grafana\ngrafana/grafana:10.4.0\nPort: 3001:3000\nProvisionning: ./monitoring/grafana\nVol: grafana_data\nDepends: prometheus] as GRAF_C
+
+        [ats_redis_exporter\noliver006/redis_exporter:v1.61.0\nDepends: redis] as REDIS_EXP_C
+
+        [ats_postgres_exporter\nprometheus/postgres_exporter:v0.15.0\nDepends: postgres] as PG_EXP_C
+      }
+    }
+  }
+}
+
+node "Services Externes" as EXTERNAL {
+  [Gmail SMTP\nsmtp.gmail.com:587\n(TLS STARTTLS)] as SMTP
+  [Google OAuth2\naccounts.google.com] as GOOGLE_AUTH
+  [HuggingFace Hub\nparaphrase-multilingual-MiniLM-L12-v2\n(téléchargé au premier démarrage)] as HF
+}
+
+' Connexions clients → Nginx
+REACT --> NGINX_C : HTTP :80
+FLUTTER --> NGINX_C : HTTP :80 ou :8000
+
+' Nginx → Backend / Frontend
+NGINX_C --> BACK_C : proxy /api/* → :8000
+NGINX_C ..> REACT : proxy / → host.docker.internal:3000
+
+' Backend → Données
+BACK_C --> PG_C : SQLAlchemy async :5432
+BACK_C --> RDS_C : Redis broker :6379
+
+' Celery
+CEL_C --> RDS_C : Consomme tâches :6379
+CEL_C --> PG_C : UPDATE/INSERT :5432
+
+' n8n
+N8N_C --> BACK_C : Webhooks POST /api/n8n/*
+N8N_C --> PG_C : Tables n8n_* :5432
+
+' Monitoring
+BACK_C --> PROM_C : GET /metrics
+REDIS_EXP_C --> RDS_C : Métriques redis://
+REDIS_EXP_C --> PROM_C : Scrape /metrics
+PG_EXP_C --> PG_C : DSN postgresql://
+PG_EXP_C --> PROM_C : Scrape /metrics
+PROM_C --> GRAF_C : Datasource PromQL
+
+' Flower
+RDS_C --> FLOWER_C : Events workers
+
+' Externes
+BACK_C --> SMTP : SMTP TLS\n(mailer.py)
+BACK_C --> GOOGLE_AUTH : OAuth2\n(api/auth/google)
+BACK_C ..> HF : Téléchargement modèle NLP\n(au démarrage si absent)
+
+@enduml

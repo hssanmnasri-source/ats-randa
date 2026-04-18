@@ -1,0 +1,124 @@
+@startuml 07_Etats_CV
+skinparam stateFontSize 12
+skinparam stateBackgroundColor #FEFECE
+skinparam stateBorderColor #A80036
+skinparam arrowColor #555555
+
+title États d'un CV (cvs.statut)
+
+[*] --> UPLOADED : Upload fichier\n(POST /api/candidate/cvs/upload\nou /api/agent/cvs/upload\nou /api/agent/import/keejob)
+
+UPLOADED : Stockage initial\nFichier dans /app/uploads/cvs/\nStatut par défaut du INSERT
+
+UPLOADED --> PARSING : Celery task démarrée\nprocess_cv_on_upload(cv_id)
+
+PARSING --> INDEXED : Succès pipeline NLP :\n1. Texte extrait (OCR/pdfplumber)\n2. Entités parsées\n3. Embedding Vector(384) généré\n4. cv_version incrémenté
+
+PARSING --> ERROR : Échec irrémédiable :\n- PDF corrompu / texte vide\n- Erreur Tesseract\n- Exception (max_retries=3)
+
+INDEXED : embedding ≠ NULL\nParticipe au matching pgvector
+
+INDEXED --> INDEXED : Re-embedding :\nPUT /api/candidate/cvs/:id/validate\n(cv_version incrémenté)
+
+ERROR : Ne participe pas au matching
+
+ERROR --> UPLOADED : Import manuel corrigé\nou re-soumission candidat
+
+newpage États — Candidature / Résultat
+
+title États d'une candidature (resultats.decision + timeline)
+
+skinparam stateBackgroundColor #FEFECE
+skinparam stateBorderColor #A80036
+
+[*] --> POSTULE : POST /api/candidate/offers/:id/apply\nOU création automatique par Celery\n→ INSERT resultats {decision=PENDING}
+
+POSTULE : Étape 1 — timeline candidat\ndecision = PENDING
+
+POSTULE --> ANALYSE_IA : Celery process_cv_on_upload terminé\nScores calculés (cv.statut=INDEXED)
+
+ANALYSE_IA : Étape 2 — timeline candidat\nscore_final calculé par scorer.py\nJaccard + cosinus + expérience + langue
+
+ANALYSE_IA --> EN_EXAMEN : RH consulte les résultats\nGET /api/rh/offers/:id/matching\n(last_score_updated_at mis à jour)
+
+EN_EXAMEN : Étape 3 — timeline candidat\nRH voit les scores dans MatchingPage
+
+EN_EXAMEN --> DECISION_RETENU : PATCH matching/:id {decision: "RETAINED"}\nfeedback_rh + feedback_visible
+
+EN_EXAMEN --> DECISION_REFUSE : PATCH matching/:id {decision: "REFUSED"}\nfeedback_rh + feedback_visible
+
+DECISION_RETENU : Étape 4 — DÉCISION FINALE\nImmuable — ne peut plus être modifié\nWorkflow entretien n8n déclenché
+
+DECISION_REFUSE : Étape 4 — DÉCISION FINALE\nEmail de notification si activé
+
+DECISION_RETENU --> [*]
+DECISION_REFUSE --> [*]
+
+POSTULE --> RETIRE : DELETE /api/candidate/applications/:id\n(uniquement si decision=PENDING)
+
+RETIRE --> [*] : Candidature supprimée
+
+newpage États — Offre d'emploi
+
+title États d'une offre d'emploi (job_offers.statut)
+
+[*] --> BROUILLON : POST /api/rh/offers\nCréation par RH (par défaut)
+
+BROUILLON --> EN_VALIDATION : RH soumet pour validation
+BROUILLON --> ARCHIVED : RH archive directement
+
+EN_VALIDATION --> BROUILLON : Refus → retour en brouillon
+EN_VALIDATION --> PROCHAINEMENT : Planification publication future
+EN_VALIDATION --> ACTIVE : Validation → publication immédiate
+EN_VALIDATION --> ARCHIVED : Archivage depuis validation
+
+PROCHAINEMENT --> ACTIVE : Date mise en ligne atteinte\nou publication manuelle
+PROCHAINEMENT --> DESACTIVEE : Désactivation avant publication
+PROCHAINEMENT --> ARCHIVED : Archivage
+
+ACTIVE : Visible sur GET /api/visitor/offers\nParticipe au matching pgvector\nCVs uploadés matchés automatiquement
+
+ACTIVE --> DESACTIVEE : RH désactive temporairement
+ACTIVE --> ARCHIVED : RH archive
+
+DESACTIVEE --> ACTIVE : RH réactive l'offre
+DESACTIVEE --> ARCHIVED : RH archive définitivement
+
+INACTIVE --> ACTIVE : Réactivation
+INACTIVE --> ARCHIVED : Archivage
+
+EXPIREE --> ARCHIVED : date_expiration dépassée\n→ transition automatique
+
+REFUSEE --> BROUILLON : Correction par le RH
+
+ARCHIVED : État terminal irréversible\nResultats et entretiens conservés
+
+ARCHIVED --> [*]
+
+newpage États — Entretien n8n
+
+title États d'un entretien (entretiens.statut)
+
+[*] --> PLANIFIE : Création manuelle par RH\nvia CalendarPage\n(POST /api/rh/calendar)
+
+[*] --> PROPOSE : Génération automatique n8n\nPOST /api/n8n/declencher-generation\n(decision=RETAINED)
+
+PLANIFIE : Créé via CalendarPage\n(FullCalendar, date manuelle)
+
+PROPOSE : Créé par le workflow n8n\nautomatiquement pour tous\nles candidats RETAINED
+
+PLANIFIE --> CONFIRME : Confirmation manuelle RH
+PLANIFIE --> ANNULE : Annulation RH ou candidat
+
+PROPOSE --> CONFIRME : POST /api/n8n/entretiens/confirmer-tout
+PROPOSE --> ANNULE : Candidat décline ou RH annule
+
+CONFIRME --> ENVOYE : POST /api/n8n/envoyer-emails-backend\n→ mailer.py SMTP\n→ email_envoye=true
+
+ENVOYE : email_envoye = true\nCandidature considérée conclue
+
+ENVOYE --> ANNULE : Annulation tardive
+
+ANNULE --> [*]
+
+@enduml

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-04-15T00:00:00.000Z" agent="Claude Code" version="24.0.0" type="device">
+
+  <!-- PAGE 1 — Démarrage et restauration de session -->
+  <diagram id="seq_mobile_start" name="10a — Démarrage Flutter">
+    <mxGraphModel dx="1600" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="2" value="App Flutter — Démarrage et restauration de session" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1"><mxGeometry x="100" y="10" width="900" height="25" as="geometry"/></mxCell>
+
+        <mxCell id="10" value="main.dart&#xa;ProviderScope" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="10" y="40" width="120" height="40" as="geometry"/></mxCell>
+        <mxCell id="11" value="authStateProvider&#xa;AuthNotifier.build()" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="200" y="40" width="140" height="40" as="geometry"/></mxCell>
+        <mxCell id="12" value="flutter_secure_storage" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="410" y="40" width="140" height="40" as="geometry"/></mxCell>
+        <mxCell id="13" value="AuthRepository" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="620" y="40" width="120" height="40" as="geometry"/></mxCell>
+        <mxCell id="14" value="api_client.dart&#xa;Dio + _AuthInterceptor" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="810" y="40" width="140" height="40" as="geometry"/></mxCell>
+        <mxCell id="15" value="FastAPI :8000" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="1020" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="16" value="routerProvider&#xa;GoRouter" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="1200" y="40" width="130" height="40" as="geometry"/></mxCell>
+        <mxCell id="17" value="Interface Flutter" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="1400" y="40" width="120" height="40" as="geometry"/></mxCell>
+
+        <!-- LIFELINES -->
+        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="70" y="80" as="sourcePoint"/><mxPoint x="70" y="900" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="270" y="80" as="sourcePoint"/><mxPoint x="270" y="900" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="480" y="80" as="sourcePoint"/><mxPoint x="480" y="900" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="680" y="80" as="sourcePoint"/><mxPoint x="680" y="900" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="880" y="80" as="sourcePoint"/><mxPoint x="880" y="900" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="25" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1075" y="80" as="sourcePoint"/><mxPoint x="1075" y="900" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="26" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1265" y="80" as="sourcePoint"/><mxPoint x="1265" y="900" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="27" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1460" y="80" as="sourcePoint"/><mxPoint x="1460" y="900" as="targetPoint"/></mxGeometry></mxCell>
+
+        <!-- MESSAGES -->
+        <mxCell id="30" value="ProviderScope → AsyncNotifier.build()" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="70" y="110" as="sourcePoint"/><mxPoint x="270" y="110" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="31" value="hasToken() — await _storage.read(key: &quot;access_token&quot;)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="270" y="145" as="sourcePoint"/><mxPoint x="480" y="145" as="targetPoint"/></mxGeometry></mxCell>
+
+        <!-- ALT Token absent / présent -->
+        <mxCell id="32" value="alt" style="swimlane;fontStyle=1;startSize=20;fillColor=none;strokeColor=#555555;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="70" y="160" width="1500" height="680" as="geometry"/>
+        </mxCell>
+        <mxCell id="33" value="[Token absent (première installation)]" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="32"><mxGeometry x="5" y="22" width="280" height="20" as="geometry"/></mxCell>
+        <mxCell id="34" value="null" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="32"><mxGeometry relative="1" as="geometry"><mxPoint x="410" y="50" as="sourcePoint"/><mxPoint x="200" y="50" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="35" value="AsyncData(null)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="32"><mxGeometry relative="1" as="geometry"><mxPoint x="200" y="80" as="sourcePoint"/><mxPoint x="1195" y="80" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="36" value="redirect(): !isLoggedIn &amp;&amp; !isPublic → return '/login'" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="32"><mxGeometry relative="1" as="geometry"><mxPoint x="1195" y="115" as="sourcePoint"/><mxPoint x="1295" y="115" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="37" value="Affiche LoginScreen" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="32"><mxGeometry relative="1" as="geometry"><mxPoint x="1195" y="150" as="sourcePoint"/><mxPoint x="1390" y="150" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="38" value="" style="line;strokeColor=#555555;" vertex="1" parent="32"><mxGeometry x="0" y="170" width="1500" height="10" as="geometry"/></mxCell>
+        <mxCell id="39" value="[Token présent]" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="32"><mxGeometry x="5" y="182" width="140" height="20" as="geometry"/></mxCell>
+        <mxCell id="40" value="access_token (String)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="32"><mxGeometry relative="1" as="geometry"><mxPoint x="410" y="210" as="sourcePoint"/><mxPoint x="200" y="210" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="41" value="getProfile()" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="32"><mxGeometry relative="1" as="geometry"><mxPoint x="200" y="245" as="sourcePoint"/><mxPoint x="610" y="245" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="42" value="GET /api/rh/me (token injecté par _AuthInterceptor)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="32"><mxGeometry relative="1" as="geometry"><mxPoint x="610" y="280" as="sourcePoint"/><mxPoint x="810" y="280" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="43" value="GET /api/rh/me Authorization: Bearer &lt;token&gt;" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="32"><mxGeometry relative="1" as="geometry"><mxPoint x="810" y="315" as="sourcePoint"/><mxPoint x="1005" y="315" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="44" value="alt [Token expiré (401)]" style="swimlane;fontStyle=1;startSize=20;fillColor=none;strokeColor=#999999;fontSize=10;" vertex="1" parent="32">
+          <mxGeometry x="70" y="330" width="1340" height="320" as="geometry"/>
+        </mxCell>
+        <mxCell id="45" value="[Token expiré]" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="44"><mxGeometry x="5" y="22" width="120" height="20" as="geometry"/></mxCell>
+        <mxCell id="46" value="HTTP 401" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="44"><mxGeometry relative="1" as="geometry"><mxPoint x="935" y="55" as="sourcePoint"/><mxPoint x="740" y="55" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="47" value="_AuthInterceptor.onError() → authorization=null" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="44"><mxGeometry relative="1" as="geometry"><mxPoint x="740" y="90" as="sourcePoint"/><mxPoint x="840" y="90" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="48" value="DioException" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="44"><mxGeometry relative="1" as="geometry"><mxPoint x="740" y="125" as="sourcePoint"/><mxPoint x="540" y="125" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="49" value="Exception" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="44"><mxGeometry relative="1" as="geometry"><mxPoint x="540" y="160" as="sourcePoint"/><mxPoint x="130" y="160" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="50" value="clearTokens() → delete(&quot;access_token&quot;)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="44"><mxGeometry relative="1" as="geometry"><mxPoint x="130" y="195" as="sourcePoint"/><mxPoint x="340" y="195" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="51" value="AsyncData(null) → redirect → LoginScreen" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="44"><mxGeometry relative="1" as="geometry"><mxPoint x="130" y="230" as="sourcePoint"/><mxPoint x="1120" y="230" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="52" value="" style="line;strokeColor=#999999;" vertex="1" parent="44"><mxGeometry x="0" y="250" width="1340" height="10" as="geometry"/></mxCell>
+        <mxCell id="53" value="[Token valide]" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="44"><mxGeometry x="5" y="262" width="120" height="20" as="geometry"/></mxCell>
+        <mxCell id="54" value="HTTP 200 {id, email, nom, prenom, role: &quot;RH&quot;}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="44"><mxGeometry relative="1" as="geometry"><mxPoint x="935" y="290" as="sourcePoint"/><mxPoint x="740" y="290" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="55" value="RhUser → AsyncData(RhUser) → redirect → DashboardScreen" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="44"><mxGeometry relative="1" as="geometry"><mxPoint x="540" y="310" as="sourcePoint"/><mxPoint x="130" y="310" as="targetPoint"/></mxGeometry></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- PAGE 2 — Dashboard RH -->
+  <diagram id="seq_mobile_dashboard" name="10b — Dashboard RH Flutter">
+    <mxGraphModel dx="1400" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="2" value="App Flutter — Chargement du tableau de bord RH" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1"><mxGeometry x="100" y="10" width="800" height="25" as="geometry"/></mxCell>
+
+        <mxCell id="10" value="DashboardScreen&#xa;(ConsumerWidget)" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="10" y="40" width="140" height="40" as="geometry"/></mxCell>
+        <mxCell id="11" value="dashboardStatsProvider&#xa;(FutureProvider)" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="220" y="40" width="150" height="40" as="geometry"/></mxCell>
+        <mxCell id="12" value="ProfileRepository" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="450" y="40" width="130" height="40" as="geometry"/></mxCell>
+        <mxCell id="13" value="StatsRepository" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="660" y="40" width="130" height="40" as="geometry"/></mxCell>
+        <mxCell id="14" value="FastAPI :8000" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="870" y="40" width="110" height="40" as="geometry"/></mxCell>
+
+        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="80" y="80" as="sourcePoint"/><mxPoint x="80" y="700" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="295" y="80" as="sourcePoint"/><mxPoint x="295" y="700" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="515" y="80" as="sourcePoint"/><mxPoint x="515" y="700" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="725" y="80" as="sourcePoint"/><mxPoint x="725" y="700" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="925" y="80" as="sourcePoint"/><mxPoint x="925" y="700" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="30" value="ref.watch(dashboardStatsProvider)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="80" y="110" as="sourcePoint"/><mxPoint x="295" y="110" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="31" value="Appels parallèles" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="295" y="150" as="sourcePoint"/><mxPoint x="375" y="150" as="targetPoint"/></mxGeometry></mxCell>
+
+        <!-- Parallel note -->
+        <mxCell id="32" value="par" style="swimlane;fontStyle=1;startSize=20;fillColor=none;strokeColor=#555555;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="80" y="165" width="960" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="33" value="getProfile()" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="32"><mxGeometry relative="1" as="geometry"><mxPoint x="215" y="40" as="sourcePoint"/><mxPoint x="435" y="40" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="34" value="GET /api/rh/me Authorization: Bearer" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="32"><mxGeometry relative="1" as="geometry"><mxPoint x="435" y="80" as="sourcePoint"/><mxPoint x="845" y="80" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="35" value="RhUser {nom, prenom, role}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="32"><mxGeometry relative="1" as="geometry"><mxPoint x="845" y="120" as="sourcePoint"/><mxPoint x="435" y="120" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="36" value="RhUser" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="32"><mxGeometry relative="1" as="geometry"><mxPoint x="435" y="160" as="sourcePoint"/><mxPoint x="215" y="160" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="37" value="" style="line;strokeColor=#555555;" vertex="1" parent="32"><mxGeometry x="0" y="175" width="960" height="5" as="geometry"/></mxCell>
+
+        <mxCell id="38" value="getDashboardStats()" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="32"><mxGeometry relative="1" as="geometry"><mxPoint x="215" y="195" as="sourcePoint"/><mxPoint x="645" y="195" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="39" value="GET /api/rh/dashboard Authorization: Bearer" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="32"><mxGeometry relative="1" as="geometry"><mxPoint x="645" y="230" as="sourcePoint"/><mxPoint x="845" y="230" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="40" value="{total_offers, total_resultats, total_retained, ...}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="32"><mxGeometry relative="1" as="geometry"><mxPoint x="845" y="265" as="sourcePoint"/><mxPoint x="645" y="265" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="41" value="DashboardStats" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="32"><mxGeometry relative="1" as="geometry"><mxPoint x="645" y="290" as="sourcePoint"/><mxPoint x="215" y="290" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="42" value="AsyncData(DashboardStats)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="295" y="490" as="sourcePoint"/><mxPoint x="80" y="490" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="43" value="Affiche statistiques (widgets, compteurs, graphiques)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="80" y="530" as="sourcePoint"/><mxPoint x="160" y="530" as="targetPoint"/></mxGeometry></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- PAGE 3 — Matching Flutter -->
+  <diagram id="seq_mobile_matching" name="10c — Matching Flutter">
+    <mxGraphModel dx="1400" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="2" value="App Flutter — Consultation des résultats de matching" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1"><mxGeometry x="100" y="10" width="800" height="25" as="geometry"/></mxCell>
+
+        <mxCell id="10" value="MatchingScreen&#xa;(ConsumerWidget)" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="10" y="40" width="140" height="40" as="geometry"/></mxCell>
+        <mxCell id="11" value="applicationsProvider&#xa;(FutureProvider)" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="220" y="40" width="150" height="40" as="geometry"/></mxCell>
+        <mxCell id="12" value="MatchingRepository" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="450" y="40" width="140" height="40" as="geometry"/></mxCell>
+        <mxCell id="13" value="applicationDetailProvider&#xa;(FutureProvider.family)" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="670" y="40" width="170" height="40" as="geometry"/></mxCell>
+        <mxCell id="14" value="FastAPI :8000" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="920" y="40" width="110" height="40" as="geometry"/></mxCell>
+
+        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="80" y="80" as="sourcePoint"/><mxPoint x="80" y="760" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="295" y="80" as="sourcePoint"/><mxPoint x="295" y="760" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="520" y="80" as="sourcePoint"/><mxPoint x="520" y="760" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="755" y="80" as="sourcePoint"/><mxPoint x="755" y="760" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="975" y="80" as="sourcePoint"/><mxPoint x="975" y="760" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="30" value="ref.watch(applicationsProvider)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="80" y="110" as="sourcePoint"/><mxPoint x="295" y="110" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="31" value="getApplications()" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="295" y="145" as="sourcePoint"/><mxPoint x="520" y="145" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="32" value="GET /api/rh/resultats Authorization: Bearer" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="520" y="180" as="sourcePoint"/><mxPoint x="975" y="180" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="33" value="[Resultat + Candidate + JobOffer]" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="975" y="215" as="sourcePoint"/><mxPoint x="520" y="215" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="34" value="List&lt;Application&gt;" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="520" y="250" as="sourcePoint"/><mxPoint x="295" y="250" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="35" value="AsyncData([Application])" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="295" y="285" as="sourcePoint"/><mxPoint x="80" y="285" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="36" value="Affiche liste des candidatures (ScoreRing + StatusBadge)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="80" y="320" as="sourcePoint"/><mxPoint x="160" y="320" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="37" value="ref.watch(applicationDetailProvider(result_id))" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="80" y="365" as="sourcePoint"/><mxPoint x="755" y="365" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="38" value="getApplicationDetail(result_id)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="755" y="400" as="sourcePoint"/><mxPoint x="520" y="400" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="39" value="GET /api/candidate/applications/{result_id}/detail" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="520" y="435" as="sourcePoint"/><mxPoint x="975" y="435" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="40" value="ApplicationDetail {timeline, scores, feedback}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="975" y="470" as="sourcePoint"/><mxPoint x="520" y="470" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="41" value="ApplicationDetail" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="520" y="505" as="sourcePoint"/><mxPoint x="755" y="505" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="42" value="AsyncData(ApplicationDetail)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="755" y="540" as="sourcePoint"/><mxPoint x="80" y="540" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="43" value="Affiche détail: TimelineStepWidget (4 étapes), ScoreRing, Feedback RH si visible" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="80" y="580" as="sourcePoint"/><mxPoint x="160" y="580" as="targetPoint"/></mxGeometry></mxCell>
+
+        <!-- NOTE Riverpod invalidation -->
+        <mxCell id="44" value="Invalidation Riverpod après décision RH:&#xa;ref.invalidate(applicationsProvider) → Re-fetch automatique de la liste" style="shape=note;whiteSpace=wrap;fontSize=9;fillColor=#fff2cc;strokeColor=#d6b656;align=left;" vertex="1" parent="1">
+          <mxGeometry x="200" y="620" width="400" height="50" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+</mxfile>

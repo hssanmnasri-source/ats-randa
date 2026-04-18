@@ -1,0 +1,191 @@
+@startuml 11_Packages_ATS_RANDA
+skinparam packageBackgroundColor #FEFECE
+skinparam packageBorderColor #A80036
+skinparam arrowColor #555555
+skinparam componentFontSize 10
+
+title Organisation des packages — ATS RANDA
+
+package "backend/app/" as BACKEND {
+
+  component "main.py\nlifespan, CORS, montage routeurs\nPrometheus instrumentator" as MAIN
+
+  package "api/" as API_PKG {
+    component "dependencies.py\nget_current_user()\nrequire_role(*roles)\nrequire_candidate/agent/rh/admin" as DEP
+
+    package "routes/" as ROUTES {
+      component "visitor/\nauth.py (login, register)\noffers.py (offres publiques)" as R_VIS
+      component "auth/\ngoogle.py (OAuth2 callback)" as R_AUTH
+      component "candidate/\nprofile.py | cvs.py\napplications.py | cover_letters.py" as R_CAN
+      component "agent/\ncvs.py | import_keejob.py\ncandidates.py | dashboard.py" as R_AGT
+      component "rh/\noffers.py | matching.py\ndashboard.py | cvs.py\ncalendar.py | n8n_webhook.py" as R_RH
+      component "admin/\nusers.py | stats.py | system.py" as R_ADM
+    }
+  }
+
+  package "services/" as SVC {
+    component "matching_service.py\n(matching pgvector + scorer)" as S_MATCH
+    component "cv_service.py" as S_CV
+    component "candidate_service.py" as S_CAN
+    component "offer_service.py" as S_OFF
+  }
+
+  package "repositories/" as REPO {
+    component "cv_repository.py" as RR_CV
+    component "candidate_repository.py\n(list_all avec agent_id filter)" as RR_CAN
+    component "offer_repository.py" as RR_OFF
+    component "resultat_repository.py" as RR_RES
+    component "user_repository.py" as RR_USR
+  }
+
+  package "models/" as MODELS {
+    component "db_models.py\nUser, Filiale, Candidate, CV\nCompetence, Experience, JobOffer\nResultat, Entretien, AuditLog\n+ Enums (UserRole, CVStatus, etc.)" as DB_MOD
+    component "schemas/\ncandidate_schemas.py | cv_schemas.py\noffer_schemas.py | resultat_schemas.py" as SCHEMAS
+  }
+
+  package "nlp/" as NLP {
+    component "embedder.py\n_get_model() lru_cache\nencode(text) → list[float]\ncv_to_embed_text()\noffer_to_embed_text()" as EMBED
+    component "scorer.py\nscore_semantique() 40%\nscore_competences() Jaccard 35%\nscore_experience() ratio 15%\nscore_langue() binary 10%\ncompute_final_score()" as SCORER
+    component "ocr.py\nextract_text_from_pdf()\nevaluate_ocr_quality()" as OCR
+    component "keejob_parser.py\nparse_keejob_cv()" as KP
+    component "generic_parser.py\nparse_generic_cv()" as GP
+  }
+
+  package "tasks/" as TASKS {
+    component "cv_tasks.py\nembed_cv(cv_id)\nembed_all_cvs(batch)\nprocess_cv_on_upload(cv_id)" as T_CV
+    component "offer_tasks.py\nembed_offer(offer_id)" as T_OFF
+  }
+
+  package "core/" as CORE {
+    component "config.py\nSettings (Pydantic BaseSettings)\n.env loading" as CONFIG
+    component "database.py\nAsyncSessionLocal\npgvector init" as DATABASE
+    component "security.py\ncreate_access_token()\ndecode_token()\nverify_password()" as SECURITY
+    component "celery_app.py\nCelery + Redis config" as CELERY_APP
+    component "mailer.py\nsend_entretien_invitation()\nSMTP asyncio" as MAILER
+  }
+}
+
+' Routes → Services → Repos
+R_RH --> S_MATCH
+R_CAN --> S_CV
+R_CAN --> S_CAN
+R_AGT --> S_CV
+S_MATCH --> RR_CV
+S_MATCH --> RR_OFF
+S_MATCH --> RR_RES
+S_CV --> RR_CV
+S_CAN --> RR_CAN
+' Services → Models
+RR_CV --> DB_MOD
+RR_CAN --> DB_MOD
+RR_OFF --> DB_MOD
+' Tasks → NLP
+T_CV --> EMBED
+T_CV --> OCR
+T_CV --> GP
+T_CV --> SCORER
+T_OFF --> EMBED
+' Routes → Core
+API_PKG --> DEP
+DEP --> SECURITY
+ROUTES --> CORE
+MAIN --> CONFIG
+
+newpage Packages — Frontend React
+
+package "frontend/src/" as FRONTEND {
+
+  package "pages/" as PAGES {
+    component "candidate/\nDashboardPage | MyCVPage\nCVGeneratorPage | ApplicationsPage\nProfilePage | OffresPage" as P_CAN
+    component "agent/\nDashboardPage | UploadCVPage\nBatchUploadPage | CVListPage" as P_AGT
+    component "rh/\nDashboardPage | OffersPage\nMatchingPage | ResultsPage\nCalendarPage | N8NCalendarPage\nStatsPage" as P_RH
+    component "admin/\nDashboardPage | UsersPage\nAuditPage | SystemHealthPage" as P_ADM
+  }
+
+  package "components/" as COMPONENTS {
+    component "common/ | cv/ | offer/\nmatching/ | dashboard/\ncandidature/CandidatureTimeline.tsx" as COMP_UI
+    component "cv/CVDocument.tsx\n(react-to-print, Keejob style)" as COMP_CV
+  }
+
+  package "hooks/" as HOOKS {
+    component "useFullProfile()\nuseApplications()\nuseFavorites() — localStorage\nuseMatching()" as H_HOOKS
+  }
+
+  package "services/" as SERVICES {
+    component "api.ts\nAxios + JWT interceptor\nbaseURL: localhost:8000\n401 → authStore.logout()" as API_SVC
+    component "messageService.ts\nmsg.success/error/warning\n(singleton Ant Design)" as MSG_SVC
+  }
+
+  package "store/" as STORE {
+    component "authStore\n(Zustand, persisted)\nuser, token, setToken, logout" as AUTH_STORE
+    component "notificationStore\n(Zustand)\ntoasts" as NOTIF_STORE
+  }
+
+  package "router/" as ROUTER {
+    component "index.tsx\nReact Router 6\nlazy() pour toutes les pages\nProtectedRoute (rôle)" as ROUTER_IDX
+  }
+
+  package "layouts/" as LAYOUTS {
+    component "AgentLayout | RHLayout\nCandidateLayout | AdminLayout\n(sidebar COLORS.sidebarBg)" as LAYOUT
+  }
+
+  component "theme.ts\nCOLORS.primary #8B1A1A\nCOLORS.gold #C9A84C\nCOLORS.sidebarBg #3D0C02\nAnt Design token override" as THEME
+}
+
+PAGES --> HOOKS
+PAGES --> COMPONENTS
+HOOKS --> SERVICES
+HOOKS --> STORE
+SERVICES --> AUTH_STORE
+ROUTER_IDX --> PAGES
+ROUTER_IDX --> LAYOUTS
+LAYOUTS --> THEME
+COMPONENTS --> THEME
+
+newpage Packages — Mobile Flutter
+
+package "mobile/lib/" as MOBILE {
+
+  package "core/" as M_CORE {
+    component "api_client.dart\nDio singleton\n_AuthInterceptor\nsaveTokens/clearTokens" as M_API
+    component "theme.dart\nkPrimary | kGold\nkGoldLight | kDarkBrown\nbuildAppTheme()" as M_THEME
+  }
+
+  package "models/" as M_MODELS {
+    component "User | CandidateProfile | FullProfile\nCvModel | Application | ApplicationDetail\nTimelineStep | JobOffer | Experience | Skill\n(freezed + json_serializable)" as M_MOD
+  }
+
+  package "repositories/" as M_REPOS {
+    component "auth_repository.dart\ncv_repository.dart\nmatching_repository.dart\noffers_repository.dart\nstats_repository.dart" as M_REPO
+  }
+
+  package "providers/" as M_PROV {
+    component "auth_provider.dart\nauthStateProvider\n(AsyncNotifier<User?>)" as M_AUTH
+    component "cv_provider.dart\ncvListProvider\nfullProfileProvider" as M_CV
+    component "matching_provider.dart\napplicationsProvider\napplicationDetailProvider(id)" as M_MATCH
+    component "dashboard_provider.dart\ndashboardStatsProvider\n(parallel fetch)" as M_DASH
+    component "offers_provider.dart\noffersProvider (autoDispose)\noffersSearchQueryProvider" as M_OFF
+  }
+
+  package "ui/" as M_UI {
+    package "screens/" as M_SCREENS {
+      component "LoginScreen | DashboardScreen\nProfileScreen | CVScreen\nApplicationsScreen\nApplicationDetailScreen\nOffersScreen | OfferDetailScreen" as M_SCR
+    }
+    package "widgets/" as M_WIDGETS {
+      component "AppShell (bottom nav 5 tabs)\nStatusBadge | ScoreRing\nTimelineStepWidget | CVCard | OfferCard" as M_WID
+    }
+  }
+
+  component "main.dart\nProviderScope → AtsRandaApp\n(ConsumerWidget → MaterialApp.router)" as M_MAIN
+  component "router.dart\nrouterProvider (Provider<GoRouter>)\nShellRoute + _AuthChangeNotifier" as M_ROUTER
+}
+
+M_MAIN --> M_PROV
+M_ROUTER --> M_AUTH
+M_SCREENS --> M_PROV
+M_PROV --> M_REPOS
+M_REPOS --> M_API
+M_SCREENS --> M_WIDGETS
+M_WIDGETS --> M_THEME
+
+@enduml

@@ -1,0 +1,74 @@
+@startuml 08_Activites_Recrutement
+skinparam activityFontSize 11
+skinparam activityBackgroundColor #FEFECE
+skinparam activityBorderColor #A80036
+skinparam arrowColor #555555
+
+title Processus complet de recrutement (bout en bout)
+
+|Agent de saisie|
+start
+:Reçoit PDF CV candidat;
+if (Format Keejob ?) then (oui)
+  :POST /api/agent/import/keejob\n(parsing synchrone);
+else (non)
+  :POST /api/agent/cvs/upload\n(OCR + Celery async);
+  :Vérifie score qualité OCR\n(score 0-100);
+  if (Score ≥ 40 ?) then (non)
+    :Alerte qualité insuffisante\n(conseils affichés);
+  endif
+endif
+
+|Système NLP — Celery Worker|
+:Tâche process_cv_on_upload(cv_id);
+:extract_text_from_pdf()\n(pdfplumber ou Tesseract fra+eng+ara);
+if (cv_entities existant ?) then (non)
+  :parse_keejob_cv() OU\nparse_generic_cv();
+endif
+:cv_to_embed_text(cv_entities, cv_text);
+:encode(text) → Vector(384)\n(paraphrase-multilingual-MiniLM-L12-v2);
+:UPDATE cv.statut=INDEXED\ncv.embedding=vector\ncv.cv_version+=1;
+:SELECT job_offers WHERE statut=ACTIVE;
+
+repeat
+  :compute_final_score(\ncosine_sim, jaccard, exp, langue);
+  if (Resultat existant ?) then (RETAINED/REFUSED)
+    :SKIP — immuable;
+  else (PENDING)
+    :UPDATE scores\n(PENDING conservé);
+  else (Nouveau)
+    :INSERT Resultat {decision=PENDING};
+  endif
+repeat while (Pour chaque offre active)
+
+|Responsable RH|
+:Crée offre d'emploi\nPOST /api/rh/offers\n(statut: BROUILLON);
+:Configure pondérations\nPUT .../poids\n(40%+35%+15%+10%=1.0);
+:Publie offre\nPATCH .../statut → ACTIVE;
+:Lance matching\nPOST .../matching?top_n=50;
+:pgvector KNN top 200 CVs;
+:scorer.py top 50 par score_final;
+:Consulte résultats\nGET .../matching;
+if (Décision ?) then (RETAINED)
+  :PATCH → RETAINED\n+ feedback optionnel;
+  :Déclenche n8n\nPOST /api/n8n/declencher-generation;
+else (REFUSED)
+  :PATCH → REFUSED\n+ feedback optionnel;
+endif
+
+|n8n + Mailer|
+:Génère créneaux\npour candidats RETAINED;
+:INSERT entretiens statut=PROPOSE;
+:Envoie invitations\nPOST /api/n8n/envoyer-emails-backend;
+:mailer.py → SMTP Gmail\nemail_envoye=true;
+
+|Candidat|
+:Consulte offres\nGET /api/visitor/offers;
+:Postule → POST .../apply;
+:Suit sa timeline\nGET .../detail (4 étapes);
+:Reçoit feedback\n(si feedback_visible=true);
+:Reçoit email entretien\nConfirme sa présence;
+
+stop
+
+@enduml

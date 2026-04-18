@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-04-15T00:00:00.000Z" agent="Claude Code" version="24.0.0" type="device">
+  <diagram id="deploiement_ats" name="09 — Déploiement">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- TITLE -->
+        <mxCell id="2" value="Diagramme de Déploiement — ATS RANDA" style="text;fontStyle=1;fontSize=14;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="10" width="800" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ MACHINE HÔTE ═══ -->
+        <mxCell id="3" value="Machine Hôte (Windows 11 / Linux)" style="swimlane;fontStyle=1;startSize=30;fillColor=#E8F4F8;strokeColor=#336699;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="20" y="50" width="1580" height="1050" as="geometry"/>
+        </mxCell>
+
+        <!-- Frontend dev server (hors Docker) -->
+        <mxCell id="4" value="Serveur de dev frontend (hors Docker)" style="swimlane;fontStyle=1;startSize=26;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="3">
+          <mxGeometry x="20" y="40" width="340" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="5" value="React 18 SPA&#xa;npm run dev / Vite :3000&#xa;TypeScript + Ant Design 5&#xa;TanStack Query + Zustand" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="4">
+          <mxGeometry x="15" y="35" width="310" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- Flutter (hors Docker) -->
+        <mxCell id="6" value="App Flutter (hors Docker)" style="swimlane;fontStyle=1;startSize=26;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="3">
+          <mxGeometry x="380" y="40" width="300" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="7" value="Flutter Web&#xa;flutter run -d chrome&#xa;Port aléatoire&#xa;Riverpod + GoRouter + Dio" style="shape=component;align=left;spacingLeft=36;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="6">
+          <mxGeometry x="15" y="35" width="270" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- Docker Engine -->
+        <mxCell id="8" value="Docker Engine" style="swimlane;fontStyle=1;startSize=26;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;" vertex="1" parent="3">
+          <mxGeometry x="20" y="180" width="1540" height="850" as="geometry"/>
+        </mxCell>
+
+        <!-- Réseau bridge -->
+        <mxCell id="9" value="Réseau bridge: ats_network" style="swimlane;fontStyle=1;startSize=26;fillColor=#f5f5f5;strokeColor=#555555;" vertex="1" parent="8">
+          <mxGeometry x="20" y="35" width="1500" height="800" as="geometry"/>
+        </mxCell>
+
+        <!-- Couche Entrée -->
+        <mxCell id="10" value="Couche Entrée" style="swimlane;fontStyle=1;startSize=22;fillColor=#f0f0f0;strokeColor=#999999;" vertex="1" parent="9">
+          <mxGeometry x="20" y="30" width="350" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="11" value="ats_nginx&#xa;nginx:1.25-alpine | Port: 80:80&#xa;Config: ./nginx/nginx.conf" style="shape=component;align=left;spacingLeft=36;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="10">
+          <mxGeometry x="15" y="30" width="320" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Couche Application -->
+        <mxCell id="12" value="Couche Application" style="swimlane;fontStyle=1;startSize=22;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="9">
+          <mxGeometry x="20" y="160" width="1100" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="13" value="ats_backend&#xa;Build: ./backend/Dockerfile | Port: 8000:8000&#xa;Vol: uploads_data:/app/uploads&#xa;Depends: postgres(healthy) redis(healthy)" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="12">
+          <mxGeometry x="20" y="30" width="320" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="14" value="ats_celery&#xa;Build: ./backend/Dockerfile&#xa;cmd: celery worker --concurrency=4&#xa;Vol: uploads_data:/app/uploads" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="12">
+          <mxGeometry x="360" y="30" width="300" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="15" value="ats_flower&#xa;Build: ./backend/Dockerfile&#xa;cmd: celery flower --port=5555&#xa;Port: 5555:5555" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="12">
+          <mxGeometry x="680" y="30" width="280" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Couche Données -->
+        <mxCell id="16" value="Couche Données" style="swimlane;fontStyle=1;startSize=22;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="9">
+          <mxGeometry x="20" y="390" width="1100" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="17" value="ats_postgres&#xa;pgvector/pgvector:pg16 | Port: 5432:5432&#xa;Vol: postgres_data | Init: ./scripts/init.sql&#xa;Healthcheck: pg_isready" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="16">
+          <mxGeometry x="20" y="30" width="500" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="18" value="ats_redis&#xa;redis:7.2-alpine | Port: 6379:6379&#xa;cmd: redis-server --requirepass&#xa;Vol: redis_data | Healthcheck: redis-cli ping" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="16">
+          <mxGeometry x="540" y="30" width="500" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Automatisation -->
+        <mxCell id="19" value="Automatisation" style="swimlane;fontStyle=1;startSize=22;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="9">
+          <mxGeometry x="1150" y="160" width="330" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="20" value="ats_n8n&#xa;n8nio/n8n:latest | Port: 5678:5678&#xa;DB: PostgreSQL partagée&#xa;Vol: n8n_data:/home/node/.n8n" style="shape=component;align=left;spacingLeft=36;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="19">
+          <mxGeometry x="15" y="30" width="300" height="90" as="geometry"/>
+        </mxCell>
+
+        <!-- Monitoring -->
+        <mxCell id="21" value="Monitoring" style="swimlane;fontStyle=1;startSize=22;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="9">
+          <mxGeometry x="1150" y="330" width="330" height="400" as="geometry"/>
+        </mxCell>
+        <mxCell id="22" value="ats_prometheus&#xa;prom/prometheus:v2.52.0&#xa;Port: 9090:9090 | Retention: 15j&#xa;Vol: prometheus_data" style="shape=component;align=left;spacingLeft=36;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="21">
+          <mxGeometry x="15" y="30" width="300" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="23" value="ats_grafana&#xa;grafana/grafana:10.4.0&#xa;Port: 3001:3000 | Vol: grafana_data&#xa;Provisioning: ./monitoring/grafana" style="shape=component;align=left;spacingLeft=36;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="21">
+          <mxGeometry x="15" y="130" width="300" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="24" value="ats_redis_exporter&#xa;oliver006/redis_exporter:v1.61.0" style="shape=component;align=left;spacingLeft=36;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="21">
+          <mxGeometry x="15" y="230" width="300" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="25" value="ats_postgres_exporter&#xa;prometheus/postgres_exporter:v0.15.0" style="shape=component;align=left;spacingLeft=36;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="21">
+          <mxGeometry x="15" y="310" width="300" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ SERVICES EXTERNES ═══ -->
+        <mxCell id="26" value="Services Externes" style="swimlane;fontStyle=1;startSize=26;fillColor=#f5f5f5;strokeColor=#555555;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="20" y="1120" width="1580" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="27" value="Gmail SMTP&#xa;smtp.gmail.com:587&#xa;(TLS STARTTLS)" style="shape=component;align=left;spacingLeft=36;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="26">
+          <mxGeometry x="30" y="35" width="220" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="28" value="Google OAuth2&#xa;accounts.google.com" style="shape=component;align=left;spacingLeft=36;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="26">
+          <mxGeometry x="300" y="35" width="220" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="29" value="HuggingFace Hub&#xa;paraphrase-multilingual-MiniLM-L12-v2&#xa;(téléchargé au premier démarrage)" style="shape=component;align=left;spacingLeft=36;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="26">
+          <mxGeometry x="570" y="35" width="280" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ CONNECTIONS ═══ -->
+        <!-- Clients → Nginx -->
+        <mxCell id="40" value="HTTP :80" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#6c8ebf;" edge="1" source="5" target="11" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="41" value="HTTP :80 ou :8000" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#82b366;" edge="1" source="7" target="11" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Nginx → Backend -->
+        <mxCell id="42" value="proxy /api/* → :8000" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#555555;" edge="1" source="11" target="13" parent="9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Backend → DB -->
+        <mxCell id="43" value="SQLAlchemy async :5432" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#82b366;" edge="1" source="13" target="17" parent="9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="44" value="Redis broker :6379" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#82b366;" edge="1" source="13" target="18" parent="9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Celery -->
+        <mxCell id="45" value="Consomme tâches :6379" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#82b366;" edge="1" source="14" target="18" parent="9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="46" value="UPDATE/INSERT :5432" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#82b366;" edge="1" source="14" target="17" parent="9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Flower -->
+        <mxCell id="47" value="Events workers" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#82b366;" edge="1" source="18" target="15" parent="9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- n8n -->
+        <mxCell id="48" value="Webhooks POST /api/n8n/*" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#9673a6;" edge="1" source="20" target="13" parent="9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="49" value="Tables n8n_* :5432" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#9673a6;" edge="1" source="20" target="17" parent="9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Monitoring -->
+        <mxCell id="50" value="GET /metrics" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;" edge="1" source="13" target="22" parent="9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="51" value="Métriques redis://" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;" edge="1" source="24" target="18" parent="9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="52" value="Scrape /metrics" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;" edge="1" source="24" target="22" parent="9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="53" value="DSN postgresql://" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;" edge="1" source="25" target="17" parent="9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="54" value="Scrape /metrics" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;" edge="1" source="25" target="22" parent="9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="55" value="Datasource PromQL" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;" edge="1" source="22" target="23" parent="9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Externes -->
+        <mxCell id="56" value="SMTP TLS (mailer.py)" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#555555;" edge="1" source="13" target="27" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="57" value="OAuth2 (api/auth/google)" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#555555;" edge="1" source="13" target="28" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="58" value="Téléchargement modèle NLP" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;dashed=1;strokeColor=#555555;" edge="1" source="13" target="29" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

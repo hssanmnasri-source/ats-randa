@@ -1,0 +1,83 @@
+@startuml 06_Composants_ATS_RANDA
+skinparam componentStyle rectangle
+skinparam componentBackgroundColor #FEFECE
+skinparam componentBorderColor #A80036
+skinparam packageBackgroundColor #F5F5F5
+skinparam arrowColor #555555
+skinparam nodeFontSize 11
+
+title Architecture des composants — ATS RANDA (Docker Compose)
+
+node "Clients Externes" {
+  [React 18 SPA\nnpm run dev :3000\n(Machine hôte)] as WEB
+  [App Flutter\nAndroid / iOS / Web\n(Port aléatoire)] as MOB
+}
+
+node "Réseau Docker : ats_network" {
+
+  package "Point d'entrée" {
+    [Nginx :80\nnginx:1.25-alpine\n/api/* → backend:8000\n/ → host.docker.internal:3000] as NGINX
+  }
+
+  package "Couche Application" {
+    [FastAPI Backend\nats_backend :8000\nRoutes: visitor/auth/candidate\nagent/rh/admin/n8n\nNLP: OCR+Parser+Embedder+Scorer\nCORS: allow_origin_regex localhost:*] as BACKEND
+
+    [Celery Worker\nats_celery --concurrency=4\nembed_cv / embed_all_cvs\nprocess_cv_on_upload\nembed_offer] as CELERY
+
+    [Flower UI\nats_flower :5555\nMonitoring Celery] as FLOWER
+  }
+
+  package "Couche Données" {
+    database "PostgreSQL 16 + pgvector\nats_postgres :5432\n12 tables\nVector(384) ivfflat index\nJSONB (cv_entities, details)\nVolume: postgres_data" as PG
+
+    database "Redis 7.2-alpine\nats_redis :6379\nBroker Celery (queues)\nBackend résultats tâches\nVolume: redis_data" as REDIS
+  }
+
+  package "Automatisation" {
+    [n8n Workflows\nats_n8n :5678\nDB: PostgreSQL partagée\nWebhooks → /api/n8n/*\nVolume: n8n_data] as N8N
+  }
+
+  package "Monitoring" {
+    [Prometheus\nats_prometheus :9090\nScrape: backend/redis/postgres\nRetention: 15j] as PROM
+    [Grafana\nats_grafana :3001\nSource: Prometheus\nDashboards provisionning] as GRAFANA
+    [redis-exporter\nolas006/redis_exporter] as REDIS_EXP
+    [postgres-exporter\nprometheus/postgres_exporter] as PG_EXP
+  }
+
+  storage "uploads_data\n/app/uploads/\ncvs/ — PDFs et images\nphotos/ — avatars candidats" as VOL
+}
+
+' Flux clients → Nginx
+WEB --> NGINX : HTTP :80
+MOB --> NGINX : HTTP :80 ou :8000
+
+' Nginx → Backend / Frontend
+NGINX --> BACKEND : /api/* proxy_pass
+NGINX ..> WEB : / → host.docker.internal:3000
+
+' Backend → Données
+BACKEND --> PG : SQLAlchemy AsyncSession\nSELECT/INSERT/UPDATE
+BACKEND --> REDIS : Celery apply_async()\nPubSub tâches
+BACKEND --> VOL : Lecture/écriture PDFs
+
+' Celery Worker → Données
+CELERY --> REDIS : Consomme tâches\nBROKER_URL=redis://
+CELERY --> PG : UPDATE embeddings\nINSERT resultats
+CELERY --> VOL : Lecture PDFs\nOCR parsing
+
+' Flower ← Redis
+REDIS --> FLOWER : Events workers\nstatuts tâches
+
+' n8n → Backend
+N8N --> BACKEND : POST /api/n8n/*\nX-N8N-Secret header
+N8N --> PG : DB propre (tables n8n_*)\ndans PostgreSQL partagé
+
+' Monitoring
+BACKEND --> PROM : GET /metrics\nPrometheus exporter
+REDIS_EXP --> REDIS : Export métriques redis://
+REDIS_EXP --> PROM : Scrape /metrics
+PG_EXP --> PG : Connexion PG DSN postgresql://
+PG_EXP --> PROM : Scrape /metrics
+PROM --> GRAFANA : Datasource PromQL
+
+@enduml

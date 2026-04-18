@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-04-15T00:00:00.000Z" agent="Claude Code" version="24.0.0" type="device">
+  <diagram id="composants_ats" name="06 — Architecture Composants">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- TITLE -->
+        <mxCell id="2" value="Architecture des composants — ATS RANDA (Docker Compose)" style="text;fontStyle=1;fontSize=14;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="10" width="800" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ CLIENTS EXTERNES ═══ -->
+        <mxCell id="3" value="Clients Externes" style="swimlane;fontStyle=1;startSize=26;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="30" y="50" width="260" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="4" value="React 18 SPA&#xa;npm run dev :3000&#xa;(Machine hôte)" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="3">
+          <mxGeometry x="20" y="35" width="220" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="5" value="App Flutter&#xa;Android / iOS / Web&#xa;(Port aléatoire)" style="shape=component;align=left;spacingLeft=36;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="3">
+          <mxGeometry x="20" y="100" width="220" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ RÉSEAU DOCKER ═══ -->
+        <mxCell id="6" value="Réseau Docker : ats_network" style="swimlane;fontStyle=1;startSize=26;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="330" y="50" width="1200" height="900" as="geometry"/>
+        </mxCell>
+
+        <!-- Point d'entrée -->
+        <mxCell id="7" value="Point d'entrée" style="swimlane;fontStyle=1;startSize=22;fillColor=#f0f0f0;strokeColor=#999999;" vertex="1" parent="6">
+          <mxGeometry x="20" y="30" width="320" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="8" value="Nginx :80&#xa;nginx:1.25-alpine&#xa;/api/* → backend:8000 | / → host:3000" style="shape=component;align=left;spacingLeft=36;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="7">
+          <mxGeometry x="15" y="28" width="290" height="45" as="geometry"/>
+        </mxCell>
+
+        <!-- Couche Application -->
+        <mxCell id="9" value="Couche Application" style="swimlane;fontStyle=1;startSize=22;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="6">
+          <mxGeometry x="20" y="140" width="760" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="10" value="FastAPI Backend&#xa;ats_backend :8000&#xa;Routes: visitor/auth/candidate/agent/rh/admin/n8n&#xa;NLP: OCR+Parser+Embedder+Scorer&#xa;CORS: allow_origin_regex localhost:*" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="9">
+          <mxGeometry x="20" y="35" width="340" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="11" value="Celery Worker&#xa;ats_celery --concurrency=4&#xa;embed_cv / embed_all_cvs&#xa;process_cv_on_upload / embed_offer" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="9">
+          <mxGeometry x="380" y="35" width="340" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="12" value="Flower UI&#xa;ats_flower :5555&#xa;Monitoring Celery" style="shape=component;align=left;spacingLeft=36;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="9">
+          <mxGeometry x="380" y="140" width="340" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Couche Données -->
+        <mxCell id="13" value="Couche Données" style="swimlane;fontStyle=1;startSize=22;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="6">
+          <mxGeometry x="20" y="390" width="760" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="14" value="PostgreSQL 16 + pgvector&#xa;ats_postgres :5432&#xa;12 tables | Vector(384) ivfflat index&#xa;JSONB (cv_entities) | Volume: postgres_data" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="13">
+          <mxGeometry x="20" y="35" width="340" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="15" value="Redis 7.2-alpine&#xa;ats_redis :6379&#xa;Broker Celery (queues)&#xa;Backend résultats tâches&#xa;Volume: redis_data" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="13">
+          <mxGeometry x="380" y="35" width="340" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Automatisation -->
+        <mxCell id="16" value="Automatisation" style="swimlane;fontStyle=1;startSize=22;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="6">
+          <mxGeometry x="820" y="140" width="350" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="17" value="n8n Workflows&#xa;ats_n8n :5678&#xa;DB: PostgreSQL partagée&#xa;Webhooks → /api/n8n/*&#xa;Volume: n8n_data" style="shape=component;align=left;spacingLeft=36;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="16">
+          <mxGeometry x="20" y="30" width="310" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Monitoring -->
+        <mxCell id="18" value="Monitoring" style="swimlane;fontStyle=1;startSize=22;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="6">
+          <mxGeometry x="820" y="290" width="350" height="280" as="geometry"/>
+        </mxCell>
+        <mxCell id="19" value="Prometheus&#xa;ats_prometheus :9090&#xa;Scrape: backend/redis/postgres&#xa;Retention: 15j" style="shape=component;align=left;spacingLeft=36;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="18">
+          <mxGeometry x="20" y="30" width="310" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="20" value="Grafana&#xa;ats_grafana :3001&#xa;Source: Prometheus | Dashboards provisionning" style="shape=component;align=left;spacingLeft=36;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="18">
+          <mxGeometry x="20" y="110" width="310" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="21" value="redis-exporter&#xa;olas006/redis_exporter" style="shape=component;align=left;spacingLeft=36;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="18">
+          <mxGeometry x="20" y="190" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="22" value="postgres-exporter&#xa;prometheus/postgres_exporter" style="shape=component;align=left;spacingLeft=36;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="18">
+          <mxGeometry x="180" y="190" width="150" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Storage -->
+        <mxCell id="23" value="uploads_data&#xa;/app/uploads/&#xa;cvs/ — PDFs et images&#xa;photos/ — avatars candidats" style="shape=mxgraph.cisco.storage.storage;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="6">
+          <mxGeometry x="20" y="620" width="220" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ FLUX — Clients → Nginx ═══ -->
+        <mxCell id="30" value="HTTP :80" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#6c8ebf;" edge="1" source="4" target="8" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="31" value="HTTP :80 ou :8000" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#82b366;" edge="1" source="5" target="8" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Nginx → Backend -->
+        <mxCell id="32" value="/api/* proxy_pass" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#555555;" edge="1" source="8" target="10" parent="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Backend → Données -->
+        <mxCell id="33" value="SQLAlchemy AsyncSession&#xa;SELECT/INSERT/UPDATE" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#82b366;" edge="1" source="10" target="14" parent="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="34" value="celery apply_async()" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#82b366;" edge="1" source="10" target="15" parent="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="35" value="Lecture/écriture PDFs" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#555555;" edge="1" source="10" target="23" parent="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Celery → Données -->
+        <mxCell id="36" value="Consomme tâches" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#82b366;" edge="1" source="11" target="15" parent="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="37" value="UPDATE embeddings" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#82b366;" edge="1" source="11" target="14" parent="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="38" value="Lecture PDFs / OCR" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#555555;" edge="1" source="11" target="23" parent="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Redis → Flower -->
+        <mxCell id="39" value="Events workers / statuts" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#82b366;" edge="1" source="15" target="12" parent="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- n8n → Backend -->
+        <mxCell id="40" value="POST /api/n8n/*&#xa;X-N8N-Secret header" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#9673a6;" edge="1" source="17" target="10" parent="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="41" value="DB propre (tables n8n_*)" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#9673a6;" edge="1" source="17" target="14" parent="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Monitoring flux -->
+        <mxCell id="42" value="GET /metrics" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;" edge="1" source="10" target="19" parent="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="43" value="Export métriques redis://" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;" edge="1" source="21" target="15" parent="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="44" value="Scrape /metrics" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;" edge="1" source="21" target="19" parent="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="45" value="Connexion PG DSN" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;" edge="1" source="22" target="14" parent="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="46" value="Scrape /metrics" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;" edge="1" source="22" target="19" parent="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="47" value="Datasource PromQL" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#b85450;" edge="1" source="19" target="20" parent="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

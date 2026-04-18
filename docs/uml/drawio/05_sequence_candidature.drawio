@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-04-15T00:00:00.000Z" agent="Claude Code" version="24.0.0" type="device">
+
+  <!-- PAGE 1 — Dépôt de candidature -->
+  <diagram id="seq_apply" name="05a — Dépôt Candidature">
+    <mxGraphModel dx="1400" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="2" value="Dépôt de candidature par le candidat" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1"><mxGeometry x="150" y="10" width="700" height="25" as="geometry"/></mxCell>
+
+        <mxCell id="10" value="Candidat" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="20" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="11" value="Client React" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="200" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="12" value="FastAPI :8000&#xa;candidate/applications.py" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="380" y="40" width="140" height="40" as="geometry"/></mxCell>
+        <mxCell id="13" value="PostgreSQL" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="600" y="40" width="110" height="40" as="geometry"/></mxCell>
+
+        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="75" y="80" as="sourcePoint"/><mxPoint x="75" y="760" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="255" y="80" as="sourcePoint"/><mxPoint x="255" y="760" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="450" y="80" as="sourcePoint"/><mxPoint x="450" y="760" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="655" y="80" as="sourcePoint"/><mxPoint x="655" y="760" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="30" value='Consulte offre et clique "Postuler"' style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="75" y="110" as="sourcePoint"/><mxPoint x="255" y="110" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="31" value="POST /api/candidate/offers/{offer_id}/apply" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="255" y="145" as="sourcePoint"/><mxPoint x="450" y="145" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="32" value="SELECT candidate WHERE email=current_user.email" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="450" y="180" as="sourcePoint"/><mxPoint x="655" y="180" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="33" value="Candidate {id}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="655" y="215" as="sourcePoint"/><mxPoint x="450" y="215" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="34" value="SELECT cvs WHERE id_candidate=? AND statut=INDEXED" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="450" y="250" as="sourcePoint"/><mxPoint x="655" y="250" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="35" value="CV indexé ou NULL" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="655" y="285" as="sourcePoint"/><mxPoint x="450" y="285" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="36" value="alt" style="swimlane;fontStyle=1;startSize=20;fillColor=none;strokeColor=#555555;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="75" y="300" width="700" height="420" as="geometry"/>
+        </mxCell>
+        <mxCell id="37" value="[Aucun CV indexé]" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="36"><mxGeometry x="5" y="22" width="180" height="20" as="geometry"/></mxCell>
+        <mxCell id="38" value='HTTP 400 {"detail": "Veuillez déposer un CV avant de postuler"}' style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="375" y="50" as="sourcePoint"/><mxPoint x="180" y="50" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="39" value="Message d'erreur" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="180" y="80" as="sourcePoint"/><mxPoint x="0" y="80" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="40" value="" style="line;strokeColor=#555555;" vertex="1" parent="36"><mxGeometry x="0" y="100" width="700" height="10" as="geometry"/></mxCell>
+        <mxCell id="41" value="[CV indexé disponible]" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="36"><mxGeometry x="5" y="112" width="180" height="20" as="geometry"/></mxCell>
+        <mxCell id="42" value="SELECT resultat WHERE id_cv=? AND id_offre=?" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="375" y="140" as="sourcePoint"/><mxPoint x="580" y="140" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="43" value="Resultat ou NULL" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="580" y="175" as="sourcePoint"/><mxPoint x="375" y="175" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="44" value='HTTP 409 {"detail": "Vous avez déjà postulé"} [Candidature existante]' style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="375" y="215" as="sourcePoint"/><mxPoint x="180" y="215" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="45" value="" style="line;strokeColor=#555555;" vertex="1" parent="36"><mxGeometry x="0" y="230" width="700" height="10" as="geometry"/></mxCell>
+        <mxCell id="46" value="[Nouvelle candidature]" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="36"><mxGeometry x="5" y="242" width="180" height="20" as="geometry"/></mxCell>
+        <mxCell id="47" value="INSERT INTO resultats {id_cv, id_offre, decision=PENDING, scores=0}" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="375" y="275" as="sourcePoint"/><mxPoint x="580" y="275" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="48" value="Resultat {id: result_id}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="580" y="310" as="sourcePoint"/><mxPoint x="375" y="310" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="49" value='INSERT audit_logs {action: "application_submitted"}' style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="375" y="345" as="sourcePoint"/><mxPoint x="580" y="345" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="50" value='HTTP 201 {message: "Candidature enregistrée", resultat_id}' style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="375" y="385" as="sourcePoint"/><mxPoint x="180" y="385" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="51" value='"Candidature soumise avec succès"' style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="180" y="415" as="sourcePoint"/><mxPoint x="0" y="415" as="targetPoint"/></mxGeometry></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- PAGE 2 — Timeline candidature -->
+  <diagram id="seq_timeline" name="05b — Timeline Candidature">
+    <mxGraphModel dx="1400" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="2" value="Consultation de la timeline par le candidat" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1"><mxGeometry x="100" y="10" width="700" height="25" as="geometry"/></mxCell>
+
+        <mxCell id="10" value="Candidat" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="20" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="11" value="Client React" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="200" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="12" value="FastAPI :8000" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="380" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="13" value="PostgreSQL" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="560" y="40" width="110" height="40" as="geometry"/></mxCell>
+
+        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="75" y="80" as="sourcePoint"/><mxPoint x="75" y="760" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="255" y="80" as="sourcePoint"/><mxPoint x="255" y="760" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="435" y="80" as="sourcePoint"/><mxPoint x="435" y="760" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="615" y="80" as="sourcePoint"/><mxPoint x="615" y="760" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="30" value="Clique sur une candidature (ApplicationsPage)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="75" y="110" as="sourcePoint"/><mxPoint x="255" y="110" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="31" value="GET /api/candidate/applications" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="255" y="145" as="sourcePoint"/><mxPoint x="435" y="145" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="32" value="SELECT resultats JOIN job_offers WHERE id_cv IN (SELECT id FROM cvs WHERE id_candidate=?)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="435" y="180" as="sourcePoint"/><mxPoint x="615" y="180" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="33" value="[Resultat + JobOffer]" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="615" y="215" as="sourcePoint"/><mxPoint x="435" y="215" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="34" value="Liste des candidatures avec scores" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="435" y="250" as="sourcePoint"/><mxPoint x="255" y="250" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="35" value="Clique &quot;Voir détail&quot; → Drawer Ant Design" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="75" y="290" as="sourcePoint"/><mxPoint x="255" y="290" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="36" value="GET /api/candidate/applications/{result_id}/detail" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="255" y="325" as="sourcePoint"/><mxPoint x="435" y="325" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="37" value="SELECT resultat JOIN job_offers JOIN cvs WHERE resultat.id=result_id" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="435" y="360" as="sourcePoint"/><mxPoint x="615" y="360" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="38" value="Resultat complet" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="615" y="395" as="sourcePoint"/><mxPoint x="435" y="395" as="targetPoint"/></mxGeometry></mxCell>
+
+        <!-- Timeline steps notes -->
+        <mxCell id="39" value="Étape 1 — POSTULÉ: done=true (Resultat existe) | date = resultat.date_analyse&#xa;Étape 2 — ANALYSE IA: done = (cv.statut == INDEXED) | date = cv.updated_at si INDEXED&#xa;Étape 3 — EN EXAMEN: done = (last_score_updated_at &gt; date_analyse)&#xa;Étape 4 — DÉCISION: done = (decision != PENDING) | date = resultat.date_decision&#xa;feedback_rh visible si feedback_visible=true" style="shape=note;whiteSpace=wrap;html=1;fontSize=9;fillColor=#fff2cc;strokeColor=#d6b656;align=left;" vertex="1" parent="1">
+          <mxGeometry x="435" y="420" width="360" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="40" value="HTTP 200 {score_final, decision, date_decision, feedback_rh (si visible), timeline: [4 étapes]}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="435" y="545" as="sourcePoint"/><mxPoint x="255" y="545" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="41" value="Affiche timeline + scores détaillés" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="255" y="580" as="sourcePoint"/><mxPoint x="75" y="580" as="targetPoint"/></mxGeometry></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- PAGE 3 — Génération créneaux n8n -->
+  <diagram id="seq_creneaux" name="05c — Génération Créneaux n8n">
+    <mxGraphModel dx="1400" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="2" value="Workflow n8n — Génération de créneaux d'entretien" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1"><mxGeometry x="100" y="10" width="800" height="25" as="geometry"/></mxCell>
+
+        <mxCell id="10" value="Responsable RH" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="10" y="40" width="120" height="40" as="geometry"/></mxCell>
+        <mxCell id="11" value="Client React&#xa;N8NCalendarPage" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="200" y="40" width="130" height="40" as="geometry"/></mxCell>
+        <mxCell id="12" value="FastAPI :8000&#xa;rh/n8n_webhook.py" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="400" y="40" width="140" height="40" as="geometry"/></mxCell>
+        <mxCell id="13" value="PostgreSQL" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="620" y="40" width="110" height="40" as="geometry"/></mxCell>
+
+        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="70" y="80" as="sourcePoint"/><mxPoint x="70" y="700" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="80" as="sourcePoint"/><mxPoint x="265" y="700" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="470" y="80" as="sourcePoint"/><mxPoint x="470" y="700" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="675" y="80" as="sourcePoint"/><mxPoint x="675" y="700" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="24" value="Note: Polling GET /api/n8n/entretiens/propose toutes les 5 secondes" style="shape=note;whiteSpace=wrap;fontSize=9;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="200" y="90" width="300" height="30" as="geometry"/></mxCell>
+
+        <mxCell id="30" value='Clique "Générer créneaux"' style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="70" y="135" as="sourcePoint"/><mxPoint x="265" y="135" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="31" value="POST /api/n8n/declencher-generation (Authorization: Bearer &lt;rh_token&gt;)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="170" as="sourcePoint"/><mxPoint x="470" y="170" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="32" value="SELECT resultats JOIN job_offers JOIN cvs&#xa;WHERE decision=RETAINED AND NOT EXISTS (entretiens PROPOSE/CONFIRME)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="470" y="215" as="sourcePoint"/><mxPoint x="675" y="215" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="33" value="[Resultats RETAINED sans entretien]" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="675" y="265" as="sourcePoint"/><mxPoint x="470" y="265" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="34" value="[loop] Pour chaque candidat RETAINED" style="swimlane;fontStyle=1;startSize=20;fillColor=none;strokeColor=#555555;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="110" y="280" width="660" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="35" value="INSERT INTO entretiens {id_resultat, id_offre, id_rh, id_candidate_user, date_entretien (calculé), statut=PROPOSE, duree_minutes=30}" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="34"><mxGeometry relative="1" as="geometry"><mxPoint x="360" y="45" as="sourcePoint"/><mxPoint x="565" y="45" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="36" value="Entretien {id}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="34"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="65" as="sourcePoint"/><mxPoint x="360" y="65" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="37" value="HTTP 200 {total_retained: N, creneaux_generes: [{id, date, statut}]}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="470" y="390" as="sourcePoint"/><mxPoint x="265" y="390" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="38" value="Affiche créneaux dans le tableau" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="425" as="sourcePoint"/><mxPoint x="70" y="425" as="targetPoint"/></mxGeometry></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- PAGE 4 — Envoi emails entretien -->
+  <diagram id="seq_emails" name="05d — Envoi Emails Entretien">
+    <mxGraphModel dx="1400" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="2" value="Envoi d'invitations d'entretien par email" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1"><mxGeometry x="100" y="10" width="700" height="25" as="geometry"/></mxCell>
+
+        <mxCell id="10" value="Responsable RH" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="10" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="11" value="Client React" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="190" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="12" value="FastAPI :8000" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="370" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="13" value="PostgreSQL" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="550" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="14" value="mailer.py&#xa;(SMTP Gmail)" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="730" y="40" width="120" height="40" as="geometry"/></mxCell>
+        <mxCell id="15" value="Boîte mail&#xa;du candidat" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="920" y="40" width="110" height="40" as="geometry"/></mxCell>
+
+        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="65" y="80" as="sourcePoint"/><mxPoint x="65" y="750" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="245" y="80" as="sourcePoint"/><mxPoint x="245" y="750" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="425" y="80" as="sourcePoint"/><mxPoint x="425" y="750" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="605" y="80" as="sourcePoint"/><mxPoint x="605" y="750" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="790" y="80" as="sourcePoint"/><mxPoint x="790" y="750" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="25" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="975" y="80" as="sourcePoint"/><mxPoint x="975" y="750" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="30" value='"Confirmer et envoyer"' style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="65" y="110" as="sourcePoint"/><mxPoint x="245" y="110" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="31" value="POST /api/n8n/envoyer-emails-backend (Bearer &lt;rh_token&gt;)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="245" y="145" as="sourcePoint"/><mxPoint x="425" y="145" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="32" value="SELECT entretiens JOIN candidates JOIN job_offers WHERE statut=PROPOSE AND email_envoye=false" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="425" y="180" as="sourcePoint"/><mxPoint x="605" y="180" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="33" value="[Entretiens à traiter]" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="605" y="215" as="sourcePoint"/><mxPoint x="425" y="215" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="34" value="[loop] Pour chaque entretien" style="swimlane;fontStyle=1;startSize=20;fillColor=none;strokeColor=#555555;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="65" y="230" width="980" height="320" as="geometry"/>
+        </mxCell>
+        <mxCell id="35" value="send_entretien_invitation(candidat_email, nom, offre_titre, date_entretien, lieu/lien_visio)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="34"><mxGeometry relative="1" as="geometry"><mxPoint x="360" y="40" as="sourcePoint"/><mxPoint x="725" y="40" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="36" value="Construire email HTML (Logo RANDA base64, détails entretien)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="34"><mxGeometry relative="1" as="geometry"><mxPoint x="725" y="80" as="sourcePoint"/><mxPoint x="820" y="80" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="37" value="SMTP TLS (Gmail :587) From: ats.randa.noreply@gmail.com" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="34"><mxGeometry relative="1" as="geometry"><mxPoint x="725" y="120" as="sourcePoint"/><mxPoint x="910" y="120" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="38" value="SMTP 250 OK [Email envoyé]" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="34"><mxGeometry relative="1" as="geometry"><mxPoint x="910" y="165" as="sourcePoint"/><mxPoint x="725" y="165" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="39" value="True" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="34"><mxGeometry relative="1" as="geometry"><mxPoint x="725" y="200" as="sourcePoint"/><mxPoint x="360" y="200" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="40" value="UPDATE entretiens SET statut=ENVOYE, email_envoye=true" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="34"><mxGeometry relative="1" as="geometry"><mxPoint x="360" y="240" as="sourcePoint"/><mxPoint x="540" y="240" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="41" value="Exception SMTP [Échec] → comptabilisé dans erreurs" style="endArrow=open;endFill=0;dashed=1;fontSize=9;" edge="1" parent="34"><mxGeometry relative="1" as="geometry"><mxPoint x="725" y="290" as="sourcePoint"/><mxPoint x="360" y="290" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="42" value="HTTP 200 {nb_sent: N, nb_total: M}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="425" y="580" as="sourcePoint"/><mxPoint x="245" y="580" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="43" value='"N invitations envoyées"' style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="245" y="615" as="sourcePoint"/><mxPoint x="65" y="615" as="targetPoint"/></mxGeometry></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+</mxfile>

@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-04-15T00:00:00.000Z" agent="Claude Code" version="24.0.0" type="device">
+
+  <!-- PAGE 1 — États d'un CV -->
+  <diagram id="etats_cv" name="07a — États CV">
+    <mxGraphModel dx="1200" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+
+        <mxCell id="2" value="États d'un CV (cvs.statut)" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="10" width="500" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Initial -->
+        <mxCell id="3" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="430" y="50" width="30" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- UPLOADED -->
+        <mxCell id="4" value="UPLOADED&#xa;Stockage initial&#xa;Fichier dans /app/uploads/cvs/" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="340" y="130" width="220" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- PARSING -->
+        <mxCell id="5" value="PARSING&#xa;Traitement Celery en cours&#xa;process_cv_on_upload(cv_id)" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="340" y="270" width="220" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- INDEXED -->
+        <mxCell id="6" value="INDEXED&#xa;embedding ≠ NULL&#xa;Participe au matching pgvector" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="340" y="430" width="220" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ERROR -->
+        <mxCell id="7" value="ERROR&#xa;Ne participe pas au matching&#xa;PDF corrompu / texte vide" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="650" y="350" width="220" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Initial → UPLOADED -->
+        <mxCell id="10" value="Upload fichier&#xa;(POST /api/candidate/cvs/upload&#xa;ou /api/agent/import/keejob)" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" source="3" target="4" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- UPLOADED → PARSING -->
+        <mxCell id="11" value="Celery task démarrée&#xa;process_cv_on_upload(cv_id)" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" source="4" target="5" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- PARSING → INDEXED -->
+        <mxCell id="12" value="Succès pipeline NLP:&#xa;1. Texte extrait (OCR/pdfplumber)&#xa;2. Entités parsées&#xa;3. Embedding Vector(384) généré&#xa;4. cv_version incrémenté" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" source="5" target="6" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- PARSING → ERROR -->
+        <mxCell id="13" value="Échec irrémédiable&#xa;(max_retries=3)" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" source="5" target="7" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- INDEXED → INDEXED (re-embedding) -->
+        <mxCell id="14" value="Re-embedding&#xa;PUT /api/candidate/cvs/:id/validate&#xa;(cv_version incrémenté)" style="endArrow=block;endFill=1;curved=1;" edge="1" source="6" target="6" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="465"/>
+              <mxPoint x="250" y="465"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ERROR → UPLOADED (retry) -->
+        <mxCell id="15" value="Import manuel corrigé&#xa;ou re-soumission candidat" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" source="7" target="4" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- PAGE 2 — États Candidature -->
+  <diagram id="etats_candidature" name="07b — États Candidature">
+    <mxGraphModel dx="1200" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+
+        <mxCell id="2" value="États d'une candidature (resultats.decision + timeline)" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1">
+          <mxGeometry x="100" y="10" width="700" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Initial -->
+        <mxCell id="3" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="430" y="50" width="30" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- POSTULE -->
+        <mxCell id="4" value="POSTULÉ&#xa;Étape 1 — timeline candidat&#xa;decision = PENDING" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="330" y="120" width="230" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ANALYSE_IA -->
+        <mxCell id="5" value="ANALYSE IA&#xa;Étape 2 — timeline candidat&#xa;score_final calculé par scorer.py&#xa;Jaccard + cosinus + exp + langue" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="330" y="250" width="230" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- EN_EXAMEN -->
+        <mxCell id="6" value="EN EXAMEN&#xa;Étape 3 — timeline candidat&#xa;RH voit les scores dans MatchingPage" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#FF8000;" vertex="1" parent="1">
+          <mxGeometry x="330" y="390" width="230" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- DECISION_RETENU -->
+        <mxCell id="7" value="DÉCISION — RETENU&#xa;Étape 4 finale — Immuable&#xa;Workflow entretien n8n déclenché" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="150" y="530" width="230" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- DECISION_REFUSE -->
+        <mxCell id="8" value="DÉCISION — REFUSÉ&#xa;Étape 4 finale&#xa;Email de notification si activé" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="510" y="530" width="230" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- RETIRE -->
+        <mxCell id="9" value="RETIRÉ&#xa;Candidature supprimée&#xa;(uniquement si decision=PENDING)" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="680" y="120" width="220" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Final -->
+        <mxCell id="12" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;shape=doubleEllipse;" vertex="1" parent="1">
+          <mxGeometry x="265" y="660" width="30" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="13" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;shape=doubleEllipse;" vertex="1" parent="1">
+          <mxGeometry x="595" y="660" width="30" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="14" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;shape=doubleEllipse;" vertex="1" parent="1">
+          <mxGeometry x="785" y="200" width="30" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Transitions -->
+        <mxCell id="20" value="POST /api/candidate/offers/:id/apply&#xa;INSERT resultats {decision=PENDING}" style="endArrow=block;endFill=1;" edge="1" source="3" target="4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="21" value="Celery terminé&#xa;cv.statut=INDEXED" style="endArrow=block;endFill=1;" edge="1" source="4" target="5" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="22" value="RH consulte&#xa;GET /api/rh/offers/:id/matching" style="endArrow=block;endFill=1;" edge="1" source="5" target="6" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="23" value="PATCH → RETAINED&#xa;+ feedback optionnel" style="endArrow=block;endFill=1;" edge="1" source="6" target="7" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="24" value="PATCH → REFUSED&#xa;+ feedback optionnel" style="endArrow=block;endFill=1;" edge="1" source="6" target="8" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="25" value="DELETE .../applications/:id" style="endArrow=block;endFill=1;" edge="1" source="4" target="9" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="26" value="" style="endArrow=block;endFill=1;" edge="1" source="7" target="12" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="27" value="" style="endArrow=block;endFill=1;" edge="1" source="8" target="13" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="28" value="" style="endArrow=block;endFill=1;" edge="1" source="9" target="14" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- PAGE 3 — États Offre d'emploi -->
+  <diagram id="etats_offre" name="07c — États Offre">
+    <mxGraphModel dx="1200" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+
+        <mxCell id="2" value="États d'une offre d'emploi (job_offers.statut)" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1">
+          <mxGeometry x="100" y="10" width="700" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Initial -->
+        <mxCell id="3" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="450" y="50" width="30" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- BROUILLON -->
+        <mxCell id="4" value="BROUILLON&#xa;Création par RH (par défaut)" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="350" y="120" width="230" height="60" as="geometry"/>
+        </mxCell>
+        <!-- EN_VALIDATION -->
+        <mxCell id="5" value="EN_VALIDATION" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="350" y="240" width="230" height="50" as="geometry"/>
+        </mxCell>
+        <!-- PROCHAINEMENT -->
+        <mxCell id="6" value="PROCHAINEMENT&#xa;Publication planifiée" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="150" y="360" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <!-- ACTIVE -->
+        <mxCell id="7" value="ACTIVE&#xa;Visible sur GET /api/visitor/offers&#xa;Participe au matching pgvector" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="370" y="360" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <!-- DESACTIVEE -->
+        <mxCell id="8" value="DESACTIVEE&#xa;Désactivée temporairement" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#FF8000;" vertex="1" parent="1">
+          <mxGeometry x="620" y="360" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <!-- INACTIVE -->
+        <mxCell id="9" value="INACTIVE" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="820" y="240" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <!-- EXPIREE -->
+        <mxCell id="10" value="EXPIREE&#xa;date_expiration dépassée" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="820" y="360" width="160" height="60" as="geometry"/>
+        </mxCell>
+        <!-- REFUSEE -->
+        <mxCell id="11" value="REFUSEE" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="620" y="240" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <!-- ARCHIVED -->
+        <mxCell id="12" value="ARCHIVED&#xa;État terminal irréversible&#xa;Resultats et entretiens conservés" style="rounded=1;whiteSpace=wrap;fillColor=#666666;fontColor=#ffffff;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="370" y="510" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <!-- Final -->
+        <mxCell id="13" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;shape=doubleEllipse;" vertex="1" parent="1">
+          <mxGeometry x="455" y="650" width="30" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Transitions -->
+        <mxCell id="20" value="POST /api/rh/offers" style="endArrow=block;endFill=1;" edge="1" source="3" target="4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="21" value="Soumet pour validation" style="endArrow=block;endFill=1;" edge="1" source="4" target="5" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="22" value="Archive" style="endArrow=block;endFill=1;" edge="1" source="4" target="12" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="23" value="Refus → retour" style="endArrow=block;endFill=1;" edge="1" source="5" target="4" parent="1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="280" y="265"/><mxPoint x="280" y="150"/></Array></mxGeometry></mxCell>
+        <mxCell id="24" value="Planification" style="endArrow=block;endFill=1;" edge="1" source="5" target="6" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="25" value="Validation → publication" style="endArrow=block;endFill=1;" edge="1" source="5" target="7" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="26" value="Date atteinte" style="endArrow=block;endFill=1;" edge="1" source="6" target="7" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="27" value="Désactivation" style="endArrow=block;endFill=1;" edge="1" source="7" target="8" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="28" value="Archivage" style="endArrow=block;endFill=1;" edge="1" source="7" target="12" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="29" value="Réactivation" style="endArrow=block;endFill=1;" edge="1" source="8" target="7" parent="1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="720" y="450"/><mxPoint x="570" y="450"/></Array></mxGeometry></mxCell>
+        <mxCell id="30" value="→ transition auto" style="endArrow=block;endFill=1;" edge="1" source="10" target="12" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="31" value="Correction RH" style="endArrow=block;endFill=1;" edge="1" source="11" target="4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="32" value="" style="endArrow=block;endFill=1;" edge="1" source="12" target="13" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- PAGE 4 — États Entretien -->
+  <diagram id="etats_entretien" name="07d — États Entretien">
+    <mxGraphModel dx="1200" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+
+        <mxCell id="2" value="États d'un entretien (entretiens.statut)" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1">
+          <mxGeometry x="100" y="10" width="700" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Initial (2 entrées) -->
+        <mxCell id="3" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="170" y="50" width="30" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="4" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="560" y="50" width="30" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- PLANIFIE -->
+        <mxCell id="5" value="PLANIFIE&#xa;Créé via CalendarPage&#xa;(FullCalendar, date manuelle)" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="80" y="140" width="220" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- PROPOSE -->
+        <mxCell id="6" value="PROPOSE&#xa;Créé par le workflow n8n&#xa;automatiquement (candidates RETAINED)" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="450" y="140" width="230" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- CONFIRME -->
+        <mxCell id="7" value="CONFIRME&#xa;Entretien confirmé" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="280" y="310" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- ENVOYE -->
+        <mxCell id="8" value="ENVOYE&#xa;email_envoye = true&#xa;Candidature considérée conclue" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="280" y="450" width="200" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ANNULE -->
+        <mxCell id="9" value="ANNULE" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="550" y="400" width="160" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Final -->
+        <mxCell id="10" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;shape=doubleEllipse;" vertex="1" parent="1">
+          <mxGeometry x="615" y="530" width="30" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Transitions -->
+        <mxCell id="20" value="Création manuelle RH&#xa;via CalendarPage" style="endArrow=block;endFill=1;" edge="1" source="3" target="5" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="21" value="Génération automatique n8n&#xa;POST /api/n8n/declencher-generation" style="endArrow=block;endFill=1;" edge="1" source="4" target="6" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="22" value="Confirmation manuelle RH" style="endArrow=block;endFill=1;" edge="1" source="5" target="7" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="23" value="Annulation RH ou candidat" style="endArrow=block;endFill=1;" edge="1" source="5" target="9" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="24" value="POST /api/n8n/entretiens/confirmer-tout" style="endArrow=block;endFill=1;" edge="1" source="6" target="7" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="25" value="Candidat décline ou RH annule" style="endArrow=block;endFill=1;" edge="1" source="6" target="9" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="26" value="POST /api/n8n/envoyer-emails-backend&#xa;→ mailer.py SMTP → email_envoye=true" style="endArrow=block;endFill=1;" edge="1" source="7" target="8" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="27" value="Annulation tardive" style="endArrow=block;endFill=1;" edge="1" source="8" target="9" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="28" value="" style="endArrow=block;endFill=1;" edge="1" source="9" target="10" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+</mxfile>

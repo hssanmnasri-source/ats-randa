@@ -1,0 +1,151 @@
+@startuml 04_Sequence_Matching_NLP
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam maxMessageSize 220
+
+title Pipeline NLP — Import CV Keejob (synchrone)
+
+actor "Agent" as AGT
+participant "Client React" as C
+participant "FastAPI :8000" as API
+participant "keejob_parser.py" as KP
+participant "PostgreSQL" as DB
+
+AGT -> C : Sélectionne PDF Keejob
+C -> API : POST /api/agent/import/keejob\n(multipart/form-data: file.pdf)
+API -> API : Validation taille ≤ 10 Mo
+API -> API : extract_text_from_pdf(bytes)\n(pdfplumber ou Tesseract OCR)
+API -> KP : parse_keejob_cv(cv_text)
+KP -> KP : Extraction regex :\n- id_keejob, titre_poste, nom, prenom\n- age, email, telephone, ville\n- niveau_etude (BAC/BAC+2/...)\n- competences[], experiences[]\n- formations[], langues[]
+KP --> API : cv_entities (15+ champs)
+API -> DB : SELECT candidate WHERE email=cv_entities.email
+DB --> API : Candidate ou NULL
+alt Candidat inexistant
+  API -> DB : INSERT INTO candidates {nom, prenom, email, ...}
+  DB --> API : Candidate (candidate_created=true)
+end
+API -> DB : INSERT INTO cvs {id_candidate, id_agent,\nsource=AGENT, statut=INDEXED,\ncv_entities, cv_text}
+DB --> API : CV créé (cv_id)
+API -> DB : INSERT INTO competences (batch)
+API -> DB : INSERT INTO experiences (batch)
+API --> C : HTTP 201 {cv_id, candidate_id,\ncandidate_created, statut: INDEXED,\nentities, nb_competences, nb_experiences}
+C --> AGT : Affiche résultat du parsing
+
+newpage Pipeline NLP — Upload CV Candidat (asynchrone Celery)
+
+title Pipeline NLP — Upload CV Candidat (Celery)
+
+actor "Candidat" as CAN
+participant "Client React" as C
+participant "FastAPI :8000" as API
+participant "PostgreSQL" as DB
+participant "Redis (Broker)" as RDS
+participant "Celery Worker\nprocess_cv_on_upload" as CEL
+participant "ocr.py\n(Tesseract)" as OCR
+participant "generic_parser.py" as PAR
+participant "embedder.py\nMiniLM-L12-v2" as EMB
+participant "scorer.py" as SCO
+
+CAN -> C : Sélectionne fichier PDF/image
+C -> API : POST /api/candidate/cvs/upload\n(multipart/form-data: file)
+API -> API : Sauvegarde fichier → /app/uploads/cvs/
+API -> DB : INSERT INTO cvs\n{id_candidate, source=CANDIDAT, statut=UPLOADED}
+DB --> API : CV {id: cv_id}
+API -> RDS : celery.apply_async(\n"tasks.process_cv_on_upload", args=[cv_id])
+RDS --> API : task_id (acknowledged)
+API --> C : HTTP 201 {cv_id, statut: UPLOADED}
+C --> CAN : "CV déposé — analyse en cours..."
+
+note over CEL,SCO : === Traitement asynchrone dans Celery Worker ===
+
+RDS -> CEL : Consomme tâche process_cv_on_upload(cv_id)
+CEL -> DB : SELECT cv WHERE cv.id=cv_id
+DB --> CEL : CV object
+CEL -> OCR : extract_text_from_pdf(bytes)\n(pdfplumber si numérique\nou Tesseract fra+eng+ara si scanné)
+OCR --> CEL : cv_text (texte brut)
+CEL -> PAR : parse_generic_cv(cv_text)
+PAR --> CEL : cv_entities {competences, experiences, formations, langues}
+CEL -> DB : UPDATE cvs SET cv_text=?, cv_entities=?
+CEL -> EMB : cv_to_embed_text(cv_entities, cv_text)
+EMB -> EMB : _get_model().encode(text, normalize_embeddings=True)\n(synchrone CPU-bound, ~20-50ms)
+EMB --> CEL : embedding [float×384] normalisé
+CEL -> DB : UPDATE cvs SET embedding=vector,\nstatut=INDEXED, cv_version+=1
+
+note over CEL,SCO : === Matching automatique contre toutes les offres ACTIVE ===
+
+CEL -> DB : SELECT * FROM job_offers WHERE statut=ACTIVE
+DB --> CEL : active_offers[]
+
+loop Pour chaque offre active
+  CEL -> SCO : compute_final_score(\ncosine_sim, cv_entities,\noffer.competences_requises,\noffer.experience_requise, offer.langue_requise)
+  SCO --> CEL : {score_matching, score_skills,\nscore_experience, score_langue, score_final}
+  CEL -> DB : SELECT resultat WHERE id_cv=? AND id_offre=?
+  DB --> CEL : Resultat ou NULL
+  alt Resultat RETAINED ou REFUSED
+    note over CEL : SKIP — décision RH immuable
+  else Resultat PENDING existant
+    CEL -> DB : UPDATE resultats SET scores, last_score_updated_at
+  else Pas de Resultat
+    CEL -> DB : INSERT INTO resultats {id_cv, id_offre, scores, decision=PENDING}
+  end
+end
+
+CEL -> DB : COMMIT
+CEL --> RDS : Task result {status: ok, cv_id, created: N, updated: M}
+
+newpage Pipeline NLP — Matching complet déclenché par RH
+
+title Matching Sémantique Complet (flux RH)
+
+actor "Responsable RH" as RH
+participant "Client React" as C
+participant "FastAPI :8000\nrh/matching.py" as API
+participant "PostgreSQL\n+ pgvector" as PGV
+participant "scorer.py" as SCO
+participant "PostgreSQL" as DB
+
+RH -> C : Clique "Lancer le matching"
+C -> API : POST /api/rh/offers/{offer_id}/matching\n?top_n=50&force=false
+API -> DB : SELECT * FROM job_offers WHERE id=offer_id
+DB --> API : JobOffer {embedding, competences_requises,\nexperience_requise, poids_*}
+
+alt embedding absent
+  API -> API : offer_to_embed_text(offer)
+  API -> API : loop.run_in_executor(None, encode, text)
+  API -> DB : UPDATE job_offers SET embedding=vector
+end
+
+note over API,PGV : === Pré-filtre pgvector KNN ===
+API -> PGV : SELECT cvs.id, (embedding <=> offer_vec) AS dist\nFROM cvs WHERE statut='INDEXED'\nORDER BY embedding <=> offer_vec LIMIT 200
+PGV -> PGV : Index ivfflat (100 listes)\nRecherche approximative KNN
+PGV --> API : [(cv_id, cosine_sim) × 200]
+
+note over API,SCO : === Scoring multi-critères sur les 200 CVs ===
+loop Pour chacun des 200 CVs
+  API -> DB : SELECT cv_entities, competences, experiences FROM cvs
+  DB --> API : CV data
+  API -> SCO : compute_final_score(\ncosine_sim, cv_entities, required_skills,\nrequired_years, required_langue,\nweights={sem:0.40, comp:0.35, exp:0.15, lang:0.10})
+  SCO -> SCO : s_sem  = cosine_sim\ns_comp = |cv ∩ req| / |cv ∪ req| (Jaccard)\ns_exp  = min(1.0, cv_years / required_years)\ns_lang = 1.0 if langue match else 0.0\nfinal  = s_sem×0.40 + s_comp×0.35\n         + s_exp×0.15 + s_lang×0.10
+  SCO --> API : {score_matching, score_skills,\nscore_experience, score_langue, score_final}
+end
+
+API -> API : Trier par score_final DESC → top 50
+
+note over API,DB : === Upsert des Resultats ===
+loop Pour chacun des top 50
+  API -> DB : SELECT resultat WHERE id_cv=? AND id_offre=?
+  DB --> API : Resultat ou NULL
+  alt RETAINED ou REFUSED
+    note over API : Skip — décision RH conservée
+  else PENDING existant
+    API -> DB : UPDATE resultats SET scores, rang
+  else Nouveau
+    API -> DB : INSERT INTO resultats {id_cv, id_offre, scores, rang, decision=PENDING}
+  end
+end
+
+API -> DB : UPDATE job_offers SET last_matching_at=NOW()
+API --> C : HTTP 200 {offer_id, titre, total: N,\nresultats: [{cv_id, score_final, rang, decision} × 50]}
+C --> RH : Tableau des résultats triés par score
+
+@enduml

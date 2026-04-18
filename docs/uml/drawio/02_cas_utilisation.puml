@@ -1,0 +1,122 @@
+@startuml 02_CasUtilisation_ATS_RANDA
+left to right direction
+skinparam actorStyle awesome
+skinparam packageBackgroundColor #F5F5F5
+skinparam usecaseBackgroundColor #FEFECE
+skinparam usecaseBorderColor #A80036
+skinparam arrowColor #555555
+
+actor "Visiteur" as VIS
+actor "Candidat" as CAN
+actor "Agent de saisie" as AGT
+actor "Responsable RH" as RH
+actor "Administrateur" as ADM
+actor "n8n Workflows" as N8N
+
+rectangle "ATS RANDA" {
+
+  package "Zone Publique" {
+    usecase "S'inscrire\nPOST /api/visitor/register" as UC_REG
+    usecase "Se connecter\nPOST /api/visitor/login" as UC_LOG
+    usecase "Connexion Google OAuth2\nGET /api/auth/google/login" as UC_GOOGLE
+    usecase "Consulter offres actives\nGET /api/visitor/offers" as UC_LIST_OFF
+    usecase "Voir détail offre\nGET /api/visitor/offers/:id" as UC_DETAIL_OFF
+  }
+
+  package "Portail Candidat /candidate/*" {
+    usecase "Gérer profil" as UC_PROFIL
+    usecase "Déposer CV PDF\nPOST /api/candidate/cvs/upload" as UC_CV_UP
+    usecase "Soumettre CV formulaire" as UC_CV_FORM
+    usecase "Valider entités extraites" as UC_CV_VALID
+    usecase "Postuler à une offre\nPOST .../apply" as UC_POSTULER
+    usecase "Suivre candidatures\n(timeline 4 étapes)" as UC_SUIVI
+    usecase "Consulter feedback RH\n(si feedback_visible=true)" as UC_FEEDBACK
+    usecase "Générer CV PDF\n(react-to-print)" as UC_GEN_CV
+    usecase "Gérer favoris\n(localStorage)" as UC_FAV
+    usecase "Gérer lettres de motivation" as UC_LETTRE
+    usecase "Gérer documents" as UC_DOCS
+  }
+
+  package "Portail Agent /agent/*" {
+    usecase "Importer CV Keejob\nPOST /api/agent/import/keejob" as UC_IMP_KEEJOB
+    usecase "Import batch CVs\nPOST /api/agent/cvs/batch" as UC_IMP_BATCH
+    usecase "Consulter qualité OCR\n(score 0-100)" as UC_OCR_QUAL
+    usecase "Gérer liste candidats\nGET /api/agent/cvs" as UC_LIST_CAND
+    usecase "Consulter historique imports" as UC_HIST
+  }
+
+  package "Portail RH /rh/*" {
+    usecase "Créer / modifier offres\nPOST /api/rh/offers" as UC_CRUD_OFF
+    usecase "Configurer pondérations\nPUT .../poids" as UC_POIDS
+    usecase "Lancer matching sémantique\nPOST .../matching?top_n=50" as UC_MATCH
+    usecase "Consulter résultats\n(pgvector + 4 critères)" as UC_RESULTATS
+    usecase "Décision RETENU/REFUSÉ\nPATCH .../matching/:id" as UC_DECISION
+    usecase "Donner feedback candidat\n(feedback_visible)" as UC_FEEDBACK_RH
+    usecase "Gérer calendrier entretiens\nGET /api/rh/calendar" as UC_CAL
+    usecase "Déclencher workflow n8n\nPOST /api/n8n/declencher-generation" as UC_N8N
+    usecase "Consulter CVthèque\nGET /api/rh/cvs" as UC_CVTH
+    usecase "Statistiques par offre\nGET /api/rh/offers/:id/stats" as UC_STATS
+  }
+
+  package "Portail Admin /admin/*" {
+    usecase "Gérer utilisateurs\nPOST/PUT /api/admin/users" as UC_USERS
+    usecase "Attribuer rôles" as UC_ROLES
+    usecase "Consulter logs d'audit\nGET /api/admin/audit" as UC_AUDIT
+    usecase "Vérifier santé système\nGET /api/admin/system" as UC_HEALTH
+    usecase "Statistiques globales\nGET /api/admin/stats" as UC_STATS_G
+  }
+
+  package "Zone n8n /api/n8n/*" {
+    usecase "Générer créneaux entretien\n(INSERT entretiens statut=PROPOSE)" as UC_CRENEAUX
+    usecase "Envoyer invitations email\n(mailer.py SMTP Gmail)" as UC_EMAILS
+    usecase "Webhook entrant\n(X-N8N-Secret)" as UC_WH_IN
+  }
+}
+
+VIS --> UC_REG
+VIS --> UC_LOG
+VIS --> UC_GOOGLE
+VIS --> UC_LIST_OFF
+VIS --> UC_DETAIL_OFF
+
+CAN --> UC_PROFIL
+CAN --> UC_CV_UP
+CAN --> UC_CV_FORM
+CAN --> UC_CV_VALID
+CAN --> UC_POSTULER
+CAN --> UC_SUIVI
+CAN --> UC_FEEDBACK
+CAN --> UC_GEN_CV
+CAN --> UC_FAV
+CAN --> UC_LETTRE
+CAN --> UC_DOCS
+CAN --> UC_LIST_OFF
+
+AGT --> UC_IMP_KEEJOB
+AGT --> UC_IMP_BATCH
+AGT --> UC_OCR_QUAL
+AGT --> UC_LIST_CAND
+AGT --> UC_HIST
+
+RH --> UC_CRUD_OFF
+RH --> UC_POIDS
+RH --> UC_MATCH
+RH --> UC_RESULTATS
+RH --> UC_DECISION
+RH --> UC_FEEDBACK_RH
+RH --> UC_CAL
+RH --> UC_N8N
+RH --> UC_CVTH
+RH --> UC_STATS
+
+ADM --> UC_USERS
+ADM --> UC_ROLES
+ADM --> UC_AUDIT
+ADM --> UC_HEALTH
+ADM --> UC_STATS_G
+
+N8N --> UC_WH_IN
+UC_N8N ..> UC_CRENEAUX : <<include>>
+UC_N8N ..> UC_EMAILS : <<include>>
+
+@enduml

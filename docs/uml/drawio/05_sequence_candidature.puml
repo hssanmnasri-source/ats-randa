@@ -1,0 +1,144 @@
+@startuml 05_Sequence_Candidature
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam maxMessageSize 220
+
+title Dépôt de candidature par le candidat
+
+actor "Candidat" as CAN
+participant "Client React" as C
+participant "FastAPI :8000\ncandidate/applications.py" as API
+participant "PostgreSQL" as DB
+
+CAN -> C : Consulte offre et clique "Postuler"
+C -> API : POST /api/candidate/offers/{offer_id}/apply
+API -> DB : SELECT candidate WHERE email=current_user.email
+DB --> API : Candidate {id}
+API -> DB : SELECT cvs WHERE id_candidate=? AND statut=INDEXED
+DB --> API : CV indexé ou NULL
+
+alt Aucun CV indexé
+  API --> C : HTTP 400\n{"detail": "Veuillez déposer un CV avant de postuler"}
+  C --> CAN : Message d'erreur
+else CV indexé disponible
+  API -> DB : SELECT resultat WHERE id_cv=? AND id_offre=?
+  DB --> API : Resultat ou NULL
+  alt Candidature déjà soumise
+    API --> C : HTTP 409\n{"detail": "Vous avez déjà postulé à cette offre"}
+  else Nouvelle candidature
+    API -> DB : INSERT INTO resultats\n{id_cv, id_offre, decision=PENDING,\nscore_matching=0, score_final=0}
+    DB --> API : Resultat {id: result_id}
+    API -> DB : INSERT INTO audit_logs\n{action: "application_submitted",\nresource: "resultat", resource_id}
+    API --> C : HTTP 201 {message: "Candidature enregistrée", resultat_id}
+    C --> CAN : "Candidature soumise avec succès"
+  end
+end
+
+newpage Timeline candidature
+
+title Consultation de la timeline par le candidat
+
+actor "Candidat" as CAN
+participant "Client React" as C
+participant "FastAPI :8000\ncandidate/applications.py" as API
+participant "PostgreSQL" as DB
+
+CAN -> C : Clique sur une candidature\n(ApplicationsPage)
+C -> API : GET /api/candidate/applications
+API -> DB : SELECT resultats JOIN job_offers\nWHERE resultat.id_cv IN\n(SELECT id FROM cvs WHERE id_candidate=?)
+DB --> API : [Resultat + JobOffer]
+API --> C : Liste des candidatures avec scores
+
+CAN -> C : Clique "Voir détail" → Drawer Ant Design
+C -> API : GET /api/candidate/applications/{result_id}/detail
+API -> DB : SELECT resultat JOIN job_offers JOIN cvs\nWHERE resultat.id=result_id
+DB --> API : Resultat complet
+
+API -> API : Construction timeline dynamique
+
+note over API
+  Étape 1 — POSTULÉ :
+  done=true (Resultat existe)
+  date = resultat.date_analyse
+end note
+
+note over API
+  Étape 2 — ANALYSE IA :
+  done = (cv.statut == INDEXED)
+  date = cv.updated_at si INDEXED
+end note
+
+note over API
+  Étape 3 — EN EXAMEN :
+  done = (last_score_updated_at > date_analyse)
+  (scores mis à jour = RH a consulté)
+end note
+
+note over API
+  Étape 4 — DÉCISION :
+  done = (decision != PENDING)
+  date = resultat.date_decision
+  feedback_rh visible si feedback_visible=true
+end note
+
+API --> C : HTTP 200 {\n  score_final, decision, date_decision,\n  feedback_rh (si feedback_visible=true),\n  timeline: [4 étapes avec done/date]\n}
+C --> CAN : Affiche timeline + scores détaillés
+
+newpage Workflow n8n — Génération créneaux
+
+title Workflow n8n — Génération de créneaux d'entretien
+
+actor "Responsable RH" as RH
+participant "Client React\nN8NCalendarPage" as C
+participant "FastAPI :8000\nrh/n8n_webhook.py" as API
+participant "PostgreSQL" as DB
+
+note over C : Polling GET /api/n8n/entretiens/propose\ntoutes les 5 secondes
+
+RH -> C : Clique "Générer créneaux"
+C -> API : POST /api/n8n/declencher-generation\nAuthorization: Bearer <rh_token>
+API -> DB : SELECT resultats JOIN job_offers JOIN cvs\nWHERE decision=RETAINED\nAND NOT EXISTS (\n  SELECT 1 FROM entretiens\n  WHERE id_resultat=resultat.id\n  AND statut IN ('PROPOSE','CONFIRME')\n)
+DB --> API : [Resultats RETAINED sans entretien]
+
+loop Pour chaque candidat RETAINED
+  API -> DB : INSERT INTO entretiens {\n  id_resultat, id_offre, id_rh,\n  id_candidate_user,\n  date_entretien (créneau calculé),\n  statut=PROPOSE, duree_minutes=30\n}
+  DB --> API : Entretien {id}
+end
+
+API --> C : HTTP 200 {total_retained: N,\ncreneaux_generes: [{id, date, statut}]}
+C --> RH : Affiche créneaux dans le tableau
+
+newpage Envoi emails entretien
+
+title Envoi d'invitations d'entretien par email
+
+actor "Responsable RH" as RH
+participant "Client React" as C
+participant "FastAPI :8000" as API
+participant "PostgreSQL" as DB
+participant "mailer.py\n(SMTP Gmail)" as ML
+participant "Boîte mail\ndu candidat" as EMAIL
+
+RH -> C : Clique "Confirmer et envoyer"
+C -> API : POST /api/n8n/envoyer-emails-backend\nAuthorization: Bearer <rh_token>
+API -> DB : SELECT entretiens JOIN candidates JOIN job_offers\nWHERE statut=PROPOSE AND email_envoye=false
+DB --> API : [Entretiens à traiter]
+
+loop Pour chaque entretien
+  API -> ML : send_entretien_invitation(\n  candidat_email, candidat_nom,\n  offre_titre, date_entretien,\n  lieu / lien_visio\n)
+  ML -> ML : Construire email HTML :\n- Logo RANDA embarqué (base64)\n- Détails de l'entretien
+  ML -> EMAIL : SMTP TLS (Gmail :587)\nFrom: ats.randa.noreply@gmail.com
+  alt Email envoyé avec succès
+    EMAIL --> ML : SMTP 250 OK
+    ML --> API : True
+    API -> DB : UPDATE entretiens SET\nstatut=ENVOYE, email_envoye=true
+  else Échec envoi
+    ML --> API : Exception SMTP
+    note over API : Comptabilisé dans erreurs
+  end
+end
+
+API --> C : HTTP 200 {nb_sent: N, nb_total: M}
+C --> RH : "N invitations envoyées"
+
+@enduml

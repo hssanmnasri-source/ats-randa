@@ -1,0 +1,108 @@
+@startuml 10_Sequence_Mobile_Flutter
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam maxMessageSize 220
+
+title App Flutter — Démarrage et restauration de session
+
+participant "main.dart\nProviderScope" as APP
+participant "authStateProvider\nAuthNotifier.build()" as AUTH
+participant "flutter_secure_storage" as SEC
+participant "AuthRepository" as REPO
+participant "api_client.dart\nDio + _AuthInterceptor" as DIO
+participant "FastAPI :8000" as API
+participant "routerProvider\nGoRouter" as ROUTER
+participant "Interface Flutter" as UI
+
+APP -> AUTH : ProviderScope → AsyncNotifier.build()
+AUTH -> SEC : hasToken()\nawait _storage.read(key: "access_token")
+
+alt Token absent (première installation)
+  SEC --> AUTH : null
+  AUTH --> ROUTER : AsyncData(null)
+  ROUTER -> ROUTER : redirect() : !isLoggedIn && !isPublic\n→ return '/login'
+  ROUTER -> UI : Affiche LoginScreen
+else Token présent
+  SEC --> AUTH : access_token (String)
+  AUTH -> REPO : getProfile()
+  REPO -> DIO : GET /api/rh/me\n(token injecté par _AuthInterceptor)
+  DIO -> API : GET /api/rh/me\nAuthorization: Bearer <token>
+  alt Token expiré (401)
+    API --> DIO : HTTP 401
+    DIO -> DIO : _AuthInterceptor.onError()\nauthorization=null
+    DIO --> REPO : DioException
+    REPO --> AUTH : Exception
+    AUTH -> SEC : clearTokens()\ndelete("access_token")
+    AUTH --> ROUTER : AsyncData(null)
+    ROUTER -> UI : Affiche LoginScreen
+  else Token valide
+    API --> DIO : HTTP 200 {id, email, nom, prenom, role: "RH"}
+    DIO --> REPO : RhUser data
+    REPO --> AUTH : RhUser
+    AUTH --> ROUTER : AsyncData(RhUser)
+    ROUTER -> ROUTER : redirect() : isLoggedIn && isPublic → null\ninitialLocation='/dashboard'
+    ROUTER -> UI : Affiche DashboardScreen (dans AppShell)
+  end
+end
+
+newpage App Flutter — Tableau de bord RH
+
+title App Flutter — Chargement du tableau de bord RH
+
+participant "DashboardScreen\n(ConsumerWidget)" as DS
+participant "dashboardStatsProvider\n(FutureProvider)" as PROV
+participant "ProfileRepository" as PREPO
+participant "StatsRepository" as SREPO
+participant "FastAPI :8000" as API
+
+DS -> PROV : ref.watch(dashboardStatsProvider)
+PROV -> PROV : Appels parallèles
+
+par
+  PROV -> PREPO : getProfile()
+  PREPO -> API : GET /api/rh/me\nAuthorization: Bearer
+  API --> PREPO : RhUser {nom, prenom, role}
+  PREPO --> PROV : RhUser
+also
+  PROV -> SREPO : getDashboardStats()
+  SREPO -> API : GET /api/rh/dashboard\nAuthorization: Bearer
+  API --> SREPO : {total_offers, total_resultats,\ntotal_retained, ...}
+  SREPO --> PROV : DashboardStats
+end
+
+PROV --> DS : AsyncData(DashboardStats)
+DS -> DS : Affiche statistiques\n(widgets, compteurs, graphiques)
+
+newpage App Flutter — Matching et détail candidature
+
+title App Flutter — Consultation des résultats de matching
+
+participant "MatchingScreen\n(ConsumerWidget)" as MS
+participant "applicationsProvider\n(FutureProvider)" as APROV
+participant "MatchingRepository" as MREPO
+participant "applicationDetailProvider(id)\n(FutureProvider.family)" as DPROV
+participant "FastAPI :8000" as API
+
+MS -> APROV : ref.watch(applicationsProvider)
+APROV -> MREPO : getApplications()
+MREPO -> API : GET /api/rh/resultats\nAuthorization: Bearer
+API --> MREPO : [Resultat + Candidate + JobOffer]
+MREPO --> APROV : List<Application>
+APROV --> MS : AsyncData([Application])
+MS -> MS : Affiche liste des candidatures\n(ScoreRing + StatusBadge)
+
+MS -> DPROV : ref.watch(applicationDetailProvider(result_id))
+DPROV -> MREPO : getApplicationDetail(result_id)
+MREPO -> API : GET /api/candidate/applications/{result_id}/detail
+API --> MREPO : ApplicationDetail {timeline, scores, feedback}
+MREPO --> DPROV : ApplicationDetail
+DPROV --> MS : AsyncData(ApplicationDetail)
+MS -> MS : Affiche détail :\n- TimelineStepWidget (4 étapes)\n- ScoreRing (score_final)\n- Feedback RH si visible
+
+note over MS
+  Invalidation Riverpod après décision RH :
+  ref.invalidate(applicationsProvider)
+  → Re-fetch automatique de la liste
+end note
+
+@enduml

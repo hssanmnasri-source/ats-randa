@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-04-15T00:00:00.000Z" agent="Claude Code" version="24.0.0" type="device">
+
+  <!-- PAGE 1 — Connexion locale JWT -->
+  <diagram id="seq_jwt" name="03a — Connexion JWT">
+    <mxGraphModel dx="1600" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+
+        <mxCell id="2" value="Authentification — Connexion locale JWT" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="10" width="900" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- PARTICIPANTS -->
+        <mxCell id="10" value="Utilisateur" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="20" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="11" value="Client&#xa;(React/Flutter)" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="190" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="12" value="Nginx :80" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="360" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="13" value="FastAPI :8000" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="530" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="14" value="security.py" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="700" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="15" value="PostgreSQL" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="870" y="40" width="110" height="40" as="geometry"/></mxCell>
+
+        <!-- LIFELINES -->
+        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#666666;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="75" y="80" as="sourcePoint"/><mxPoint x="75" y="820" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#6c8ebf;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="245" y="80" as="sourcePoint"/><mxPoint x="245" y="820" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#666666;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="415" y="80" as="sourcePoint"/><mxPoint x="415" y="820" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#82b366;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="585" y="80" as="sourcePoint"/><mxPoint x="585" y="820" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#d6b656;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="755" y="80" as="sourcePoint"/><mxPoint x="755" y="820" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="25" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#9673a6;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="925" y="80" as="sourcePoint"/><mxPoint x="925" y="820" as="targetPoint"/></mxGeometry></mxCell>
+
+        <!-- MESSAGES -->
+        <mxCell id="30" value="Saisit email + mot de passe" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="75" y="110" as="sourcePoint"/><mxPoint x="245" y="110" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="31" value="POST /api/visitor/login {email, password}" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="245" y="145" as="sourcePoint"/><mxPoint x="415" y="145" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="32" value="Proxy → POST /api/visitor/login" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="415" y="180" as="sourcePoint"/><mxPoint x="585" y="180" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="33" value="SELECT * FROM users WHERE email=?" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="585" y="215" as="sourcePoint"/><mxPoint x="925" y="215" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="34" value="User {id, hashed_pwd, role, is_active}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="925" y="250" as="sourcePoint"/><mxPoint x="585" y="250" as="targetPoint"/></mxGeometry></mxCell>
+
+        <!-- ALT block -->
+        <mxCell id="35" value="alt" style="swimlane;fontStyle=1;startSize=20;fillColor=none;strokeColor=#555555;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="75" y="265" width="960" height="480" as="geometry"/>
+        </mxCell>
+        <mxCell id="36" value="[Utilisateur introuvable]" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="35">
+          <mxGeometry x="5" y="20" width="200" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="37" value="HTTP 401 {detail: &quot;Email ou mot de passe incorrect&quot;}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="510" y="50" as="sourcePoint"/><mxPoint x="170" y="50" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="38" value="" style="line;strokeColor=#555555;" vertex="1" parent="35">
+          <mxGeometry x="0" y="70" width="960" height="10" as="geometry"/>
+        </mxCell>
+        <mxCell id="39" value="[Compte désactivé]" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="35">
+          <mxGeometry x="5" y="80" width="160" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="40" value="HTTP 401 {detail: &quot;Compte désactivé&quot;}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="510" y="110" as="sourcePoint"/><mxPoint x="170" y="110" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="41" value="" style="line;strokeColor=#555555;" vertex="1" parent="35">
+          <mxGeometry x="0" y="130" width="960" height="10" as="geometry"/>
+        </mxCell>
+        <mxCell id="42" value="[Identifiants valides]" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="35">
+          <mxGeometry x="5" y="140" width="160" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="43" value="verify_password(plain, hashed_pwd)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="510" y="170" as="sourcePoint"/><mxPoint x="680" y="170" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="44" value="bcrypt compare" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="680" y="195" as="sourcePoint"/><mxPoint x="760" y="195" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="45" value="True" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="680" y="220" as="sourcePoint"/><mxPoint x="510" y="220" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="46" value="create_access_token({sub: user.id, role})" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="510" y="250" as="sourcePoint"/><mxPoint x="680" y="250" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="47" value="jwt.encode(payload, SECRET_KEY, HS256)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="680" y="275" as="sourcePoint"/><mxPoint x="760" y="275" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="48" value="access_token (JWT)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="680" y="300" as="sourcePoint"/><mxPoint x="510" y="300" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="49" value="HTTP 200 {access_token, token_type: &quot;bearer&quot;}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="510" y="330" as="sourcePoint"/><mxPoint x="340" y="330" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="50" value="HTTP 200 {access_token}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="340" y="360" as="sourcePoint"/><mxPoint x="170" y="360" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="51" value="authStore.setToken() / flutter_secure_storage.write" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="170" y="395" as="sourcePoint"/><mxPoint x="270" y="395" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="52" value="Redirection portail (/candidate, /rh, /agent, /admin)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="170" y="430" as="sourcePoint"/><mxPoint x="0" y="430" as="targetPoint"/></mxGeometry></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- PAGE 2 — Google OAuth2 -->
+  <diagram id="seq_google" name="03b — Google OAuth2">
+    <mxGraphModel dx="1600" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+
+        <mxCell id="2" value="Authentification — Connexion Google OAuth2" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="10" width="900" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- PARTICIPANTS -->
+        <mxCell id="10" value="Utilisateur" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="20" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="11" value="Client (Navigateur)" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="200" y="40" width="130" height="40" as="geometry"/></mxCell>
+        <mxCell id="12" value="FastAPI :8000" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="400" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="13" value="Google OAuth2&#xa;(accounts.google.com)" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="580" y="40" width="140" height="40" as="geometry"/></mxCell>
+        <mxCell id="14" value="PostgreSQL" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="800" y="40" width="110" height="40" as="geometry"/></mxCell>
+
+        <!-- LIFELINES -->
+        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="75" y="80" as="sourcePoint"/><mxPoint x="75" y="820" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="80" as="sourcePoint"/><mxPoint x="265" y="820" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="455" y="80" as="sourcePoint"/><mxPoint x="455" y="820" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="650" y="80" as="sourcePoint"/><mxPoint x="650" y="820" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="855" y="80" as="sourcePoint"/><mxPoint x="855" y="820" as="targetPoint"/></mxGeometry></mxCell>
+
+        <!-- MESSAGES -->
+        <mxCell id="30" value='Clique "Connexion avec Google"' style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="75" y="110" as="sourcePoint"/><mxPoint x="265" y="110" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="31" value="GET /api/auth/google/login" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="145" as="sourcePoint"/><mxPoint x="455" y="145" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="32" value="HTTP 302 Redirect → accounts.google.com (scope: openid email profile)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="455" y="180" as="sourcePoint"/><mxPoint x="265" y="180" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="33" value="Redirection vers Google" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="215" as="sourcePoint"/><mxPoint x="650" y="215" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="34" value="S'authentifie sur Google" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="75" y="250" as="sourcePoint"/><mxPoint x="650" y="250" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="35" value="Redirection → /api/auth/google/callback?code=AUTH_CODE" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="650" y="285" as="sourcePoint"/><mxPoint x="265" y="285" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="36" value="GET /api/auth/google/callback?code=AUTH_CODE" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="320" as="sourcePoint"/><mxPoint x="455" y="320" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="37" value="POST /token {code, client_id, client_secret, redirect_uri}" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="455" y="355" as="sourcePoint"/><mxPoint x="650" y="355" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="38" value="{access_token, id_token}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="650" y="390" as="sourcePoint"/><mxPoint x="455" y="390" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="39" value="GET /oauth2/v2/userinfo (Bearer access_token)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="455" y="425" as="sourcePoint"/><mxPoint x="650" y="425" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="40" value="{email, name, given_name, picture, sub}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="650" y="460" as="sourcePoint"/><mxPoint x="455" y="460" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="41" value="SELECT * FROM users WHERE email=?" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="455" y="495" as="sourcePoint"/><mxPoint x="855" y="495" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="42" value="User ou NULL" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="855" y="530" as="sourcePoint"/><mxPoint x="455" y="530" as="targetPoint"/></mxGeometry></mxCell>
+
+        <!-- ALT email inconnu / existant -->
+        <mxCell id="43" value="alt" style="swimlane;fontStyle=1;startSize=20;fillColor=none;strokeColor=#555555;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="75" y="545" width="900" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="44" value="[Email inconnu → INSERT new user]" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="43"><mxGeometry x="5" y="22" width="300" height="20" as="geometry"/></mxCell>
+        <mxCell id="45" value="INSERT INTO users {email, nom, google_id, role: CANDIDATE}" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="43"><mxGeometry relative="1" as="geometry"><mxPoint x="380" y="50" as="sourcePoint"/><mxPoint x="780" y="50" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="46" value="" style="line;strokeColor=#555555;" vertex="1" parent="43"><mxGeometry x="0" y="70" width="900" height="10" as="geometry"/></mxCell>
+        <mxCell id="47" value="[Email existant → UPDATE google_id / connexion directe]" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="43"><mxGeometry x="5" y="82" width="400" height="20" as="geometry"/></mxCell>
+        <mxCell id="48" value="UPDATE users SET google_id=? WHERE email=?" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="43"><mxGeometry relative="1" as="geometry"><mxPoint x="380" y="120" as="sourcePoint"/><mxPoint x="780" y="120" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="50" value="create_access_token({sub: user.id, role}) + HTTP 302 → /auth/google/success?token=JWT" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="455" y="720" as="sourcePoint"/><mxPoint x="265" y="720" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="51" value="GoogleCallbackPage extrait le token → authStore.setToken(token)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="755" as="sourcePoint"/><mxPoint x="365" y="755" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="52" value="Redirection → /candidate" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="790" as="sourcePoint"/><mxPoint x="75" y="790" as="targetPoint"/></mxGeometry></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- PAGE 3 — Validation JWT -->
+  <diagram id="seq_jwt_validate" name="03c — Validation JWT">
+    <mxGraphModel dx="1600" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+
+        <mxCell id="2" value="Validation JWT sur route protégée" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="10" width="800" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- PARTICIPANTS -->
+        <mxCell id="10" value="Client" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="20" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="11" value="Nginx :80" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="190" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="12" value="FastAPI :8000" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="360" y="40" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="13" value="dependencies.py&#xa;get_current_user()" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="530" y="40" width="140" height="40" as="geometry"/></mxCell>
+        <mxCell id="14" value="security.py&#xa;decode_token()" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="730" y="40" width="130" height="40" as="geometry"/></mxCell>
+        <mxCell id="15" value="PostgreSQL" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="920" y="40" width="110" height="40" as="geometry"/></mxCell>
+
+        <!-- LIFELINES -->
+        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="75" y="80" as="sourcePoint"/><mxPoint x="75" y="820" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="245" y="80" as="sourcePoint"/><mxPoint x="245" y="820" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="415" y="80" as="sourcePoint"/><mxPoint x="415" y="820" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="600" y="80" as="sourcePoint"/><mxPoint x="600" y="820" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="795" y="80" as="sourcePoint"/><mxPoint x="795" y="820" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="25" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="975" y="80" as="sourcePoint"/><mxPoint x="975" y="820" as="targetPoint"/></mxGeometry></mxCell>
+
+        <!-- MESSAGES -->
+        <mxCell id="30" value="GET /api/rh/offers&#xa;Authorization: Bearer eyJhbGci..." style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="75" y="110" as="sourcePoint"/><mxPoint x="245" y="110" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="31" value="Proxy request" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="245" y="145" as="sourcePoint"/><mxPoint x="415" y="145" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="32" value="Injection Depends(bearer) — Extraction token" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="415" y="180" as="sourcePoint"/><mxPoint x="600" y="180" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="33" value="decode_token(token)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="600" y="215" as="sourcePoint"/><mxPoint x="795" y="215" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="34" value="jwt.decode(token, SECRET_KEY, algorithms=[&quot;HS256&quot;])" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="795" y="250" as="sourcePoint"/><mxPoint x="880" y="250" as="targetPoint"/></mxGeometry></mxCell>
+
+        <!-- ALT Token invalide/valide -->
+        <mxCell id="35" value="alt" style="swimlane;fontStyle=1;startSize=20;fillColor=none;strokeColor=#555555;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="75" y="265" width="970" height="520" as="geometry"/>
+        </mxCell>
+        <mxCell id="36" value="[Token invalide ou expiré]" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="35"><mxGeometry x="5" y="22" width="220" height="20" as="geometry"/></mxCell>
+        <mxCell id="37" value="None (JWTError capturée)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="720" y="50" as="sourcePoint"/><mxPoint x="525" y="50" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="38" value="HTTP 401 Unauthorized" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="340" y="80" as="sourcePoint"/><mxPoint x="0" y="80" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="39" value="" style="line;strokeColor=#555555;" vertex="1" parent="35"><mxGeometry x="0" y="100" width="970" height="10" as="geometry"/></mxCell>
+        <mxCell id="40" value="[Token valide]" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="35"><mxGeometry x="5" y="112" width="120" height="20" as="geometry"/></mxCell>
+        <mxCell id="41" value="payload {sub: user_id, role, exp, type: &quot;access&quot;}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="720" y="140" as="sourcePoint"/><mxPoint x="525" y="140" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="42" value="SELECT * FROM users WHERE id=payload[&quot;sub&quot;]" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="525" y="170" as="sourcePoint"/><mxPoint x="900" y="170" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="43" value="User" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="900" y="200" as="sourcePoint"/><mxPoint x="525" y="200" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="44" value="require_role(&quot;RH&quot;) — user.role.value == &quot;RH&quot;?" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="525" y="235" as="sourcePoint"/><mxPoint x="620" y="235" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="45" value="HTTP 403 Forbidden [Mauvais rôle]" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="340" y="275" as="sourcePoint"/><mxPoint x="0" y="275" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="46" value="User injecté dans handler [Rôle OK]" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="525" y="320" as="sourcePoint"/><mxPoint x="340" y="320" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="47" value="Exécute la requête métier" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="340" y="360" as="sourcePoint"/><mxPoint x="900" y="360" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="48" value="Données" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="900" y="395" as="sourcePoint"/><mxPoint x="340" y="395" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="49" value="HTTP 200 + données JSON" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="340" y="440" as="sourcePoint"/><mxPoint x="0" y="440" as="targetPoint"/></mxGeometry></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+</mxfile>
