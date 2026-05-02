@@ -17,6 +17,7 @@ Documentation technique complète du système ATS RANDA, rédigée en français 
 | 8 | [08_application_mobile.md](08_application_mobile.md) | Application Flutter RH : architecture Riverpod/GoRouter, fonctionnalités, synchronisation | 4–5 pages |
 | 9 | [09_workflows_n8n.md](09_workflows_n8n.md) | Automatisation n8n : rôle, workflows entretiens, routes dédiées, sécurité webhooks | 2 pages |
 | 10 | [10_glossaire.md](10_glossaire.md) | Glossaire de 25+ termes techniques définis en français | 2 pages |
+| 11 | [11_diagrammes_uml.md](11_diagrammes_uml.md) | Description de l'ensemble des 11 diagrammes UML : classes, cas d'utilisation, séquences, composants, états, activités, déploiement, packages | 8–10 pages |
 
 ## Ordre de lecture recommandé
 
@@ -37,6 +38,7 @@ Documentation technique complète du système ATS RANDA, rédigée en français 
 9. `09_workflows_n8n.md`
 10. `06_guide_installation.md`
 11. `10_glossaire.md`
+12. `11_diagrammes_uml.md`
 
 ### Pour un rapport académique
 Suivre l'ordre numérique `00` → `10`. Chaque fichier correspond à un chapitre autonome.

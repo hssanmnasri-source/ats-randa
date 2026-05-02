@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" version="24.0.0" type="device">
+
+  <!-- PAGE 1 — Dépôt et analyse d'un CV -->
+  <diagram id="depot_cv" name="04a — Dépôt et analyse d'un CV">
+    <mxGraphModel dx="1400" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="2" value="Comment un CV est déposé et analysé automatiquement" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1">
+          <mxGeometry x="100" y="10" width="800" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- PARTICIPANTS -->
+        <mxCell id="10" value="Agent" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="30" y="45" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="11" value="Interface web" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="200" y="45" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="12" value="Serveur" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="380" y="45" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="13" value="Moteur d'analyse" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="560" y="45" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="14" value="Base de données" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="740" y="45" width="120" height="40" as="geometry"/></mxCell>
+
+        <!-- LIFELINES -->
+        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="85" y="85" as="sourcePoint"/><mxPoint x="85" y="750" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="255" y="85" as="sourcePoint"/><mxPoint x="255" y="750" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="435" y="85" as="sourcePoint"/><mxPoint x="435" y="750" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="615" y="85" as="sourcePoint"/><mxPoint x="615" y="750" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="800" y="85" as="sourcePoint"/><mxPoint x="800" y="750" as="targetPoint"/></mxGeometry></mxCell>
+
+        <!-- MESSAGES -->
+        <mxCell id="30" value="Choisit un fichier CV (PDF)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="85" y="115" as="sourcePoint"/><mxPoint x="255" y="115" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="31" value="Envoie le fichier au serveur" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="255" y="150" as="sourcePoint"/><mxPoint x="435" y="150" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="32" value="Vérifie la taille du fichier (max 10 Mo)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="435" y="185" as="sourcePoint"/><mxPoint x="510" y="185" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="33" value="Enregistre le CV (état : déposé)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="435" y="220" as="sourcePoint"/><mxPoint x="800" y="220" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="34" value="Confirme l'enregistrement" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="800" y="255" as="sourcePoint"/><mxPoint x="435" y="255" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="35" value="Affiche « CV reçu, analyse en cours… »" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="435" y="290" as="sourcePoint"/><mxPoint x="255" y="290" as="targetPoint"/></mxGeometry></mxCell>
+
+        <!-- TRAITEMENT AUTOMATIQUE -->
+        <mxCell id="36" value="Traitement automatique (en arrière-plan)" style="swimlane;fontStyle=1;startSize=24;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="85" y="310" width="840" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="37" value="Extrait le texte du fichier PDF" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="350" y="35" as="sourcePoint"/><mxPoint x="530" y="35" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="38" value="Identifie : nom, email, téléphone, compétences, expériences, langues, formations, ville…" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="350" y="70" as="sourcePoint"/><mxPoint x="530" y="70" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="39" value="Renvoie les informations extraites" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="530" y="105" as="sourcePoint"/><mxPoint x="350" y="105" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="40" value="Cherche ou crée la fiche candidat" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="350" y="140" as="sourcePoint"/><mxPoint x="715" y="140" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="41" value="Calcule l'empreinte numérique du CV (pour la recherche intelligente)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="350" y="175" as="sourcePoint"/><mxPoint x="530" y="175" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="42" value="Enregistre l'empreinte — état du CV : indexé" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="350" y="210" as="sourcePoint"/><mxPoint x="715" y="210" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="43" value="Lance la mise en correspondance avec toutes les offres actives" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="350" y="250" as="sourcePoint"/><mxPoint x="530" y="250" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="43b" value="Enregistre les résultats de correspondance" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="36"><mxGeometry relative="1" as="geometry"><mxPoint x="350" y="278" as="sourcePoint"/><mxPoint x="715" y="278" as="targetPoint"/></mxGeometry></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- PAGE 2 — Sélection automatique des candidats -->
+  <diagram id="selection_auto" name="04b — Sélection automatique des candidats">
+    <mxGraphModel dx="1400" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="2" value="Comment le système sélectionne les meilleurs candidats pour une offre" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1">
+          <mxGeometry x="100" y="10" width="800" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- PARTICIPANTS -->
+        <mxCell id="10" value="Responsable RH" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="30" y="45" width="120" height="40" as="geometry"/></mxCell>
+        <mxCell id="11" value="Interface web" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="230" y="45" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="12" value="Serveur" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="420" y="45" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="13" value="Moteur de sélection" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="600" y="45" width="110" height="40" as="geometry"/></mxCell>
+        <mxCell id="14" value="Base de données" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="780" y="45" width="120" height="40" as="geometry"/></mxCell>
+
+        <!-- LIFELINES -->
+        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="90" y="85" as="sourcePoint"/><mxPoint x="90" y="720" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="285" y="85" as="sourcePoint"/><mxPoint x="285" y="720" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="475" y="85" as="sourcePoint"/><mxPoint x="475" y="720" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="655" y="85" as="sourcePoint"/><mxPoint x="655" y="720" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="840" y="85" as="sourcePoint"/><mxPoint x="840" y="720" as="targetPoint"/></mxGeometry></mxCell>
+
+        <!-- MESSAGES -->
+        <mxCell id="30" value="Clique sur « Lancer la sélection »" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="90" y="115" as="sourcePoint"/><mxPoint x="285" y="115" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="31" value="Demande la sélection pour l'offre choisie" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="285" y="150" as="sourcePoint"/><mxPoint x="475" y="150" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="32" value="Récupère les 200 CV les plus proches de l'offre" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="475" y="185" as="sourcePoint"/><mxPoint x="840" y="185" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="33" value="Renvoie les CV pré-sélectionnés" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="840" y="220" as="sourcePoint"/><mxPoint x="475" y="220" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="34" value="Calcule 4 critères pour chaque CV" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="475" y="255" as="sourcePoint"/><mxPoint x="655" y="255" as="targetPoint"/></mxGeometry></mxCell>
+
+        <!-- CRITÈRES -->
+        <mxCell id="35" value="Les 4 critères de notation" style="swimlane;fontStyle=1;startSize=24;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="400" y="270" width="500" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="36" value="① Correspondance sémantique du texte   → 40 % du score" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;fontSize=10;" vertex="1" parent="35"><mxGeometry x="10" y="28" width="480" height="22" as="geometry"/></mxCell>
+        <mxCell id="37" value="② Compétences en commun avec l'offre    → 35 % du score" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;fontSize=10;" vertex="1" parent="35"><mxGeometry x="10" y="50" width="480" height="22" as="geometry"/></mxCell>
+        <mxCell id="38" value="③ Adéquation des années d'expérience     → 15 % du score" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;fontSize=10;" vertex="1" parent="35"><mxGeometry x="10" y="72" width="480" height="22" as="geometry"/></mxCell>
+        <mxCell id="39" value="④ Maîtrise de la langue requise           → 10 % du score" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;fontSize=10;" vertex="1" parent="35"><mxGeometry x="10" y="94" width="480" height="22" as="geometry"/></mxCell>
+
+        <mxCell id="40" value="Renvoie les scores calculés" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="655" y="415" as="sourcePoint"/><mxPoint x="475" y="415" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="41" value="Conserve les 50 meilleurs résultats dans la base&#xa;(sans modifier les décisions RH déjà prises)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="475" y="455" as="sourcePoint"/><mxPoint x="840" y="455" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="42" value="Renvoie la liste des candidats classés" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="475" y="490" as="sourcePoint"/><mxPoint x="285" y="490" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="43" value="Affiche le classement avec les scores" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="285" y="525" as="sourcePoint"/><mxPoint x="90" y="525" as="targetPoint"/></mxGeometry></mxCell>
+
+        <mxCell id="50" value="Règle importante : une décision déjà prise par le RH (retenu ou refusé) n'est jamais modifiée par le système." style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=8;rounded=1;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="90" y="560" width="840" height="40" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+</mxfile>

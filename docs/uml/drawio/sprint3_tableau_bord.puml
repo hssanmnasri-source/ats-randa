@@ -1,0 +1,119 @@
+@startuml Sprint3_Tableau_Bord
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam classBackgroundColor #FEFECE
+skinparam classBorderColor #A80036
+skinparam arrowColor #A80036
+skinparam packageBackgroundColor #EEEEEE
+skinparam noteBackgroundColor #FFFDE7
+skinparam noteBorderColor #C9A84C
+hide empty methods
+
+title Sprint 3 — Tableaux de Bord & Visualisation RH
+
+' ─────────────────────────────
+' CLASSES
+' ─────────────────────────────
+
+class RH {
+  +id : Integer <<PK>>
+  +nom : String
+  +prenom : String
+  +email : String
+  +role : String = "RH"
+}
+
+class JobOffer {
+  +id : Integer <<PK>>
+  +titre : String
+  +description : Text
+  +competences_requises : Text
+  +experience_requise : Integer
+  +statut : OfferStatus
+  +embedding : Vector(384)
+  +created_at : DateTime
+}
+
+class Resultat {
+  +id : Integer <<PK>>
+  +id_cv : Integer <<FK>>
+  +id_offre : Integer <<FK>>
+  +score_global : Float
+  +score_semantic : Float
+  +score_skills : Float
+  +score_experience : Float
+  +score_langue : Float
+  +decision : Decision
+  +feedback_rh : Text
+  +feedback_visible : Boolean
+  +date_decision : DateTime
+}
+
+class CV {
+  +id : Integer <<PK>>
+  +id_candidate : Integer <<FK>>
+  +nom : String
+  +prenom : String
+  +statut : CVStatus
+  +embedding : Vector(384)
+}
+
+class DashboardStats {
+  +nb_offres_actives : Integer
+  +nb_candidats : Integer
+  +nb_matching_pending : Integer
+  +nb_retenus : Integer
+  +nb_refuses : Integer
+  +taux_retention : Float
+}
+
+' ─────────────────────────────
+' ÉNUMÉRATIONS
+' ─────────────────────────────
+
+enum Decision {
+  PENDING
+  RETAINED
+  REFUSED
+}
+
+enum OfferStatus {
+  ACTIVE
+  CLOSED
+  DRAFT
+}
+
+' ─────────────────────────────
+' RELATIONS
+' ─────────────────────────────
+
+RH        "1"    --> "0..*" JobOffer   : gère
+RH        "1"    --> "1"   DashboardStats : consulte
+JobOffer  "1"    --> "0..*" Resultat   : génère
+CV        "1"    --> "0..*" Resultat   : évalué dans
+Resultat   ..>  Decision              : statut
+JobOffer   ..>  OfferStatus          : statut
+
+' ─────────────────────────────
+' NOTES
+' ─────────────────────────────
+
+note right of Resultat
+  Scores pondérés :
+  40% sémantique (pgvector)
+  35% compétences (Jaccard)
+  15% expérience
+  10% langues
+
+  RETAINED / REFUSED = immuables
+  Seul PENDING est recalculable
+end note
+
+note bottom of DashboardStats
+  Agrégé depuis /api/rh/dashboard
+  Non persisté en base — calculé
+  à chaque appel
+end note
+
+@enduml

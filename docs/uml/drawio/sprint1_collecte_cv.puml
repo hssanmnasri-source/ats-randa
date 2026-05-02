@@ -1,0 +1,113 @@
+@startuml Sprint1_Collecte_CV
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam classBackgroundColor #FEFECE
+skinparam classBorderColor #A80036
+skinparam arrowColor #A80036
+skinparam packageBackgroundColor #EEEEEE
+skinparam noteBackgroundColor #FFFDE7
+skinparam noteBorderColor #C9A84C
+hide empty methods
+
+title Sprint 1 — Collecte de CVs par un Agent
+
+' ─────────────────────────────
+' CLASSES
+' ─────────────────────────────
+
+class Agent {
+  +id : Integer <<PK>>
+  +nom : String
+  +prenom : String
+  +email : String
+  +role : String = "AGENT"
+}
+
+class Candidate {
+  +id : Integer <<PK>>
+  +nom : String
+  +prenom : String
+  +email : String <<UNIQUE>>
+  +telephone : String
+  +ville : String
+  +created_at : DateTime
+}
+
+class CV {
+  +id : Integer <<PK>>
+  +id_candidate : Integer <<FK>>
+  +id_agent : Integer <<FK, nullable>>
+  +fichier_pdf : String
+  +cv_text : Text
+  +cv_entities : JSONB
+  +statut : CVStatus
+  +source : CVSource
+  +embedding : Vector(384)
+  +cv_version : Integer
+  +date_depot : DateTime
+}
+
+class Competence {
+  +id : Integer <<PK>>
+  +id_cv : Integer <<FK>>
+  +nom_competence : String
+  +niveau : String
+}
+
+class Experience {
+  +id : Integer <<PK>>
+  +id_cv : Integer <<FK>>
+  +poste : String
+  +entreprise : String
+  +date_debut : String
+  +date_fin : String
+  +is_current : Boolean
+}
+
+' ─────────────────────────────
+' ÉNUMÉRATIONS
+' ─────────────────────────────
+
+enum CVStatus {
+  UPLOADED
+  PARSING
+  INDEXED
+  ERROR
+}
+
+enum CVSource {
+  KEEJOB
+  AGENT
+}
+
+' ─────────────────────────────
+' RELATIONS
+' ─────────────────────────────
+
+Agent      "1" --> "0..*" CV        : collecte
+Candidate  "1" --> "0..*" CV        : possède
+CV         "1" --> "0..*" Competence : contient
+CV         "1" --> "0..*" Experience : contient
+CV          ..>  CVStatus            : statut
+CV          ..>  CVSource            : source
+
+' ─────────────────────────────
+' NOTES
+' ─────────────────────────────
+
+note right of CV
+  source = KEEJOB → parsing synchrone
+  id_agent = NULL, statut = INDEXED immédiat
+
+  source = AGENT  → Celery asynchrone
+  id_agent = agent.id
+  UPLOADED → PARSING → INDEXED
+end note
+
+note bottom of Competence
+  Extraites automatiquement
+  par le pipeline NLP
+end note
+
+@enduml

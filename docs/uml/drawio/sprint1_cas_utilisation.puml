@@ -1,0 +1,32 @@
+@startuml Sprint1_Cas_Utilisation
+left to right direction
+skinparam actorStyle awesome
+skinparam usecaseBackgroundColor #FEFECE
+skinparam usecaseBorderColor #A80036
+skinparam arrowColor #555555
+
+title Sprint 1 — Collecte de CVs par un Agent
+
+actor "Agent de saisie" as AGT
+
+rectangle "ATS RANDA" {
+  usecase "Se connecter" as UC1
+  usecase "Importer un CV Keejob" as UC2
+  usecase "Importer un CV générique" as UC3
+  usecase "Importer des CVs en batch" as UC4
+  usecase "Consulter la liste des CVs" as UC5
+  usecase "Voir le détail d'un candidat" as UC6
+  usecase "Consulter l'historique des imports" as UC7
+}
+
+AGT --> UC1
+AGT --> UC2
+AGT --> UC3
+AGT --> UC4
+AGT --> UC5
+AGT --> UC6
+AGT --> UC7
+
+UC4 ..> UC3 : <<include>>
+
+@enduml

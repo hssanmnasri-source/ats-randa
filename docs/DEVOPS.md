@@ -37,7 +37,7 @@ Vue d'ensemble des technologies et outils DevOps utilisés dans le projet.
 | Version Compose | V2 (`docker compose`) |
 | Image backend | `python:3.11-slim-bookworm` (custom Dockerfile) |
 | Réseau | Bridge personnalisé `ats_network` |
-| Volumes nommés | `postgres_data`, `redis_data`, `uploads_data`, `prometheus_data`, `grafana_data` |
+| Volumes nommés | `postgres_data`, `redis_data`, `uploads_data`, `n8n_data`, `prometheus_data`, `grafana_data` |
 | Stratégie de restart | `unless-stopped` sur tous les services |
 | Health checks | PostgreSQL (`pg_isready`), Redis (`redis-cli ping`) |
 
@@ -59,6 +59,7 @@ CMD : uvicorn avec --reload (dev)
 | `celery_worker` | Custom (même image que backend) | — |
 | `flower` | Custom (même image que backend) | 5555 |
 | `nginx` | `nginx:1.25-alpine` | 80 |
+| `n8n` | `n8nio/n8n:latest` | 5678 |
 | `prometheus` | `prom/prometheus:v2.52.0` | 9090 |
 | `grafana` | `grafana/grafana:10.4.0` | 3001 |
 | `redis-exporter` | `oliver006/redis_exporter:v1.61.0` | — |
@@ -124,34 +125,78 @@ CMD : uvicorn avec --reload (dev)
 
 ### Grafana 10.4
 - Port **:3001**
-- Datasource : Prometheus (provisionné automatiquement)
-- Dashboards provisionnés depuis `monitoring/grafana/provisioning/`
+- Datasource : Prometheus (provisionné automatiquement via `monitoring/grafana/provisioning/datasources/`)
+- Dashboard unique **"ATS RANDA — Monitoring"** (`monitoring/grafana/provisioning/dashboards/ats_dashboard.json`) — 26 panneaux organisés en 4 sections :
+  - **Backend API** : requêtes/sec, latence P50/P95, taux d'erreur 5xx, top 10 endpoints, CPU, RAM, distribution codes HTTP
+  - **Redis** : mémoire, clients, commandes/sec, opérations par type
+  - **PostgreSQL** : taille base, lignes par table (cvs/candidats/offres/résultats), connexions, transactions, cache hit ratio, deadlocks
+  - **Celery Workers** : workers online, tâches actives/réussies/échouées, débit
+- 4 règles d'alerte provisionnées (`monitoring/grafana/provisioning/alerting/rules.yaml`) : erreurs 5xx, latence P95 > 3s, worker Celery absent, mémoire Redis > 80 %
 - Inscription publique désactivée (`GF_USERS_ALLOW_SIGN_UP=false`)
 
 ### Instrumentation backend
 - Librairie : `prometheus-fastapi-instrumentator==6.1.0`
-- Expose automatiquement les métriques FastAPI sur `/metrics`
+- Métriques exposées sur `/metrics` :
+  | Métrique | Type | Description |
+  |----------|------|-------------|
+  | `http_requests_total` | Counter | Total requêtes par `method` / `handler` / `status_code` |
+  | `http_requests_in_progress` | Gauge | Requêtes en cours de traitement |
+  | `http_request_duration_seconds` | Histogram | Latence (buckets P50/P95/P99) |
+  | `process_resident_memory_bytes` | Gauge | RAM RSS du process |
+  | `process_cpu_seconds_total` | Counter | CPU consommé |
+  | `process_start_time_seconds` | Gauge | Timestamp de démarrage (uptime = `time() - valeur`) |
 
 ---
 
 ## Automatisation — Makefile
 
+### Développement
 | Commande | Action |
 |----------|--------|
 | `make up` | Démarrer tous les services |
 | `make down` | Arrêter tous les services |
+| `make restart` | Stop puis start |
 | `make build` | Rebuild + démarrer |
-| `make logs` | Logs en temps réel |
-| `make migrate` | `alembic upgrade head` dans le container |
+| `make logs` | Logs en temps réel (tous services) |
+| `make logs-backend` | Logs backend uniquement |
+| `make logs-db` | Logs PostgreSQL uniquement |
+| `make shell` | Bash dans le container backend |
+| `make db-shell` | Accès psql interactif |
+| `make status` | État des containers |
+| `make info` | Nombre de lignes par table + état containers |
+| `make clean` | Supprimer containers + volumes (destructif) |
+
+### Tests & Qualité
+| Commande | Action |
+|----------|--------|
 | `make test` | pytest + coverage |
 | `make test-unit` | Tests unitaires uniquement |
 | `make test-integration` | Tests d'intégration uniquement |
 | `make lint` | flake8 + black (check) |
 | `make format` | Auto-format black |
-| `make db-shell` | Accès psql interactif |
-| `make shell` | Bash dans le container backend |
-| `make clean` | `down -v` + `docker system prune` |
-| `make status` | État des containers |
+| `make security-scan` | bandit + safety |
+
+### Base de données & Migrations
+| Commande | Action |
+|----------|--------|
+| `make migrate` | `alembic upgrade head` dans le container |
+| `make migrate-create name="..."` | Générer une nouvelle révision Alembic |
+| `make backup` | Dump PostgreSQL vers `backups/` |
+| `make restore FILE=backups/...sql.gz` | Restaurer un dump |
+
+### Observabilité
+| Commande | Action |
+|----------|--------|
+| `make monitoring` | Afficher les URLs (Grafana, Prometheus, Flower) |
+| `make metrics` | Aperçu des 50 premières métriques Prometheus (`curl /metrics`) |
+
+### Production
+| Commande | Action |
+|----------|--------|
+| `make prod-up` | Démarrer le stack production |
+| `make prod-down` | Arrêter le stack production |
+| `make prod-build` | Rebuild + démarrer en production |
+| `make prod-logs` | Logs production en temps réel |
 
 ---
 

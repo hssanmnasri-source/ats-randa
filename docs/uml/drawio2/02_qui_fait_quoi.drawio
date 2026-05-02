@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" version="24.0.0" type="device">
+  <diagram id="qui_fait_quoi" name="02 — Qui peut faire quoi">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1969" pageHeight="1654" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="2" value="Qui peut faire quoi — ATS RANDA" style="text;fontStyle=1;fontSize=15;align=center;" vertex="1" parent="1">
+          <mxGeometry x="500" y="10" width="700" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- FRONTIÈRE SYSTÈME -->
+        <mxCell id="3" value="Système ATS RANDA" style="swimlane;fontStyle=1;align=center;startSize=34;fillColor=none;strokeColor=#555555;strokeWidth=2;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="200" y="50" width="1380" height="1200" as="geometry"/>
+        </mxCell>
+
+        <!-- ZONE PUBLIQUE -->
+        <mxCell id="4" value="Accès public (sans connexion)" style="swimlane;fontStyle=1;startSize=26;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="3">
+          <mxGeometry x="30" y="50" width="360" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="10" value="S'inscrire" style="ellipse;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="4"><mxGeometry x="20" y="35" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="11" value="Se connecter" style="ellipse;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="4"><mxGeometry x="200" y="35" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="12" value="Se connecter avec Google" style="ellipse;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="4"><mxGeometry x="20" y="100" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="13" value="Voir les offres d'emploi" style="ellipse;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="4"><mxGeometry x="200" y="100" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="14" value="Voir le détail d'une offre" style="ellipse;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="4"><mxGeometry x="110" y="163" width="140" height="45" as="geometry"/></mxCell>
+
+        <!-- ESPACE CANDIDAT -->
+        <mxCell id="5" value="Espace candidat" style="swimlane;fontStyle=1;startSize=26;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="3">
+          <mxGeometry x="430" y="50" width="360" height="420" as="geometry"/>
+        </mxCell>
+        <mxCell id="20" value="Gérer mon profil" style="ellipse;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="5"><mxGeometry x="20" y="35" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="21" value="Déposer mon CV (PDF)" style="ellipse;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="5"><mxGeometry x="200" y="35" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="22" value="Remplir mon CV via formulaire" style="ellipse;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="5"><mxGeometry x="20" y="100" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="23" value="Postuler à une offre" style="ellipse;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="5"><mxGeometry x="200" y="100" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="24" value="Suivre mes candidatures" style="ellipse;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="5"><mxGeometry x="20" y="165" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="25" value="Voir le retour du RH" style="ellipse;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="5"><mxGeometry x="200" y="165" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="26" value="Générer mon CV en PDF" style="ellipse;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="5"><mxGeometry x="20" y="230" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="27" value="Sauvegarder des offres en favoris" style="ellipse;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="5"><mxGeometry x="200" y="230" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="28" value="Gérer mes lettres de motivation" style="ellipse;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="5"><mxGeometry x="20" y="295" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="29" value="Gérer mes documents" style="ellipse;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="5"><mxGeometry x="200" y="295" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="29b" value="Modifier mes paramètres" style="ellipse;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="5"><mxGeometry x="110" y="360" width="140" height="45" as="geometry"/></mxCell>
+
+        <!-- ESPACE AGENT -->
+        <mxCell id="6" value="Espace agent de saisie" style="swimlane;fontStyle=1;startSize=26;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="3">
+          <mxGeometry x="840" y="50" width="360" height="230" as="geometry"/>
+        </mxCell>
+        <mxCell id="30" value="Importer un CV Keejob" style="ellipse;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="6"><mxGeometry x="20" y="35" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="31" value="Importer des CV en lot" style="ellipse;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="6"><mxGeometry x="200" y="35" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="32" value="Voir la liste des CV importés" style="ellipse;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="6"><mxGeometry x="20" y="100" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="33" value="Voir l'historique des imports" style="ellipse;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="6"><mxGeometry x="200" y="100" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="34" value="Consulter son tableau de bord" style="ellipse;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="6"><mxGeometry x="110" y="165" width="140" height="45" as="geometry"/></mxCell>
+
+        <!-- ESPACE RH -->
+        <mxCell id="7" value="Espace responsable RH" style="swimlane;fontStyle=1;startSize=26;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="3">
+          <mxGeometry x="30" y="320" width="380" height="450" as="geometry"/>
+        </mxCell>
+        <mxCell id="40" value="Créer / modifier une offre" style="ellipse;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="7"><mxGeometry x="20" y="35" width="150" height="45" as="geometry"/></mxCell>
+        <mxCell id="41" value="Lancer la sélection automatique" style="ellipse;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="7"><mxGeometry x="210" y="35" width="150" height="45" as="geometry"/></mxCell>
+        <mxCell id="42" value="Voir les candidats classés" style="ellipse;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="7"><mxGeometry x="20" y="100" width="150" height="45" as="geometry"/></mxCell>
+        <mxCell id="43" value="Retenir ou refuser un candidat" style="ellipse;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="7"><mxGeometry x="210" y="100" width="150" height="45" as="geometry"/></mxCell>
+        <mxCell id="44" value="Laisser un commentaire" style="ellipse;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="7"><mxGeometry x="20" y="165" width="150" height="45" as="geometry"/></mxCell>
+        <mxCell id="45" value="Planifier les entretiens" style="ellipse;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="7"><mxGeometry x="210" y="165" width="150" height="45" as="geometry"/></mxCell>
+        <mxCell id="46" value="Envoyer les invitations" style="ellipse;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="7"><mxGeometry x="20" y="230" width="150" height="45" as="geometry"/></mxCell>
+        <mxCell id="47" value="Exporter un rapport PDF" style="ellipse;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="7"><mxGeometry x="210" y="230" width="150" height="45" as="geometry"/></mxCell>
+        <mxCell id="48" value="Consulter les statistiques" style="ellipse;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="7"><mxGeometry x="20" y="295" width="150" height="45" as="geometry"/></mxCell>
+        <mxCell id="49" value="Consulter le calendrier" style="ellipse;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="7"><mxGeometry x="210" y="295" width="150" height="45" as="geometry"/></mxCell>
+        <mxCell id="49b" value="Parcourir la CVthèque" style="ellipse;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="7"><mxGeometry x="110" y="380" width="150" height="45" as="geometry"/></mxCell>
+
+        <!-- ESPACE ADMIN -->
+        <mxCell id="8" value="Espace administrateur" style="swimlane;fontStyle=1;startSize=26;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="3">
+          <mxGeometry x="460" y="530" width="360" height="290" as="geometry"/>
+        </mxCell>
+        <mxCell id="50" value="Gérer les utilisateurs" style="ellipse;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="8"><mxGeometry x="20" y="35" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="51" value="Attribuer les rôles" style="ellipse;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="8"><mxGeometry x="200" y="35" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="52" value="Voir tous les CV" style="ellipse;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="8"><mxGeometry x="20" y="100" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="53" value="Consulter les journaux d'activité" style="ellipse;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="8"><mxGeometry x="200" y="100" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="54" value="Surveiller la santé du système" style="ellipse;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="8"><mxGeometry x="20" y="165" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="55" value="Gérer les agences" style="ellipse;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="8"><mxGeometry x="200" y="165" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="55b" value="Voir les statistiques globales" style="ellipse;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="8"><mxGeometry x="110" y="228" width="140" height="45" as="geometry"/></mxCell>
+
+        <!-- APPLICATION MOBILE (RH + Candidat) -->
+        <mxCell id="9" value="Application mobile (RH + Candidat)" style="swimlane;fontStyle=1;startSize=26;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="3">
+          <mxGeometry x="870" y="340" width="360" height="290" as="geometry"/>
+        </mxCell>
+        <mxCell id="60" value="(RH) Voir les offres et candidats" style="ellipse;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="9"><mxGeometry x="20" y="35" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="61" value="(RH) Prendre une décision" style="ellipse;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="9"><mxGeometry x="200" y="35" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="62" value="(RH) Consulter le calendrier" style="ellipse;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="9"><mxGeometry x="20" y="100" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="63" value="(Candidat) Voir mes candidatures" style="ellipse;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="9"><mxGeometry x="200" y="100" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="64" value="(Candidat) Postuler à une offre" style="ellipse;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="9"><mxGeometry x="20" y="165" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="65" value="(Candidat) Gérer mon profil" style="ellipse;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="9"><mxGeometry x="200" y="165" width="140" height="45" as="geometry"/></mxCell>
+        <mxCell id="65b" value="(Candidat) Gérer mes lettres" style="ellipse;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="9"><mxGeometry x="110" y="230" width="140" height="45" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

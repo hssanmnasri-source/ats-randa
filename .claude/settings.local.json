@@ -16,7 +16,25 @@
       "Bash(docker.exe ps:*)",
       "Bash(curl -s \"http://localhost:9090/api/v1/targets\" -o /tmp/prom_targets.json)",
       "Bash(node -e \":*)",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(git checkout:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(curl:*)",
+      "mcp__playwright__browser_evaluate",
+      "Bash(wc:*)",
+      "Bash(stat /c/pfe-dev/ats-randa/mobile/*.dart /c/pfe-dev/ats-randa/mobile/repositories/*.dart /c/pfe-dev/ats-randa/mobile/viewmodels/*.dart)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter pub:*)",
+      "Bash(dart run:*)",
+      "Bash(flutter build:*)",
+      "Bash(flutter create:*)",
+      "Bash(flutter emulators:*)",
+      "Bash(git add:*)",
+      "Bash(docker restart *)",
+      "Bash(python -m json.tool)",
+      "Bash(npm list *)",
+      "Bash(git *)"
     ]
   }
 }

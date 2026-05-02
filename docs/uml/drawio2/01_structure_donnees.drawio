@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" version="24.0.0" type="device">
+  <diagram id="structure_donnees" name="01 — Structure des données">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="2" value="Structure des données — ATS RANDA" style="text;fontStyle=1;fontSize=15;align=center;" vertex="1" parent="1">
+          <mxGeometry x="400" y="10" width="700" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- AGENCE -->
+        <mxCell id="10" value="Agence" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="200" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="11" value="Nom de l'agence" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="10"><mxGeometry y="28" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="12" value="Adresse" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="10"><mxGeometry y="50" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="13" value="Ville" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="10"><mxGeometry y="72" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="14" value="Date de création" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="10"><mxGeometry y="88" width="200" height="22" as="geometry"/></mxCell>
+
+        <!-- UTILISATEUR -->
+        <mxCell id="20" value="Utilisateur" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="300" y="60" width="200" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="21" value="Nom" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="20"><mxGeometry y="28" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="22" value="Prénom" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="20"><mxGeometry y="50" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="23" value="Adresse email" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="20"><mxGeometry y="72" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="24" value="Mot de passe (chiffré)" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="20"><mxGeometry y="94" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="25" value="Rôle (Candidat / Agent / RH / Admin)" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="20"><mxGeometry y="116" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="26" value="Département" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="20"><mxGeometry y="138" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="27" value="Compte actif (oui / non)" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="20"><mxGeometry y="160" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="28" value="Photo de profil" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="20"><mxGeometry y="178" width="200" height="22" as="geometry"/></mxCell>
+
+        <!-- OFFRE D'EMPLOI -->
+        <mxCell id="30" value="Offre d'emploi" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="560" y="60" width="210" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="31" value="Titre du poste" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="30"><mxGeometry y="28" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="32" value="Description" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="30"><mxGeometry y="50" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="33" value="Compétences requises" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="30"><mxGeometry y="72" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="34" value="Années d'expérience requises" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="30"><mxGeometry y="94" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="35" value="Langue requise" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="30"><mxGeometry y="116" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="36" value="État (active / expirée / brouillon)" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="30"><mxGeometry y="138" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="37" value="Date d'expiration" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="30"><mxGeometry y="160" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="38" value="Responsable RH" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="30"><mxGeometry y="182" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="39" value="Agence concernée" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="30"><mxGeometry y="198" width="210" height="22" as="geometry"/></mxCell>
+
+        <!-- CANDIDAT -->
+        <mxCell id="40" value="Candidat" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="260" width="200" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="41" value="Nom" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="40"><mxGeometry y="28" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="42" value="Prénom" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="40"><mxGeometry y="50" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="43" value="Adresse email" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="40"><mxGeometry y="72" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="44" value="Téléphone" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="40"><mxGeometry y="94" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="45" value="Poste actuel" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="40"><mxGeometry y="116" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="46" value="Niveau d'expérience" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="40"><mxGeometry y="138" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="47" value="Niveau d'études" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="40"><mxGeometry y="160" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="48" value="Disponible à la mobilité" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="40"><mxGeometry y="182" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="49" value="Secteurs recherchés" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="40"><mxGeometry y="204" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="49b" value="Profil visible (oui / non)" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="40"><mxGeometry y="220" width="200" height="22" as="geometry"/></mxCell>
+
+        <!-- CV -->
+        <mxCell id="50" value="CV" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="300" y="320" width="200" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="51" value="Nom du fichier" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="50"><mxGeometry y="28" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="52" value="État (déposé / en cours / indexé / erreur)" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="50"><mxGeometry y="50" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="53" value="Origine (agent / candidat / import)" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="50"><mxGeometry y="72" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="54" value="Contenu textuel extrait" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="50"><mxGeometry y="94" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="55" value="Informations extraites (JSON)" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="50"><mxGeometry y="116" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="56" value="Version (incrémentée à chaque mise à jour)" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="50"><mxGeometry y="138" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="57" value="Date de dépôt" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="50"><mxGeometry y="160" width="200" height="22" as="geometry"/></mxCell>
+
+        <!-- RÉSULTAT DE CORRESPONDANCE -->
+        <mxCell id="60" value="Résultat de correspondance" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="560" y="340" width="210" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="61" value="Score global (0 à 100 %)" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="60"><mxGeometry y="28" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="62" value="Score compétences" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="60"><mxGeometry y="50" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="63" value="Score expérience" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="60"><mxGeometry y="72" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="64" value="Score langue" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="60"><mxGeometry y="94" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="65" value="Décision (retenu / en attente / refusé)" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="60"><mxGeometry y="116" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="66" value="Commentaire RH" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="60"><mxGeometry y="138" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="67" value="Commentaire visible par le candidat" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="60"><mxGeometry y="160" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="68" value="Date de décision" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="60"><mxGeometry y="178" width="210" height="22" as="geometry"/></mxCell>
+
+        <!-- COMPÉTENCE -->
+        <mxCell id="70" value="Compétence" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="570" width="200" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="71" value="Intitulé" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="70"><mxGeometry y="28" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="72" value="Niveau (débutant / confirmé / expert)" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="70"><mxGeometry y="50" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="73" value="Appartient au candidat" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="70"><mxGeometry y="68" width="200" height="22" as="geometry"/></mxCell>
+
+        <!-- EXPÉRIENCE -->
+        <mxCell id="75" value="Expérience professionnelle" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="300" y="570" width="200" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="76" value="Poste occupé" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="75"><mxGeometry y="28" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="77" value="Entreprise" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="75"><mxGeometry y="50" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="78" value="Durée (années)" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="75"><mxGeometry y="72" width="200" height="22" as="geometry"/></mxCell>
+        <mxCell id="79" value="Appartient au candidat" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="75"><mxGeometry y="88" width="200" height="22" as="geometry"/></mxCell>
+
+        <!-- ENTRETIEN -->
+        <mxCell id="80" value="Entretien" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="560" y="600" width="210" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="81" value="Date et heure proposée" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="80"><mxGeometry y="28" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="82" value="État (proposé / confirmé / envoyé / annulé)" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="80"><mxGeometry y="50" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="83" value="Email du candidat" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="80"><mxGeometry y="72" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="84" value="Offre concernée" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="80"><mxGeometry y="94" width="210" height="22" as="geometry"/></mxCell>
+        <mxCell id="85" value="Lien de réunion" style="text;strokeColor=none;fillColor=none;align=left;spacingLeft=8;verticalAlign=middle;" vertex="1" parent="80"><mxGeometry y="116" width="210" height="22" as="geometry"/></mxCell>
+
+        <!-- RELATIONS -->
+        <!-- Agence → Utilisateur -->
+        <mxCell id="r1" value="appartient à" style="endArrow=open;endFill=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSize=10;" edge="1" parent="1" source="20" target="10">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Utilisateur → Candidat (lien compte) -->
+        <mxCell id="r2" value="a un profil" style="endArrow=open;endFill=0;exitX=0;exitY=1;entryX=1;entryY=0;fontSize=10;dashed=1;" edge="1" parent="1" source="20" target="40">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Candidat → CV -->
+        <mxCell id="r3" value="possède (1 ou +)" style="endArrow=open;endFill=0;exitX=1;exitY=0.5;entryX=0;entryY=0;fontSize=10;" edge="1" parent="1" source="40" target="50">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Candidat → Compétence -->
+        <mxCell id="r4" value="a des" style="endArrow=open;endFill=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;fontSize=10;" edge="1" parent="1" source="40" target="70">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Candidat → Expérience -->
+        <mxCell id="r5" value="a des" style="endArrow=open;endFill=0;exitX=1;exitY=1;entryX=0;entryY=0;fontSize=10;" edge="1" parent="1" source="40" target="75">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- CV → Résultat -->
+        <mxCell id="r6" value="génère" style="endArrow=open;endFill=0;exitX=1;exitY=0.5;entryX=0;entryY=0;fontSize=10;" edge="1" parent="1" source="50" target="60">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Offre → Résultat -->
+        <mxCell id="r7" value="reçoit" style="endArrow=open;endFill=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;fontSize=10;" edge="1" parent="1" source="30" target="60">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Utilisateur → Offre -->
+        <mxCell id="r8" value="crée (RH)" style="endArrow=open;endFill=0;exitX=1;exitY=0;entryX=0;entryY=0;fontSize=10;" edge="1" parent="1" source="20" target="30">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Résultat → Entretien -->
+        <mxCell id="r9" value="peut mener à" style="endArrow=open;endFill=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;fontSize=10;" edge="1" parent="1" source="60" target="80">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

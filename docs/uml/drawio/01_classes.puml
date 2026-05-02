@@ -8,6 +8,9 @@ skinparam arrowColor #A80036
 skinparam packageBackgroundColor #EEEEEE
 hide empty methods
 
+' ─────────────────────────────────────────────────────────────
+' FILIALE
+' ─────────────────────────────────────────────────────────────
 class Filiale {
   +id : Integer <<PK>>
   +nom_filiale : String
@@ -16,58 +19,105 @@ class Filiale {
   +created_at : DateTime
 }
 
-class User {
+' ─────────────────────────────────────────────────────────────
+' UTILISATEUR (table : users)
+' ─────────────────────────────────────────────────────────────
+abstract class Utilisateur {
   +id : Integer <<PK>>
   +nom : String
   +prenom : String
   +email : String <<UNIQUE>>
   +hashed_pwd : String
-  +role : UserRole
+  +role : String
   +departement : String
   +id_filiale : Integer <<FK>>
   +is_active : Boolean
-  +google_id : String <<UNIQUE>>
+  +google_id : String <<UNIQUE, nullable>>
   +auth_provider : String
   +avatar_url : Text
+  +created_at : DateTime
+  +updated_at : DateTime
 }
 
+' ── Spécialisations de rôle (même table, même PK) ───────────
+class Admin <<role>> {
+}
+
+class Agent <<role>> {
+}
+
+class RH <<role>> {
+}
+
+' ─────────────────────────────────────────────────────────────
+' CANDIDATE (table : candidates)
+' ─────────────────────────────────────────────────────────────
 class Candidate {
   +id : Integer <<PK>>
   +nom : String
   +prenom : String
   +email : String <<UNIQUE>>
   +telephone : String
+  +adresse : Text
+  +date_naissance : String
+  +age : Integer
   +titre_poste : String
   +niveau_experience : String
   +niveau_etude : String
-  +visibility_status : VisibilityStatus
-  +secteurs_recherche : JSONB
-  +metiers_recherche : JSONB
+  +salaire_actuel : String
+  +disponibilite : String
+  +genre : String
+  +situation_familiale : String
+  +nationalite : String
+  +has_driving_license : Boolean
+  +owns_car : Boolean
+  +has_handicap : Boolean
+  +visibility_status : String
+  +alert_frequency : String
+  +code_postal : String
+  +ville : String
+  +region : String
   +mobilite_tn : Boolean
   +mobilite_intl : Boolean
+  +statut_pro : String
+  +secteurs_recherche : JSONB
+  +metiers_recherche : JSONB
+  +created_at : DateTime
 }
 
+' ─────────────────────────────────────────────────────────────
+' CV (table : cvs)
+' ─────────────────────────────────────────────────────────────
 class CV {
   +id : Integer <<PK>>
   +id_candidate : Integer <<FK>>
   +id_agent : Integer <<FK, nullable>>
-  +statut : CVStatus
-  +source : CVSource
+  +date_depot : DateTime
+  +statut : String
+  +source : String
   +fichier_pdf : String
   +cv_text : Text
   +cv_entities : JSONB
   +embedding : Vector(384)
   +score_final : Float
   +cv_version : Integer
+  +created_at : DateTime
+  +updated_at : DateTime
 }
 
+' ─────────────────────────────────────────────────────────────
+' COMPETENCE (table : competences)
+' ─────────────────────────────────────────────────────────────
 class Competence {
   +id : Integer <<PK>>
   +id_cv : Integer <<FK>>
   +nom_competence : String
-  +niveau : SkillLevel
+  +niveau : String
 }
 
+' ─────────────────────────────────────────────────────────────
+' EXPERIENCE (table : experiences)
+' ─────────────────────────────────────────────────────────────
 class Experience {
   +id : Integer <<PK>>
   +id_cv : Integer <<FK>>
@@ -77,9 +127,16 @@ class Experience {
   +date_fin : String
   +description : Text
   +type_contrat : String
+  +taille_entreprise : String
+  +categorie_entreprise : String
+  +secteur_activite : String
+  +missions : Text
   +is_current : Boolean
 }
 
+' ─────────────────────────────────────────────────────────────
+' JOBOFFER (table : job_offers)
+' ─────────────────────────────────────────────────────────────
 class JobOffer {
   +id : Integer <<PK>>
   +id_rh : Integer <<FK, nullable>>
@@ -88,15 +145,26 @@ class JobOffer {
   +competences_requises : JSONB
   +experience_requise : Float
   +langue_requise : String
+  +date_publication : DateTime
+  +plateforme_source : String
   +embedding : Vector(384)
-  +statut : OfferStatus
-  +poids_semantique : Float (0.40)
-  +poids_competences : Float (0.35)
-  +poids_experience : Float (0.15)
-  +poids_langue : Float (0.10)
+  +statut : String
+  +seuil_alerte : Integer
+  +matching_auto : Boolean
+  +alerte_envoyee : Boolean
+  +details : JSONB
+  +poids_semantique : Float
+  +poids_competences : Float
+  +poids_experience : Float
+  +poids_langue : Float
   +date_expiration : DateTime
+  +raison_refus : Text
+  +last_matching_at : DateTime
 }
 
+' ─────────────────────────────────────────────────────────────
+' RESULTAT (table : resultats)
+' ─────────────────────────────────────────────────────────────
 class Resultat {
   +id : Integer <<PK>>
   +id_cv : Integer <<FK>>
@@ -107,12 +175,17 @@ class Resultat {
   +score_langue : Float
   +score_final : Float
   +rang : Integer
-  +decision : Decision
-  +feedback_rh : Text <<nullable>>
+  +decision : String
+  +date_analyse : DateTime
+  +last_score_updated_at : DateTime
+  +feedback_rh : Text
   +feedback_visible : Boolean
-  +date_decision : DateTime <<nullable>>
+  +date_decision : DateTime
 }
 
+' ─────────────────────────────────────────────────────────────
+' ENTRETIEN (table : entretiens)
+' ─────────────────────────────────────────────────────────────
 class Entretien {
   +id : Integer <<PK>>
   +id_resultat : Integer <<FK, nullable>>
@@ -124,29 +197,44 @@ class Entretien {
   +lieu : String
   +type_entretien : String
   +lien_visio : Text
+  +notes_rh : Text
   +statut : String
   +email_envoye : Boolean
+  +email_candidat_envoye : Boolean
   +n8n_execution_id : String
+  +created_at : DateTime
+  +updated_at : DateTime
 }
 
+' ─────────────────────────────────────────────────────────────
+' AUDITLOG (table : audit_logs)
+' ─────────────────────────────────────────────────────────────
 class AuditLog {
   +id : Integer <<PK>>
   +user_id : Integer <<FK, nullable>>
-  +action : String <<INDEX>>
+  +action : String
   +resource : String
   +resource_id : Integer
   +details : JSONB
   +ip_address : String
-  +created_at : DateTime <<INDEX>>
+  +created_at : DateTime
 }
 
+' ─────────────────────────────────────────────────────────────
+' COVERLETTER (table : cover_letters)
+' ─────────────────────────────────────────────────────────────
 class CoverLetter {
   +id : Integer <<PK>>
   +id_candidate : Integer <<FK>>
   +titre : String
   +contenu : Text
+  +created_at : DateTime
+  +updated_at : DateTime
 }
 
+' ─────────────────────────────────────────────────────────────
+' CANDIDATEDOCUMENT (table : candidate_documents)
+' ─────────────────────────────────────────────────────────────
 class CandidateDocument {
   +id : Integer <<PK>>
   +id_candidate : Integer <<FK>>
@@ -154,75 +242,36 @@ class CandidateDocument {
   +fichier : String
   +type_doc : String
   +taille : Integer
+  +created_at : DateTime
 }
 
-enum UserRole {
-  VISITOR
-  CANDIDATE
-  AGENT
-  RH
-  ADMIN
-}
+' ─────────────────────────────────────────────────────────────
+' HÉRITAGE — même table "users", discriminé par role
+' ─────────────────────────────────────────────────────────────
+Utilisateur <|-- Admin
+Utilisateur <|-- Agent
+Utilisateur <|-- RH
 
-enum CVStatus {
-  UPLOADED
-  PARSING
-  INDEXED
-  ERROR
-}
-
-enum CVSource {
-  KEEJOB
-  AGENT
-  CANDIDAT
-  EMAIL
-  LINKEDIN
-}
-
-enum OfferStatus {
-  ACTIVE
-  INACTIVE
-  ARCHIVED
-  BROUILLON
-  EN_VALIDATION
-  PROCHAINEMENT
-  DESACTIVEE
-  EXPIREE
-  REFUSEE
-}
-
-enum Decision {
-  RETAINED
-  PENDING
-  REFUSED
-}
-
-enum SkillLevel {
-  BEGINNER
-  INTERMEDIATE
-  EXPERT
-}
-
-Filiale "1" --> "0..*" User : id_filiale
-User "1" --> "0..*" CV : id_agent (CVs importés)
-User "1" --> "0..*" AuditLog : user_id
-User "1" --> "0..*" JobOffer : id_rh
-User "1" --> "0..*" Entretien : id_rh
-User "1" --> "0..*" Entretien : id_candidate_user
-Candidate "1" --> "0..*" CV : id_candidate
-Candidate "1" --> "0..*" CoverLetter : id_candidate
-Candidate "1" --> "0..*" CandidateDocument : id_candidate
-CV "1" --> "0..*" Competence : id_cv
-CV "1" --> "0..*" Experience : id_cv
-CV "1" --> "0..*" Resultat : id_cv
-JobOffer "1" --> "0..*" Resultat : id_offre
-JobOffer "1" --> "0..*" Entretien : id_offre
-Resultat "1" --> "0..1" Entretien : id_resultat
-CV ..> CVStatus
-CV ..> CVSource
-User ..> UserRole
-JobOffer ..> OfferStatus
-Resultat ..> Decision
-Competence ..> SkillLevel
+' ─────────────────────────────────────────────────────────────
+' ASSOCIATIONS
+' ─────────────────────────────────────────────────────────────
+Utilisateur   "0..*" --> "0..1"  Filiale           : appartient à
+Admin         "1"    --> "0..*"  Filiale           : gère
+Admin         "1"    --> "0..*"  Utilisateur       : administre
+Admin         "1"    --> "0..*"  AuditLog          : consulte
+Agent         "1"    --> "0..*"  CV                : téléverse
+RH            "1"    --> "0..*"  JobOffer          : publie
+RH            "1"    --> "0..*"  Entretien         : planifie
+Utilisateur   "1"    --> "0..*"  AuditLog          : génère
+Candidate     "1"    --> "0..*"  CV                : possède
+Candidate     "1"    --> "0..*"  CoverLetter       : rédige
+Candidate     "1"    --> "0..*"  CandidateDocument : dépose
+CV            "1"    --> "0..*"  Competence        : contient
+CV            "1"    --> "0..*"  Experience        : contient
+CV            "1"    --> "0..*"  Resultat          : produit
+JobOffer      "1"    --> "0..*"  Resultat          : reçoit
+JobOffer      "1"    --> "0..*"  Entretien         : concerne
+Resultat      "1"    --> "0..1"  Entretien         : déclenche
+Utilisateur   "0..1" --> "0..*"  Entretien         : participe à
 
 @enduml

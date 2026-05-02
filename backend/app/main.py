@@ -192,11 +192,19 @@ app = FastAPI(
 # ── Prometheus metrics (/metrics) ─────────────────────────────────────────────
 try:
     from prometheus_fastapi_instrumentator import Instrumentator
+    from prometheus_fastapi_instrumentator.metrics import (
+        requests as _pfi_requests,
+        requests_in_progress as _pfi_in_progress,
+    )
     Instrumentator(
         should_group_status_codes=False,
         should_ignore_untemplated=True,
         should_respect_env_var=False,
         excluded_handlers=["/metrics", "/health"],
+    ).add(
+        _pfi_requests()          # → http_requests_total counter
+    ).add(
+        _pfi_in_progress()       # → http_requests_in_progress gauge
     ).instrument(app).expose(app, endpoint="/metrics", include_in_schema=False)
 except ImportError:
     logger.warning("prometheus-fastapi-instrumentator non installé — /metrics désactivé")

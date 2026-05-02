@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-04-28T00:00:00.000Z" agent="Claude Code" version="24.0.0" type="device">
+  <diagram id="sprint1_collecte_cv" name="Sprint 1 — Collecte de CVs">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- TITRE -->
+        <mxCell id="title" value="Sprint 1 — Collecte de CVs par un Agent" style="text;html=1;fontSize=16;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="500" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ─── Agent ─── -->
+        <mxCell id="agent_h" value="Agent" style="swimlane;startSize=30;fillColor=#FEFECE;strokeColor=#A80036;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="60" y="80" width="220" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="agent_b" value="+id : Integer &lt;&lt;PK&gt;&gt;&#xa;+nom : String&#xa;+prenom : String&#xa;+email : String&#xa;+role : String = &quot;AGENT&quot;" style="text;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="agent_h">
+          <mxGeometry x="0" y="30" width="220" height="130" as="geometry" />
+        </mxCell>
+
+        <!-- ─── Candidate ─── -->
+        <mxCell id="cand_h" value="Candidate" style="swimlane;startSize=30;fillColor=#FEFECE;strokeColor=#A80036;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="60" y="310" width="220" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="cand_b" value="+id : Integer &lt;&lt;PK&gt;&gt;&#xa;+nom : String&#xa;+prenom : String&#xa;+email : String &lt;&lt;UNIQUE&gt;&gt;&#xa;+telephone : String&#xa;+ville : String&#xa;+created_at : DateTime" style="text;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="cand_h">
+          <mxGeometry x="0" y="30" width="220" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- ─── CV ─── -->
+        <mxCell id="cv_h" value="CV" style="swimlane;startSize=30;fillColor=#FEFECE;strokeColor=#A80036;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="440" y="180" width="260" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="cv_b" value="+id : Integer &lt;&lt;PK&gt;&gt;&#xa;+id_candidate : Integer &lt;&lt;FK&gt;&gt;&#xa;+id_agent : Integer &lt;&lt;FK, nullable&gt;&gt;&#xa;+fichier_pdf : String&#xa;+cv_text : Text&#xa;+cv_entities : JSONB&#xa;+statut : CVStatus&#xa;+source : CVSource&#xa;+embedding : Vector(384)&#xa;+cv_version : Integer&#xa;+date_depot : DateTime" style="text;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="cv_h">
+          <mxGeometry x="0" y="30" width="260" height="260" as="geometry" />
+        </mxCell>
+
+        <!-- ─── Competence ─── -->
+        <mxCell id="comp_h" value="Competence" style="swimlane;startSize=30;fillColor=#FEFECE;strokeColor=#A80036;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="830" y="120" width="220" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="comp_b" value="+id : Integer &lt;&lt;PK&gt;&gt;&#xa;+id_cv : Integer &lt;&lt;FK&gt;&gt;&#xa;+nom_competence : String&#xa;+niveau : String" style="text;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="comp_h">
+          <mxGeometry x="0" y="30" width="220" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- ─── Experience ─── -->
+        <mxCell id="exp_h" value="Experience" style="swimlane;startSize=30;fillColor=#FEFECE;strokeColor=#A80036;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="830" y="320" width="220" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="exp_b" value="+id : Integer &lt;&lt;PK&gt;&gt;&#xa;+id_cv : Integer &lt;&lt;FK&gt;&gt;&#xa;+poste : String&#xa;+entreprise : String&#xa;+date_debut : String&#xa;+date_fin : String&#xa;+is_current : Boolean" style="text;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="exp_h">
+          <mxGeometry x="0" y="30" width="220" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- ─── CVStatus enum ─── -->
+        <mxCell id="cvstatus_h" value="&lt;&lt;enumeration&gt;&gt;&#xa;CVStatus" style="swimlane;startSize=40;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=11;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="440" y="560" width="160" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="cvstatus_b" value="UPLOADED&#xa;PARSING&#xa;INDEXED&#xa;ERROR" style="text;align=center;verticalAlign=top;fontSize=11;" vertex="1" parent="cvstatus_h">
+          <mxGeometry x="0" y="40" width="160" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ─── CVSource enum ─── -->
+        <mxCell id="cvsource_h" value="&lt;&lt;enumeration&gt;&gt;&#xa;CVSource" style="swimlane;startSize=40;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=11;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="640" y="560" width="160" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="cvsource_b" value="KEEJOB&#xa;AGENT" style="text;align=center;verticalAlign=top;fontSize=11;" vertex="1" parent="cvsource_h">
+          <mxGeometry x="0" y="40" width="160" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ─── Note CV ─── -->
+        <mxCell id="note_cv" value="source = KEEJOB → parsing synchrone&#xa;id_agent = NULL, statut = INDEXED immédiat&#xa;&#xa;source = AGENT  → Celery asynchrone&#xa;id_agent = agent.id&#xa;UPLOADED → PARSING → INDEXED" style="shape=note;whiteSpace=wrap;align=left;fontSize=10;fillColor=#FFFDE7;strokeColor=#C9A84C;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="830" y="570" width="260" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- ─── Note Competence ─── -->
+        <mxCell id="note_comp" value="Extraites automatiquement&#xa;par le pipeline NLP" style="shape=note;whiteSpace=wrap;align=left;fontSize=10;fillColor=#FFFDE7;strokeColor=#C9A84C;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="160" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ═══ ARÊTES ═══ -->
+
+        <!-- Agent -collecte-> CV -->
+        <mxCell id="e_agent_cv" value="collecte     1..*" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#A80036;endArrow=open;endFill=0;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" source="agent_h" target="cv_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Candidate -possède-> CV -->
+        <mxCell id="e_cand_cv" value="possède     1..*" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#A80036;endArrow=open;endFill=0;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.7;entryDx=0;entryDy=0;" edge="1" source="cand_h" target="cv_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CV -contient-> Competence -->
+        <mxCell id="e_cv_comp" value="contient     1..*" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#A80036;endArrow=open;endFill=0;fontSize=10;exitX=1;exitY=0.3;exitDx=0;exitDy=0;" edge="1" source="cv_h" target="comp_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CV -contient-> Experience -->
+        <mxCell id="e_cv_exp" value="contient     1..*" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#A80036;endArrow=open;endFill=0;fontSize=10;exitX=1;exitY=0.7;exitDx=0;exitDy=0;" edge="1" source="cv_h" target="exp_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CV ..> CVStatus -->
+        <mxCell id="e_cv_status" value="«use»" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" source="cv_h" target="cvstatus_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CV ..> CVSource -->
+        <mxCell id="e_cv_source" value="«use»" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" source="cv_h" target="cvsource_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Note -> CV -->
+        <mxCell id="e_note_cv" style="edgeStyle=none;strokeColor=#C9A84C;endArrow=none;dashed=1;fontSize=10;" edge="1" source="note_cv" target="cv_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Note -> Competence -->
+        <mxCell id="e_note_comp" style="edgeStyle=none;strokeColor=#C9A84C;endArrow=none;dashed=1;fontSize=10;" edge="1" source="note_comp" target="comp_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

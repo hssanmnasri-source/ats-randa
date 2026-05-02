@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" version="24.0.0" type="device">
+  <diagram id="processus_recrutement" name="08 — Processus de recrutement">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="2200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+
+        <mxCell id="2" value="Processus complet de recrutement — du dépôt de CV à l'entretien" style="text;fontStyle=1;fontSize=14;align=center;" vertex="1" parent="1">
+          <mxGeometry x="300" y="10" width="900" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- SWIMLANES -->
+        <mxCell id="10" value="Agent de saisie" style="swimlane;fontStyle=1;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;horizontal=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="10" y="50" width="280" height="2080" as="geometry"/>
+        </mxCell>
+        <mxCell id="11" value="Traitement automatique" style="swimlane;fontStyle=1;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;horizontal=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="300" y="50" width="280" height="2080" as="geometry"/>
+        </mxCell>
+        <mxCell id="12" value="Responsable RH" style="swimlane;fontStyle=1;startSize=30;fillColor=#ffe6cc;strokeColor=#d6b656;horizontal=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="590" y="50" width="280" height="2080" as="geometry"/>
+        </mxCell>
+        <mxCell id="13" value="Envoi d'emails" style="swimlane;fontStyle=1;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;horizontal=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="880" y="50" width="230" height="2080" as="geometry"/>
+        </mxCell>
+        <mxCell id="14" value="Candidat" style="swimlane;fontStyle=1;startSize=30;fillColor=#f8cecc;strokeColor=#b85450;horizontal=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="50" width="230" height="2080" as="geometry"/>
+        </mxCell>
+
+        <!-- ÉTAPE 1 : DÉPÔT DU CV -->
+        <mxCell id="20" value="Sélectionne un CV (PDF)" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="55" y="100" width="190" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="21" value="Envoie le CV&#xa;au serveur" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="55" y="170" width="190" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="22" value="Le serveur vérifie&#xa;le fichier et l'enregistre" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="345" y="170" width="190" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="23" value="Déclenche l'analyse&#xa;automatique" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="345" y="240" width="190" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="24" value="Confirmation : « CV bien reçu »" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="55" y="240" width="190" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- FLÈCHES ÉTAPE 1 -->
+        <mxCell id="f1" value="" style="endArrow=block;endFill=1;" edge="1" parent="1" source="20" target="21"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f2" value="" style="endArrow=block;endFill=1;" edge="1" parent="1" source="21" target="22"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f3" value="" style="endArrow=block;endFill=1;" edge="1" parent="1" source="22" target="23"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f4" value="" style="endArrow=open;endFill=0;dashed=1;" edge="1" parent="1" source="22" target="24"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- SÉPARATEUR -->
+        <mxCell id="sep1" value="" style="endArrow=none;dashed=1;strokeColor=#aaaaaa;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="10" y="310" as="sourcePoint"/><mxPoint x="1360" y="310" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="sep1b" value="ÉTAPE 2 : Analyse du CV" style="text;fontStyle=3;fontSize=11;fillColor=#fffacd;strokeColor=#d6b656;rounded=1;" vertex="1" parent="1"><mxGeometry x="550" y="315" width="240" height="22" as="geometry"/></mxCell>
+
+        <!-- ÉTAPE 2 : ANALYSE -->
+        <mxCell id="30" value="Extrait le texte&#xa;du fichier PDF" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="345" y="355" width="190" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="31" value="Identifie : nom, email,&#xa;compétences, expériences,&#xa;formations, langues, ville…" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="345" y="420" width="190" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="32" value="Crée ou met à jour&#xa;la fiche candidat" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="345" y="510" width="190" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="33" value="Calcule l'empreinte numérique&#xa;du CV (pour la recherche)" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="345" y="580" width="190" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- DÉCISION QUALITÉ -->
+        <mxCell id="34" value="Fichier&#xa;lisible ?" style="rhombus;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="370" y="660" width="140" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="35" value="État : erreur&#xa;Notifie l'agent" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="600" y="668" width="160" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="35b" value="Agent reçoit la notification&#xa;et peut redéposer un CV" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="55" y="668" width="190" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="f5" value="" style="endArrow=block;endFill=1;" edge="1" parent="1" source="30" target="31"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f6" value="" style="endArrow=block;endFill=1;" edge="1" parent="1" source="31" target="32"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f7" value="" style="endArrow=block;endFill=1;" edge="1" parent="1" source="32" target="33"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f8" value="" style="endArrow=block;endFill=1;" edge="1" parent="1" source="33" target="34"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f8b" value="Non" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1" source="34" target="35"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f8c" value="" style="endArrow=open;endFill=0;dashed=1;" edge="1" parent="1" source="35" target="35b"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- SÉPARATEUR -->
+        <mxCell id="sep2" value="" style="endArrow=none;dashed=1;strokeColor=#aaaaaa;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="10" y="750" as="sourcePoint"/><mxPoint x="1360" y="750" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="sep2b" value="ÉTAPE 3 : Mise en correspondance" style="text;fontStyle=3;fontSize=11;fillColor=#fffacd;strokeColor=#d6b656;rounded=1;" vertex="1" parent="1"><mxGeometry x="530" y="755" width="280" height="22" as="geometry"/></mxCell>
+
+        <!-- ÉTAPE 3 : MATCHING -->
+        <mxCell id="40" value="Calcule le score du CV&#xa;pour chaque offre active" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="345" y="795" width="190" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="41" value="⬛ Correspondance sémantique → 40 %&#xa;⬛ Compétences en commun → 35 %&#xa;⬛ Années d'expérience → 15 %&#xa;⬛ Langue requise → 10 %" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=8;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="635" y="795" width="220" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="42" value="Enregistre les 50 meilleurs&#xa;résultats par offre" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="345" y="870" width="190" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="f9" value="Oui" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1" source="34" target="40"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f10" value="" style="endArrow=block;endFill=1;" edge="1" parent="1" source="40" target="42"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- SÉPARATEUR -->
+        <mxCell id="sep3" value="" style="endArrow=none;dashed=1;strokeColor=#aaaaaa;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="10" y="950" as="sourcePoint"/><mxPoint x="1360" y="950" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="sep3b" value="ÉTAPE 4 : Décision du responsable RH" style="text;fontStyle=3;fontSize=11;fillColor=#fffacd;strokeColor=#d6b656;rounded=1;" vertex="1" parent="1"><mxGeometry x="510" y="955" width="320" height="22" as="geometry"/></mxCell>
+
+        <!-- ÉTAPE 4 : DÉCISION RH -->
+        <mxCell id="50" value="Ouvre la liste des candidats&#xa;classés pour une offre" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="635" y="995" width="190" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="51" value="Consulte le profil&#xa;et les scores de chaque candidat" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="635" y="1070" width="190" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="52" value="Décision ?" style="rhombus;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="665" y="1145" width="140" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- RETENU -->
+        <mxCell id="53" value="Marque « Retenu(e) »&#xa;Laisse un commentaire" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="635" y="1250" width="190" height="50" as="geometry"/>
+        </mxCell>
+        <!-- REFUSÉ -->
+        <mxCell id="54" value="Marque « Non retenu(e) »&#xa;Laisse un commentaire" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="635" y="1340" width="190" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- EMAIL DÉCISION -->
+        <mxCell id="55" value="Envoie un email&#xa;de notification" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="925" y="1295" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="56" value="Reçoit la décision&#xa;par email" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="1295" width="150" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="f11" value="" style="endArrow=block;endFill=1;" edge="1" parent="1" source="50" target="51"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f12" value="" style="endArrow=block;endFill=1;" edge="1" parent="1" source="51" target="52"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f13" value="Retenu(e)" style="endArrow=block;endFill=1;fontSize=10;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="52" target="53"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="735" y="1215"/><mxPoint x="730" y="1250"/></Array></mxGeometry></mxCell>
+        <mxCell id="f14" value="Non retenu(e)" style="endArrow=block;endFill=1;fontSize=10;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="52" target="54"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="735" y="1215"/><mxPoint x="730" y="1340"/></Array></mxGeometry></mxCell>
+        <mxCell id="f15" value="" style="endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="53" target="55"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f16" value="" style="endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="54" target="55"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f17" value="" style="endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="55" target="56"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- SÉPARATEUR -->
+        <mxCell id="sep4" value="" style="endArrow=none;dashed=1;strokeColor=#aaaaaa;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="10" y="1430" as="sourcePoint"/><mxPoint x="1360" y="1430" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="sep4b" value="ÉTAPE 5 : Planification des entretiens" style="text;fontStyle=3;fontSize=11;fillColor=#fffacd;strokeColor=#d6b656;rounded=1;" vertex="1" parent="1"><mxGeometry x="520" y="1435" width="300" height="22" as="geometry"/></mxCell>
+
+        <!-- ÉTAPE 5 : ENTRETIENS -->
+        <mxCell id="60" value="Lance la génération&#xa;des créneaux d'entretien" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="635" y="1475" width="190" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="61" value="Génère les créneaux&#xa;pour les candidats retenus" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="345" y="1475" width="190" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="62" value="Consulte et valide&#xa;les créneaux proposés" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="635" y="1560" width="190" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="63" value="Lance l'envoi&#xa;des invitations par email" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="635" y="1640" width="190" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="64" value="Envoie l'invitation&#xa;à chaque candidat retenu" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="925" y="1640" width="145" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="65" value="Reçoit l'invitation&#xa;par email" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="1640" width="150" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="66" value="Confirme le créneau&#xa;qui lui convient" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="1720" width="150" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="67" value="Entretien confirmé&#xa;dans le calendrier RH" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="635" y="1800" width="190" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Fin -->
+        <mxCell id="99" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="716" y="1885" width="36" height="36" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="f18" value="" style="endArrow=block;endFill=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="60" target="61"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f19" value="" style="endArrow=open;endFill=0;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="61" target="62"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f20" value="" style="endArrow=block;endFill=1;" edge="1" parent="1" source="62" target="63"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f21" value="" style="endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="63" target="64"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f22" value="" style="endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="64" target="65"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f23" value="" style="endArrow=block;endFill=1;" edge="1" parent="1" source="65" target="66"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f24" value="" style="endArrow=block;endFill=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="66" target="67"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f25" value="" style="endArrow=block;endFill=1;" edge="1" parent="1" source="67" target="99"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

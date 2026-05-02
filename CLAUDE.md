@@ -38,6 +38,10 @@ make info            # DB row counts + container state
 make monitoring      # Print URLs for Grafana/Prometheus/Flower
 make backup          # Dump PostgreSQL to backups/
 make restore FILE=backups/ats_randa_*.sql.gz  # Restore a dump
+make prod-up         # Start production Compose stack
+make prod-down       # Stop production stack
+make prod-build      # Rebuild and start production stack
+make prod-logs       # Stream production logs
 ```
 
 Docker container names for `docker exec`: `ats_backend`, `ats_postgres`, `ats_redis`.
@@ -46,6 +50,9 @@ Docker container names for `docker exec`: `ats_backend`, `ats_postgres`, `ats_re
 ```bash
 docker exec ats_backend pytest tests/path/to/test_file.py::test_function_name -v
 ```
+
+#### Test fixtures (`backend/tests/conftest.py`)
+Pre-built JWT fixtures available in all tests: `rh_token`, `admin_token`, `agent_token`. Each returns an `AsyncClient` pre-authorized with the matching role. Use these rather than building your own auth headers.
 
 #### Database migrations
 Schema migrations that add nullable columns are done directly via psql rather than Alembic (no migration history for these columns):
@@ -177,6 +184,8 @@ n8n workflow JSONs live in `n8n/workflows/` and are imported via Settings → Im
 ### Adding New Routes
 Register every new router in `main.py` with `app.include_router(...)`. Schema migrations that are low-risk (adding nullable columns) are done directly via `psql` in the running container rather than through Alembic, since there is no migration history for these columns.
 
+**Unregistered admin routes:** `routes/admin/filiates.py` and `routes/admin/roles.py` exist but are **not** wired into `main.py` — their endpoints are unreachable. Check registration before assuming an admin endpoint is live.
+
 ### NLP Embedder — critical async rule
 `nlp/embedder.py::encode()` and `encode_batch()` are **synchronous** and load a CPU-bound PyTorch model. Calling them directly inside an async route or service **blocks the entire event loop**, freezing all concurrent requests (including login) until the model finishes.
 
@@ -198,6 +207,7 @@ The model is pre-warmed at startup in `main.py::lifespan()` via `run_in_executor
 - **Routing**: React Router 6 with role-based `ProtectedRoute`
 - **Charts**: Recharts
 - **Calendar**: FullCalendar (`@fullcalendar/react` + daygrid/timegrid/interaction)
+- **Animations**: Framer Motion (`framer-motion`) — used for homepage section transitions
 - **Icons**: `@ant-design/icons`
 
 ### Design System
@@ -253,6 +263,9 @@ Both `candidate_schemas.py` and `types/cv.ts` include `formations: List[dict]` /
 
 ### Public Pages (`/`)
 `HomePage` — public job listings (no auth). `OfferDetailPage` — public offer detail with apply button that redirects to login if not authenticated.
+
+### Auth Pages (`/auth`)
+`LoginPage`, `RegisterPage` (eagerly imported), `GoogleCallbackPage` (lazy) — handles the OAuth2 redirect from `/api/auth/google/callback`, exchanges the code, stores the token, and redirects to the appropriate role dashboard.
 
 ### Agent Portal (`/agent`)
 Pages: `DashboardPage`, `UploadCVPage`, `BatchUploadPage`, `CVListPage`, `HistoryPage`.
@@ -378,3 +391,7 @@ API docs: `http://localhost:8000/docs` (Swagger) and `/redoc`.
 ## Environment Variables
 
 All config lives in `.env` at the repo root. Key variables: `POSTGRES_*`, `REDIS_*`, `SECRET_KEY`, `CORS_ORIGINS`, `UPLOAD_DIR`, `MAX_FILE_SIZE_MB`, `MAIL_*`, `N8N_*`, `GRAFANA_*`. The backend reads these via `app/core/config.py` (Pydantic BaseSettings with `extra="ignore"` to allow extra vars like `GRAFANA_*`). See `.env.example` for the full list.
+
+**Google OAuth** (required for `GoogleCallbackPage`): set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `GOOGLE_REDIRECT_URI=http://localhost:8000/api/auth/google/callback` in `.env`. The callback route lives in `routes/auth/google.py`.
+
+**`MAIL_ENABLED`**: defaults to `false` — all mailer calls log to stdout instead of sending real emails. Set to `true` only when `MAIL_*` SMTP credentials are configured.

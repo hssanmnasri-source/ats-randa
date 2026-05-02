@@ -1,0 +1,37 @@
+@startuml Sprint3_Cas_Utilisation
+left to right direction
+skinparam actorStyle awesome
+skinparam usecaseBackgroundColor #FEFECE
+skinparam usecaseBorderColor #A80036
+skinparam arrowColor #555555
+
+title Sprint 3 — Tableaux de Bord & Visualisation RH
+
+actor "Responsable RH" as RH
+
+rectangle "ATS RANDA" {
+  usecase "Se connecter" as UC1
+  usecase "Consulter le tableau de bord" as UC2
+  usecase "Lancer le matching IA" as UC3
+  usecase "Filtrer les résultats" as UC4
+  usecase "Retenir un candidat" as UC5
+  usecase "Refuser un candidat" as UC6
+  usecase "Laisser un feedback" as UC7
+  usecase "Consulter les statistiques par offre" as UC8
+  usecase "Exporter le rapport PDF" as UC9
+}
+
+RH --> UC1
+RH --> UC2
+RH --> UC3
+RH --> UC4
+RH --> UC5
+RH --> UC6
+RH --> UC8
+RH --> UC9
+
+UC5 ..> UC7 : <<include>>
+UC6 ..> UC7 : <<include>>
+UC3 ..> UC4 : <<extend>>
+
+@enduml
