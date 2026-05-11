@@ -99,7 +99,7 @@ function EmptySection({ label }: { label: string }) {
 }
 
 export default function CandidateProfilePage() {
-  const { data, isLoading } = useFullProfile();
+  const { data, isLoading, isError } = useFullProfile();
   const { mutate: updatePersonal,      isPending: savingPersonal } = useUpdatePersonal();
   const { mutate: updateProfessional,  isPending: savingPro }      = useUpdateProfessional();
   const { mutate: addExperience,       isPending: addingExp }       = useAddExperience();
@@ -120,8 +120,16 @@ export default function CandidateProfilePage() {
   const isCurrentWatch = Form.useWatch('is_current', expForm);
 
   if (isLoading) return <LoadingSpinner fullPage />;
+  if (isError || !data) return (
+    <Alert
+      type="error"
+      showIcon
+      message="Impossible de charger le profil. Réessayez dans quelques instants."
+      style={{ margin: 24 }}
+    />
+  );
 
-  const { profile, completion, experiences, skills, langues } = data!;
+  const { profile, completion, experiences, skills, langues } = data;
   const pct      = completion.total;
   const sections = completion.sections;
 

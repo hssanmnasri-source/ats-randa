@@ -96,7 +96,7 @@ export default function MatchingPage() {
     setExportingPdf(true);
     try {
       const res = await fetch(
-        `http://localhost:8000/api/rh/offers/${selectedOfferId}/export/pdf`,
+        `/api/rh/offers/${selectedOfferId}/export/pdf`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);

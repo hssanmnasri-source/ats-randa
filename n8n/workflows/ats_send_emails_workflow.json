@@ -23,7 +23,7 @@
     },
     {
       "parameters": {
-        "fromEmail": "ats@randa.tn",
+        "fromEmail": "atsranda@gmail.com",
         "toEmail": "={{ $json.candidat_email }}",
         "subject": "={{ '📅 Invitation entretien — ' + $json.offre_titre }}",
         "emailType": "html",

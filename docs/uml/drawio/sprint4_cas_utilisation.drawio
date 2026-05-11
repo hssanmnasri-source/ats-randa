@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-05-06T00:00:00.000Z" agent="Claude Code" version="24.0.0" type="device">
+  <diagram id="sprint4_uc" name="Sprint 4 — Cas d'utilisation Mobile">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1050" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- TITRE -->
+        <mxCell id="title" value="Sprint 4 — Application Mobile (RH &amp; Candidat)" style="text;html=1;fontSize=15;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="300" y="18" width="780" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ACTEUR RH -->
+        <mxCell id="rh" value="" style="shape=mxgraph.flowchart.actor;fillColor=#A80036;strokeColor=#6F0000;" vertex="1" parent="1">
+          <mxGeometry x="60" y="270" width="50" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="rh_lbl" value="Responsable RH" style="text;align=center;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="22" y="348" width="126" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ACTEUR CANDIDAT -->
+        <mxCell id="cand" value="" style="shape=mxgraph.flowchart.actor;fillColor=#0066CC;strokeColor=#004C99;" vertex="1" parent="1">
+          <mxGeometry x="60" y="680" width="50" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cand_lbl" value="Candidat" style="text;align=center;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="758" width="90" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- SYSTÈME -->
+        <mxCell id="sys" value="ATS RANDA — Mobile" style="swimlane;startSize=35;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="55" width="1160" height="960" as="geometry" />
+        </mxCell>
+
+        <!-- UC PARTAGÉ -->
+        <mxCell id="uc1" value="Se connecter" style="ellipse;whiteSpace=wrap;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=12;" vertex="1" parent="sys">
+          <mxGeometry x="440" y="50" width="260" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- LABEL GROUPE RH -->
+        <mxCell id="lbl_rh" value="— Fonctionnalités RH —" style="text;html=1;fontSize=11;fontStyle=2;align=center;fontColor=#A80036;" vertex="1" parent="sys">
+          <mxGeometry x="50" y="135" width="290" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- UC RH -->
+        <mxCell id="uc_rh1" value="Consulter le tableau de bord RH" style="ellipse;whiteSpace=wrap;fillColor=#FEFECE;strokeColor=#A80036;fontSize=12;" vertex="1" parent="sys">
+          <mxGeometry x="50" y="170" width="290" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_rh2" value="Gérer les offres d'emploi" style="ellipse;whiteSpace=wrap;fillColor=#FEFECE;strokeColor=#A80036;fontSize=12;" vertex="1" parent="sys">
+          <mxGeometry x="50" y="270" width="290" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_rh3" value="Consulter les résultats de matching" style="ellipse;whiteSpace=wrap;fillColor=#FEFECE;strokeColor=#A80036;fontSize=12;" vertex="1" parent="sys">
+          <mxGeometry x="50" y="370" width="290" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_rh4" value="Prendre une décision&#xa;(RETENU / REFUSÉ)" style="ellipse;whiteSpace=wrap;fillColor=#FEFECE;strokeColor=#A80036;fontSize=12;" vertex="1" parent="sys">
+          <mxGeometry x="420" y="370" width="260" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_rh5" value="Parcourir la CVthèque" style="ellipse;whiteSpace=wrap;fillColor=#FEFECE;strokeColor=#A80036;fontSize=12;" vertex="1" parent="sys">
+          <mxGeometry x="50" y="470" width="290" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_rh6" value="Consulter le calendrier des entretiens" style="ellipse;whiteSpace=wrap;fillColor=#FEFECE;strokeColor=#A80036;fontSize=12;" vertex="1" parent="sys">
+          <mxGeometry x="50" y="570" width="290" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- LABEL GROUPE CANDIDAT -->
+        <mxCell id="lbl_cand" value="— Fonctionnalités Candidat —" style="text;html=1;fontSize=11;fontStyle=2;align=center;fontColor=#0066CC;" vertex="1" parent="sys">
+          <mxGeometry x="795" y="135" width="310" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- UC CANDIDAT -->
+        <mxCell id="uc_c1" value="Consulter le tableau de bord candidat" style="ellipse;whiteSpace=wrap;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;" vertex="1" parent="sys">
+          <mxGeometry x="800" y="170" width="290" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_c2" value="Parcourir les offres publiques" style="ellipse;whiteSpace=wrap;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;" vertex="1" parent="sys">
+          <mxGeometry x="800" y="270" width="290" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_c3" value="Postuler à une offre" style="ellipse;whiteSpace=wrap;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;" vertex="1" parent="sys">
+          <mxGeometry x="800" y="370" width="290" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_c4" value="Suivre ses candidatures (timeline)" style="ellipse;whiteSpace=wrap;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;" vertex="1" parent="sys">
+          <mxGeometry x="800" y="470" width="290" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_c5" value="Gérer son profil" style="ellipse;whiteSpace=wrap;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;" vertex="1" parent="sys">
+          <mxGeometry x="800" y="570" width="290" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_c6" value="Gérer ses CVs et lettres de motivation" style="ellipse;whiteSpace=wrap;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;" vertex="1" parent="sys">
+          <mxGeometry x="800" y="670" width="290" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- NOTE RETENU/REFUSÉ -->
+        <mxCell id="note_dec" value="RETENU / REFUSÉ&#xa;sont immuables" style="shape=note;whiteSpace=wrap;align=left;fontSize=10;fillColor=#FFFDE7;strokeColor=#C9A84C;spacingLeft=8;" vertex="1" parent="sys">
+          <mxGeometry x="720" y="365" width="170" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- NOTE TIMELINE -->
+        <mxCell id="note_tl" value="Timeline 4 étapes :&#xa;POSTULÉ → ANALYSE IA&#xa;→ EN EXAMEN → DÉCISION" style="shape=note;whiteSpace=wrap;align=left;fontSize=10;fillColor=#FFFDE7;strokeColor=#C9A84C;spacingLeft=8;" vertex="1" parent="sys">
+          <mxGeometry x="800" y="555" width="210" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- extend UC_RH3 -> UC_RH4 (inside sys) -->
+        <mxCell id="e_ext_rh" value="«extend»" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;endArrow=open;endFill=0;dashed=1;fontSize=11;" edge="1" source="uc_rh3" target="uc_rh4" parent="sys">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- include UC_C2 -> UC_C3 (inside sys) -->
+        <mxCell id="e_inc_c" value="«include»" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;endArrow=open;endFill=0;dashed=1;fontSize=11;" edge="1" source="uc_c2" target="uc_c3" parent="sys">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ARÊTES RH -> UCs (inter-parent) -->
+        <mxCell id="e_rh_uc1"  style="edgeStyle=orthogonalEdgeStyle;strokeColor=#A80036;endArrow=open;endFill=0;" edge="1" source="rh" target="uc1"    parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_rh_rh1" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#A80036;endArrow=open;endFill=0;" edge="1" source="rh" target="uc_rh1" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_rh_rh2" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#A80036;endArrow=open;endFill=0;" edge="1" source="rh" target="uc_rh2" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_rh_rh3" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#A80036;endArrow=open;endFill=0;" edge="1" source="rh" target="uc_rh3" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_rh_rh4" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#A80036;endArrow=open;endFill=0;" edge="1" source="rh" target="uc_rh4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_rh_rh5" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#A80036;endArrow=open;endFill=0;" edge="1" source="rh" target="uc_rh5" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_rh_rh6" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#A80036;endArrow=open;endFill=0;" edge="1" source="rh" target="uc_rh6" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- ARÊTES CANDIDAT -> UCs (inter-parent) -->
+        <mxCell id="e_ca_uc1"  style="edgeStyle=orthogonalEdgeStyle;strokeColor=#0066CC;endArrow=open;endFill=0;" edge="1" source="cand" target="uc1"   parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_ca_c1"  style="edgeStyle=orthogonalEdgeStyle;strokeColor=#0066CC;endArrow=open;endFill=0;" edge="1" source="cand" target="uc_c1" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_ca_c2"  style="edgeStyle=orthogonalEdgeStyle;strokeColor=#0066CC;endArrow=open;endFill=0;" edge="1" source="cand" target="uc_c2" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_ca_c3"  style="edgeStyle=orthogonalEdgeStyle;strokeColor=#0066CC;endArrow=open;endFill=0;" edge="1" source="cand" target="uc_c3" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_ca_c4"  style="edgeStyle=orthogonalEdgeStyle;strokeColor=#0066CC;endArrow=open;endFill=0;" edge="1" source="cand" target="uc_c4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_ca_c5"  style="edgeStyle=orthogonalEdgeStyle;strokeColor=#0066CC;endArrow=open;endFill=0;" edge="1" source="cand" target="uc_c5" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_ca_c6"  style="edgeStyle=orthogonalEdgeStyle;strokeColor=#0066CC;endArrow=open;endFill=0;" edge="1" source="cand" target="uc_c6" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

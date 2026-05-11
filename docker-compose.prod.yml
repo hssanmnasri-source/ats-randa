@@ -93,11 +93,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 60s
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-          cpus: '2'
     networks:
       - ats_network
     logging:

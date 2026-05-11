@@ -30,10 +30,10 @@ const GoogleCallbackPage: React.FC = () => {
           avatar_url: avatar || undefined,
         })
         const redirectMap: Record<string, string> = {
-          ADMIN: '/admin/dashboard',
-          RH: '/rh/dashboard',
-          AGENT: '/agent/dashboard',
-          CANDIDATE: '/candidate/dashboard',
+          ADMIN: '/admin',
+          RH: '/rh',
+          AGENT: '/agent',
+          CANDIDATE: '/candidate',
         }
         navigate(redirectMap[role] || '/')
       } catch (e) {

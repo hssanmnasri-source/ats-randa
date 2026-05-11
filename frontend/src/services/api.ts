@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: '',
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -30,7 +30,7 @@ api.interceptors.response.use(
 export default api;
 
 /** Converts a relative upload path (e.g. /uploads/photos/x.jpg) to a full URL. */
-export const API_BASE = 'http://localhost:8000';
+export const API_BASE = '';
 export function mediaUrl(path?: string | null): string | undefined {
   if (!path) return undefined;
   if (path.startsWith('http')) return path;

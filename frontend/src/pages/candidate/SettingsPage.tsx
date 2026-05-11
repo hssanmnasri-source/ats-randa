@@ -16,7 +16,7 @@ const { Title, Text, Paragraph } = Typography;
 
 export default function SettingsPage() {
   const { message } = App.useApp();
-  const { data, isLoading } = useFullProfile();
+  const { data, isLoading, isError } = useFullProfile();
   const { mutate: updateVisibility, isPending: savingVisibility } = useUpdateVisibility();
   const { logout } = useAuthStore();
   const navigate = useNavigate();
@@ -29,8 +29,16 @@ export default function SettingsPage() {
   const [savingPwd, setSavingPwd] = useState(false);
 
   if (isLoading) return <LoadingSpinner fullPage />;
+  if (isError || !data) return (
+    <Alert
+      type="error"
+      showIcon
+      message="Impossible de charger les paramètres. Réessayez dans quelques instants."
+      style={{ margin: 24 }}
+    />
+  );
 
-  const profile = data!.profile;
+  const profile = data.profile;
 
   const handleVisibilitySave = () => {
     visibilityForm.validateFields().then((values) => {

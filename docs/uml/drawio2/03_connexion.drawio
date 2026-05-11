@@ -1,222 +1,593 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<mxfile host="app.diagrams.net" version="24.0.0" type="device">
-
-  <!-- PAGE 1 — Connexion classique (email + mot de passe) -->
-  <diagram id="connexion_classique" name="03a — Connexion par email">
-    <mxGraphModel dx="1600" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
-      <root>
-        <mxCell id="0"/><mxCell id="1" parent="0"/>
-
-        <mxCell id="2" value="Connexion avec email et mot de passe" style="text;fontStyle=1;fontSize=14;align=center;" vertex="1" parent="1">
-          <mxGeometry x="300" y="10" width="800" height="28" as="geometry"/>
-        </mxCell>
-
-        <!-- PARTICIPANTS -->
-        <mxCell id="10" value="Utilisateur" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="20" y="45" width="120" height="40" as="geometry"/></mxCell>
-        <mxCell id="11" value="Interface&#xa;(web ou mobile)" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="200" y="45" width="130" height="40" as="geometry"/></mxCell>
-        <mxCell id="12" value="Routeur d'accès" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="390" y="45" width="130" height="40" as="geometry"/></mxCell>
-        <mxCell id="13" value="Serveur" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="580" y="45" width="120" height="40" as="geometry"/></mxCell>
-        <mxCell id="14" value="Module de sécurité" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="760" y="45" width="130" height="40" as="geometry"/></mxCell>
-        <mxCell id="15" value="Base de données" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="950" y="45" width="130" height="40" as="geometry"/></mxCell>
-
-        <!-- LIFELINES -->
-        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#666666;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="80" y="85" as="sourcePoint"/><mxPoint x="80" y="870" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#6c8ebf;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="85" as="sourcePoint"/><mxPoint x="265" y="870" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#666666;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="455" y="85" as="sourcePoint"/><mxPoint x="455" y="870" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#82b366;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="640" y="85" as="sourcePoint"/><mxPoint x="640" y="870" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#d6b656;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="825" y="85" as="sourcePoint"/><mxPoint x="825" y="870" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="25" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#9673a6;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1015" y="85" as="sourcePoint"/><mxPoint x="1015" y="870" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- MESSAGES avant le bloc alt -->
-        <mxCell id="30" value="Saisit son email et son mot de passe" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="80" y="115" as="sourcePoint"/><mxPoint x="265" y="115" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="31" value="Envoie les informations de connexion" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="150" as="sourcePoint"/><mxPoint x="455" y="150" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="32" value="Transfère la demande au serveur" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="455" y="185" as="sourcePoint"/><mxPoint x="640" y="185" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="33" value="Recherche l'utilisateur par email" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="640" y="220" as="sourcePoint"/><mxPoint x="1015" y="220" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="34" value="Renvoie les informations du compte (mot de passe chiffré, rôle, état)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1015" y="255" as="sourcePoint"/><mxPoint x="640" y="255" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- BLOC ALT -->
-        <mxCell id="35" value="alt" style="swimlane;fontStyle=1;startSize=22;fillColor=none;strokeColor=#555555;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="80" y="270" width="1070" height="510" as="geometry"/>
-        </mxCell>
-
-        <!-- CAS 1 : email inconnu -->
-        <mxCell id="36" value="L'email n'existe pas dans la base" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="35"><mxGeometry x="5" y="22" width="300" height="20" as="geometry"/></mxCell>
-        <mxCell id="37" value="Renvoie « Email ou mot de passe incorrect »" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="560" y="50" as="sourcePoint"/><mxPoint x="185" y="50" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="37b" value="Affiche le message d'erreur" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="185" y="70" as="sourcePoint"/><mxPoint x="0" y="70" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- SÉPARATEUR -->
-        <mxCell id="38" value="" style="line;strokeColor=#555555;" vertex="1" parent="35"><mxGeometry x="0" y="85" width="1070" height="10" as="geometry"/></mxCell>
-
-        <!-- CAS 2 : compte désactivé -->
-        <mxCell id="39" value="Le compte existe mais est désactivé" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="35"><mxGeometry x="5" y="97" width="300" height="20" as="geometry"/></mxCell>
-        <mxCell id="40" value="Renvoie « Compte désactivé »" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="560" y="125" as="sourcePoint"/><mxPoint x="185" y="125" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="40b" value="Affiche le message d'erreur" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="185" y="145" as="sourcePoint"/><mxPoint x="0" y="145" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- SÉPARATEUR -->
-        <mxCell id="41" value="" style="line;strokeColor=#555555;" vertex="1" parent="35"><mxGeometry x="0" y="160" width="1070" height="10" as="geometry"/></mxCell>
-
-        <!-- CAS 3 : identifiants valides -->
-        <mxCell id="42" value="Email et mot de passe corrects" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="35"><mxGeometry x="5" y="172" width="300" height="20" as="geometry"/></mxCell>
-        <mxCell id="43" value="Envoie le mot de passe pour vérification" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="560" y="205" as="sourcePoint"/><mxPoint x="745" y="205" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="44" value="Compare le mot de passe saisi avec celui en base" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="745" y="235" as="sourcePoint"/><mxPoint x="900" y="235" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="45" value="Confirmation : mot de passe identique" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="745" y="265" as="sourcePoint"/><mxPoint x="560" y="265" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="46" value="Crée un jeton de connexion (valable 24h)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="560" y="298" as="sourcePoint"/><mxPoint x="745" y="298" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="47" value="Chiffre et signe le jeton avec la clé secrète du serveur" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="745" y="328" as="sourcePoint"/><mxPoint x="900" y="328" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="48" value="Renvoie le jeton signé" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="745" y="358" as="sourcePoint"/><mxPoint x="560" y="358" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="49" value="Enregistre la connexion dans les journaux" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="560" y="390" as="sourcePoint"/><mxPoint x="935" y="390" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="50" value="Renvoie le jeton + le rôle de l'utilisateur" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="560" y="425" as="sourcePoint"/><mxPoint x="375" y="425" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="51" value="Transfère le jeton à l'interface" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="375" y="455" as="sourcePoint"/><mxPoint x="185" y="455" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="52" value="Sauvegarde le jeton (navigateur ou mémoire du téléphone)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="185" y="485" as="sourcePoint"/><mxPoint x="310" y="485" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="53" value="Redirige vers l'espace correspondant au rôle" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="185" y="490" as="sourcePoint"/><mxPoint x="0" y="490" as="targetPoint"/></mxGeometry></mxCell>
-
-        <mxCell id="60" value="Le jeton est joint automatiquement à toutes les requêtes suivantes.&#xa;Il n'est plus nécessaire de se reconnecter jusqu'à son expiration (24h)." style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=8;rounded=1;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="80" y="800" width="900" height="50" as="geometry"/>
-        </mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
-
-  <!-- PAGE 2 — Connexion via Google -->
-  <diagram id="connexion_google" name="03b — Connexion via Google">
-    <mxGraphModel dx="1600" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
-      <root>
-        <mxCell id="0"/><mxCell id="1" parent="0"/>
-
-        <mxCell id="2" value="Connexion avec un compte Google" style="text;fontStyle=1;fontSize=14;align=center;" vertex="1" parent="1">
-          <mxGeometry x="300" y="10" width="800" height="28" as="geometry"/>
-        </mxCell>
-
-        <!-- PARTICIPANTS -->
-        <mxCell id="10" value="Utilisateur" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="20" y="45" width="120" height="40" as="geometry"/></mxCell>
-        <mxCell id="11" value="Interface&#xa;(navigateur)" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="200" y="45" width="130" height="40" as="geometry"/></mxCell>
-        <mxCell id="12" value="Serveur" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="390" y="45" width="120" height="40" as="geometry"/></mxCell>
-        <mxCell id="13" value="Google" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="570" y="45" width="130" height="40" as="geometry"/></mxCell>
-        <mxCell id="14" value="Base de données" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="760" y="45" width="130" height="40" as="geometry"/></mxCell>
-
-        <!-- LIFELINES -->
-        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="80" y="85" as="sourcePoint"/><mxPoint x="80" y="850" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="85" as="sourcePoint"/><mxPoint x="265" y="850" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="450" y="85" as="sourcePoint"/><mxPoint x="450" y="850" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="635" y="85" as="sourcePoint"/><mxPoint x="635" y="850" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="825" y="85" as="sourcePoint"/><mxPoint x="825" y="850" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- MESSAGES -->
-        <mxCell id="30" value="Clique sur « Se connecter avec Google »" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="80" y="115" as="sourcePoint"/><mxPoint x="265" y="115" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="31" value="Demande l'adresse de la page de connexion Google" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="150" as="sourcePoint"/><mxPoint x="450" y="150" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="32" value="Renvoie l'adresse de connexion Google" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="450" y="185" as="sourcePoint"/><mxPoint x="265" y="185" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="33" value="Redirige l'utilisateur vers la page Google" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="220" as="sourcePoint"/><mxPoint x="635" y="220" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="34" value="Choisit son compte Google et accepte les permissions" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="80" y="255" as="sourcePoint"/><mxPoint x="635" y="255" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="35" value="Renvoie un code d'autorisation vers le serveur" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="635" y="290" as="sourcePoint"/><mxPoint x="265" y="290" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="36" value="Transfère le code au serveur" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="325" as="sourcePoint"/><mxPoint x="450" y="325" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="37" value="Échange le code contre un jeton d'accès Google" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="450" y="360" as="sourcePoint"/><mxPoint x="635" y="360" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="38" value="Renvoie le jeton d'accès Google" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="635" y="395" as="sourcePoint"/><mxPoint x="450" y="395" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="39" value="Demande les informations du compte Google" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="450" y="430" as="sourcePoint"/><mxPoint x="635" y="430" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="40" value="Renvoie : nom, prénom, adresse email, photo de profil" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="635" y="465" as="sourcePoint"/><mxPoint x="450" y="465" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="41" value="Cherche un compte avec cette adresse email" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="450" y="500" as="sourcePoint"/><mxPoint x="825" y="500" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="42" value="Renvoie le compte existant, ou rien si nouveau" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="825" y="535" as="sourcePoint"/><mxPoint x="450" y="535" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- BLOC ALT -->
-        <mxCell id="43" value="alt" style="swimlane;fontStyle=1;startSize=22;fillColor=none;strokeColor=#555555;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="80" y="550" width="900" height="160" as="geometry"/>
-        </mxCell>
-
-        <!-- Nouveau compte -->
-        <mxCell id="44" value="Première connexion (email inconnu) — création du compte" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="43"><mxGeometry x="5" y="22" width="500" height="20" as="geometry"/></mxCell>
-        <mxCell id="45" value="Crée un nouveau compte avec le rôle Candidat" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="43"><mxGeometry relative="1" as="geometry"><mxPoint x="370" y="50" as="sourcePoint"/><mxPoint x="745" y="50" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- Compte déjà existant -->
-        <mxCell id="46" value="" style="line;strokeColor=#555555;" vertex="1" parent="43"><mxGeometry x="0" y="70" width="900" height="10" as="geometry"/></mxCell>
-        <mxCell id="47" value="Connexion suivante (email connu) — liaison des comptes" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="43"><mxGeometry x="5" y="82" width="500" height="20" as="geometry"/></mxCell>
-        <mxCell id="48" value="Met à jour le lien avec le compte Google" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="43"><mxGeometry relative="1" as="geometry"><mxPoint x="370" y="125" as="sourcePoint"/><mxPoint x="745" y="125" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- Suite commune -->
-        <mxCell id="50" value="Crée le jeton de connexion (valable 24h)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="450" y="730" as="sourcePoint"/><mxPoint x="580" y="730" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="51" value="Redirige vers l'interface avec le jeton dans l'adresse" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="450" y="765" as="sourcePoint"/><mxPoint x="265" y="765" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="52" value="Extrait le jeton et le sauvegarde" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="800" as="sourcePoint"/><mxPoint x="365" y="800" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="53" value="Redirige vers l'espace candidat" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="265" y="835" as="sourcePoint"/><mxPoint x="80" y="835" as="targetPoint"/></mxGeometry></mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
-
-  <!-- PAGE 3 — Vérification des droits d'accès -->
-  <diagram id="verification_acces" name="03c — Vérification des droits d'accès">
-    <mxGraphModel dx="1600" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
-      <root>
-        <mxCell id="0"/><mxCell id="1" parent="0"/>
-
-        <mxCell id="2" value="Comment le système vérifie les droits avant chaque action" style="text;fontStyle=1;fontSize=14;align=center;" vertex="1" parent="1">
-          <mxGeometry x="250" y="10" width="900" height="28" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="2b" value="(Ce mécanisme s'applique à toute page ou action protégée : RH, Agent, Admin, Candidat)" style="text;fontStyle=3;fontSize=11;align=center;" vertex="1" parent="1">
-          <mxGeometry x="250" y="38" width="900" height="20" as="geometry"/>
-        </mxCell>
-
-        <!-- PARTICIPANTS -->
-        <mxCell id="10" value="Interface&#xa;(web ou mobile)" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="20" y="70" width="130" height="40" as="geometry"/></mxCell>
-        <mxCell id="11" value="Routeur d'accès" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="210" y="70" width="130" height="40" as="geometry"/></mxCell>
-        <mxCell id="12" value="Serveur" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="400" y="70" width="120" height="40" as="geometry"/></mxCell>
-        <mxCell id="13" value="Vérificateur&#xa;d'identité" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="580" y="70" width="130" height="40" as="geometry"/></mxCell>
-        <mxCell id="14" value="Module de sécurité&#xa;(déchiffrage du jeton)" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="770" y="70" width="150" height="40" as="geometry"/></mxCell>
-        <mxCell id="15" value="Base de données" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="980" y="70" width="130" height="40" as="geometry"/></mxCell>
-
-        <!-- LIFELINES -->
-        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="85" y="110" as="sourcePoint"/><mxPoint x="85" y="870" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="275" y="110" as="sourcePoint"/><mxPoint x="275" y="870" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="460" y="110" as="sourcePoint"/><mxPoint x="460" y="870" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="645" y="110" as="sourcePoint"/><mxPoint x="645" y="870" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="845" y="110" as="sourcePoint"/><mxPoint x="845" y="870" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="25" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1045" y="110" as="sourcePoint"/><mxPoint x="1045" y="870" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- MESSAGES -->
-        <mxCell id="30" value="Demande une page protégée (ex : liste des offres RH)&#xa;en joignant son jeton de connexion" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="85" y="135" as="sourcePoint"/><mxPoint x="275" y="135" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="31" value="Transfère la demande avec le jeton" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="275" y="175" as="sourcePoint"/><mxPoint x="460" y="175" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="32" value="Extrait le jeton et demande sa vérification" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="460" y="210" as="sourcePoint"/><mxPoint x="645" y="210" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="33" value="Déchiffre et lit le contenu du jeton" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="645" y="245" as="sourcePoint"/><mxPoint x="845" y="245" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="34" value="Vérifie la signature avec la clé secrète du serveur" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="845" y="280" as="sourcePoint"/><mxPoint x="950" y="280" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- BLOC ALT -->
-        <mxCell id="35" value="alt" style="swimlane;fontStyle=1;startSize=22;fillColor=none;strokeColor=#555555;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="85" y="295" width="1080" height="540" as="geometry"/>
-        </mxCell>
-
-        <!-- CAS 1 : jeton invalide ou expiré -->
-        <mxCell id="36" value="Le jeton est invalide ou expiré" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="35"><mxGeometry x="5" y="22" width="300" height="20" as="geometry"/></mxCell>
-        <mxCell id="37" value="Renvoie : jeton non reconnu" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="760" y="50" as="sourcePoint"/><mxPoint x="560" y="50" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="38" value="Renvoie : accès refusé (non connecté)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="375" y="80" as="sourcePoint"/><mxPoint x="0" y="80" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="38b" value="Redirige vers la page de connexion" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="0" y="110" as="sourcePoint"/><mxPoint x="0" y="110" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- SÉPARATEUR -->
-        <mxCell id="39" value="" style="line;strokeColor=#555555;" vertex="1" parent="35"><mxGeometry x="0" y="125" width="1080" height="10" as="geometry"/></mxCell>
-
-        <!-- CAS 2 : jeton valide -->
-        <mxCell id="40" value="Le jeton est valide" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="35"><mxGeometry x="5" y="137" width="220" height="20" as="geometry"/></mxCell>
-        <mxCell id="41" value="Renvoie le contenu du jeton (identifiant + rôle de l'utilisateur)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="760" y="165" as="sourcePoint"/><mxPoint x="560" y="165" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="42" value="Recherche le compte dans la base avec l'identifiant" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="560" y="200" as="sourcePoint"/><mxPoint x="960" y="200" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="43" value="Renvoie les informations du compte" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="960" y="235" as="sourcePoint"/><mxPoint x="560" y="235" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="44" value="Vérifie que le rôle donne accès à cette page" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="560" y="270" as="sourcePoint"/><mxPoint x="680" y="270" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- SÉPARATEUR INTERNE -->
-        <mxCell id="44b" value="" style="line;strokeColor=#aaaaaa;dashed=1;" vertex="1" parent="35"><mxGeometry x="375" y="290" width="700" height="8" as="geometry"/></mxCell>
-
-        <mxCell id="45" value="Mauvais rôle (ex : Candidat essaie d'accéder à l'espace RH)" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="35"><mxGeometry x="5" y="302" width="500" height="20" as="geometry"/></mxCell>
-        <mxCell id="46" value="Renvoie : accès interdit (mauvais rôle)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="375" y="330" as="sourcePoint"/><mxPoint x="0" y="330" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="46b" value="Affiche un message « Accès non autorisé »" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="0" y="360" as="sourcePoint"/><mxPoint x="0" y="360" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- SÉPARATEUR INTERNE -->
-        <mxCell id="46c" value="" style="line;strokeColor=#aaaaaa;dashed=1;" vertex="1" parent="35"><mxGeometry x="375" y="375" width="700" height="8" as="geometry"/></mxCell>
-
-        <mxCell id="47" value="Rôle autorisé — accès accordé" style="text;fontStyle=2;fontSize=10;align=left;" vertex="1" parent="35"><mxGeometry x="5" y="387" width="300" height="20" as="geometry"/></mxCell>
-        <mxCell id="48" value="Transmet l'identité de l'utilisateur à la logique métier" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="560" y="415" as="sourcePoint"/><mxPoint x="375" y="415" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="49" value="Exécute la demande et récupère les données" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="375" y="450" as="sourcePoint"/><mxPoint x="960" y="450" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="50" value="Renvoie les données demandées" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="960" y="485" as="sourcePoint"/><mxPoint x="375" y="485" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="51" value="Renvoie la réponse à l'interface" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="35"><mxGeometry relative="1" as="geometry"><mxPoint x="375" y="515" as="sourcePoint"/><mxPoint x="0" y="515" as="targetPoint"/></mxGeometry></mxCell>
-
-        <mxCell id="60" value="Ce mécanisme est appliqué automatiquement à chaque action.&#xa;L'utilisateur ne le voit pas : s'il est connecté, tout fonctionne normalement." style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=8;rounded=1;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="85" y="860" width="900" height="50" as="geometry"/>
-        </mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
-
+<mxfile host="65bd71144e">
+    <diagram id="verification_acces" name="03c — Vérification des droits d&#39;accès">
+        <mxGraphModel dx="2717" dy="659" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Comment le système vérifie les droits avant chaque action" style="text;fontStyle=1;fontSize=14;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="10" width="900" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="2b" value="(Ce mécanisme s&#39;applique à toute page ou action protégée : RH, Agent, Admin, Candidat)" style="text;fontStyle=3;fontSize=11;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="38" width="900" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Interface&#xa;(web ou mobile)" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="70" width="130" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Routeur d&#39;accès" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="70" width="130" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Serveur" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="70" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="Vérificateur&#xa;d&#39;identité" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="70" width="130" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="Module de sécurité&#xa;(déchiffrage du jeton)" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="770" y="70" width="150" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Base de données" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="980" y="70" width="130" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="85" y="110" as="sourcePoint"/>
+                        <mxPoint x="85" y="870" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="275" y="110" as="sourcePoint"/>
+                        <mxPoint x="275" y="870" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="460" y="110" as="sourcePoint"/>
+                        <mxPoint x="460" y="870" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="645" y="110" as="sourcePoint"/>
+                        <mxPoint x="645" y="870" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="845" y="110" as="sourcePoint"/>
+                        <mxPoint x="845" y="870" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="25" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1045" y="110" as="sourcePoint"/>
+                        <mxPoint x="1045" y="870" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="30" value="Demande une page protégée (ex : liste des offres RH)&#xa;en joignant son jeton de connexion" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="85" y="135" as="sourcePoint"/>
+                        <mxPoint x="275" y="135" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="31" value="Transfère la demande avec le jeton" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="275" y="175" as="sourcePoint"/>
+                        <mxPoint x="460" y="175" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="32" value="Extrait le jeton et demande sa vérification" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="460" y="210" as="sourcePoint"/>
+                        <mxPoint x="645" y="210" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="33" value="Déchiffre et lit le contenu du jeton" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="645" y="245" as="sourcePoint"/>
+                        <mxPoint x="845" y="245" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="34" value="Vérifie la signature avec la clé secrète du serveur" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="845" y="280" as="sourcePoint"/>
+                        <mxPoint x="950" y="280" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="35" value="alt" style="swimlane;fontStyle=1;startSize=22;fillColor=none;strokeColor=#555555;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="85" y="295" width="1080" height="540" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" value="Le jeton est invalide ou expiré" style="text;fontStyle=2;fontSize=10;align=left;" parent="35" vertex="1">
+                    <mxGeometry x="5" y="22" width="300" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="Renvoie : jeton non reconnu" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="760" y="50" as="sourcePoint"/>
+                        <mxPoint x="560" y="50" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="38" value="Renvoie : accès refusé (non connecté)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="375" y="80" as="sourcePoint"/>
+                        <mxPoint y="80" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="38b" value="Redirige vers la page de connexion" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint y="110" as="sourcePoint"/>
+                        <mxPoint y="110" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="39" value="" style="line;strokeColor=#555555;" parent="35" vertex="1">
+                    <mxGeometry y="125" width="1080" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" value="Le jeton est valide" style="text;fontStyle=2;fontSize=10;align=left;" parent="35" vertex="1">
+                    <mxGeometry x="5" y="137" width="220" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="Renvoie le contenu du jeton (identifiant + rôle de l&#39;utilisateur)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="760" y="165" as="sourcePoint"/>
+                        <mxPoint x="560" y="165" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="42" value="Recherche le compte dans la base avec l&#39;identifiant" style="endArrow=block;endFill=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="560" y="200" as="sourcePoint"/>
+                        <mxPoint x="960" y="200" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="43" value="Renvoie les informations du compte" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="960" y="235" as="sourcePoint"/>
+                        <mxPoint x="560" y="235" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="44" value="Vérifie que le rôle donne accès à cette page" style="endArrow=block;endFill=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="560" y="270" as="sourcePoint"/>
+                        <mxPoint x="680" y="270" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="44b" value="" style="line;strokeColor=#aaaaaa;dashed=1;" parent="35" vertex="1">
+                    <mxGeometry x="375" y="290" width="700" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="45" value="Mauvais rôle (ex : Candidat essaie d&#39;accéder à l&#39;espace RH)" style="text;fontStyle=2;fontSize=10;align=left;" parent="35" vertex="1">
+                    <mxGeometry x="5" y="302" width="500" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="46" value="Renvoie : accès interdit (mauvais rôle)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="375" y="330" as="sourcePoint"/>
+                        <mxPoint y="330" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="46b" value="Affiche un message « Accès non autorisé »" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint y="360" as="sourcePoint"/>
+                        <mxPoint y="360" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="46c" value="" style="line;strokeColor=#aaaaaa;dashed=1;" parent="35" vertex="1">
+                    <mxGeometry x="375" y="375" width="700" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="47" value="Rôle autorisé — accès accordé" style="text;fontStyle=2;fontSize=10;align=left;" parent="35" vertex="1">
+                    <mxGeometry x="5" y="387" width="300" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="48" value="Transmet l&#39;identité de l&#39;utilisateur à la logique métier" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="560" y="415" as="sourcePoint"/>
+                        <mxPoint x="375" y="415" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="49" value="Exécute la demande et récupère les données" style="endArrow=block;endFill=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="375" y="450" as="sourcePoint"/>
+                        <mxPoint x="960" y="450" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="50" value="Renvoie les données demandées" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="960" y="485" as="sourcePoint"/>
+                        <mxPoint x="375" y="485" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="51" value="Renvoie la réponse à l&#39;interface" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="375" y="515" as="sourcePoint"/>
+                        <mxPoint y="515" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="60" value="Ce mécanisme est appliqué automatiquement à chaque action.&#xa;L&#39;utilisateur ne le voit pas : s&#39;il est connecté, tout fonctionne normalement." style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=8;rounded=1;strokeColor=#d6b656;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="85" y="860" width="900" height="50" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="connexion_google" name="03b — Connexion via Google">
+        <mxGraphModel dx="1353" dy="838" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Connexion avec un compte Google" style="text;fontStyle=1;fontSize=14;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="10" width="800" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Utilisateur" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="45" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Interface&#xa;(navigateur)" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="45" width="130" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Serveur" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="390" y="45" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="Google" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="570" y="45" width="130" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="Base de données" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="760" y="45" width="130" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="80" y="85" as="sourcePoint"/>
+                        <mxPoint x="80" y="850" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="265" y="85" as="sourcePoint"/>
+                        <mxPoint x="265" y="850" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="450" y="85" as="sourcePoint"/>
+                        <mxPoint x="450" y="850" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="635" y="85" as="sourcePoint"/>
+                        <mxPoint x="635" y="850" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="825" y="85" as="sourcePoint"/>
+                        <mxPoint x="825" y="850" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="30" value="Clique sur « Se connecter avec Google »" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="80" y="115" as="sourcePoint"/>
+                        <mxPoint x="265" y="115" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="31" value="Demande l&#39;adresse de la page de connexion Google" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="265" y="150" as="sourcePoint"/>
+                        <mxPoint x="450" y="150" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="32" value="Renvoie l&#39;adresse de connexion Google" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="450" y="185" as="sourcePoint"/>
+                        <mxPoint x="265" y="185" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="33" value="Redirige l&#39;utilisateur vers la page Google" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="265" y="220" as="sourcePoint"/>
+                        <mxPoint x="635" y="220" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="34" value="Choisit son compte Google et accepte les permissions" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="80" y="255" as="sourcePoint"/>
+                        <mxPoint x="635" y="255" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="35" value="Renvoie un code d&#39;autorisation vers le serveur" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="635" y="290" as="sourcePoint"/>
+                        <mxPoint x="265" y="290" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="36" value="Transfère le code au serveur" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="265" y="325" as="sourcePoint"/>
+                        <mxPoint x="450" y="325" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="37" value="Échange le code contre un jeton d&#39;accès Google" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="450" y="360" as="sourcePoint"/>
+                        <mxPoint x="635" y="360" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="38" value="Renvoie le jeton d&#39;accès Google" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="635" y="395" as="sourcePoint"/>
+                        <mxPoint x="450" y="395" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="39" value="Demande les informations du compte Google" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="450" y="430" as="sourcePoint"/>
+                        <mxPoint x="635" y="430" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="40" value="Renvoie : nom, prénom, adresse email, photo de profil" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="635" y="465" as="sourcePoint"/>
+                        <mxPoint x="450" y="465" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="41" value="Cherche un compte avec cette adresse email" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="450" y="500" as="sourcePoint"/>
+                        <mxPoint x="825" y="500" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="42" value="Renvoie le compte existant, ou rien si nouveau" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="825" y="535" as="sourcePoint"/>
+                        <mxPoint x="450" y="535" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="43" value="alt" style="swimlane;fontStyle=1;startSize=22;fillColor=none;strokeColor=#555555;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="550" width="900" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="44" value="Première connexion (email inconnu) — création du compte" style="text;fontStyle=2;fontSize=10;align=left;" parent="43" vertex="1">
+                    <mxGeometry x="5" y="22" width="500" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="45" value="Crée un nouveau compte avec le rôle Candidat" style="endArrow=block;endFill=1;fontSize=10;" parent="43" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="370" y="50" as="sourcePoint"/>
+                        <mxPoint x="745" y="50" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="46" value="" style="line;strokeColor=#555555;" parent="43" vertex="1">
+                    <mxGeometry y="70" width="900" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="47" value="Connexion suivante (email connu) — liaison des comptes" style="text;fontStyle=2;fontSize=10;align=left;" parent="43" vertex="1">
+                    <mxGeometry x="5" y="82" width="500" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="48" value="Met à jour le lien avec le compte Google" style="endArrow=block;endFill=1;fontSize=10;" parent="43" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="370" y="125" as="sourcePoint"/>
+                        <mxPoint x="745" y="125" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="50" value="Crée le jeton de connexion (valable 24h)" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="450" y="730" as="sourcePoint"/>
+                        <mxPoint x="580" y="730" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="51" value="Redirige vers l&#39;interface avec le jeton dans l&#39;adresse" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="450" y="765" as="sourcePoint"/>
+                        <mxPoint x="265" y="765" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="52" value="Extrait le jeton et le sauvegarde" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="265" y="800" as="sourcePoint"/>
+                        <mxPoint x="365" y="800" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="53" value="Redirige vers l&#39;espace candidat" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="265" y="835" as="sourcePoint"/>
+                        <mxPoint x="80" y="835" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="connexion_classique" name="03a — Connexion par email">
+        <mxGraphModel dx="1145" dy="709" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Connexion avec email et mot de passe" style="text;fontStyle=1;fontSize=14;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="10" width="800" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Utilisateur" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="45" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Interface&#xa;(web ou mobile)" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="45" width="130" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Routeur d&#39;accès" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="390" y="45" width="130" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="Serveur" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="45" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="Module de sécurité" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="760" y="45" width="130" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Base de données" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="950" y="45" width="130" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#666666;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="80" y="85" as="sourcePoint"/>
+                        <mxPoint x="80" y="870" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#6c8ebf;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="265" y="85" as="sourcePoint"/>
+                        <mxPoint x="265" y="870" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#666666;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="455" y="85" as="sourcePoint"/>
+                        <mxPoint x="455" y="870" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#82b366;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="640" y="85" as="sourcePoint"/>
+                        <mxPoint x="640" y="870" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#d6b656;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="825" y="85" as="sourcePoint"/>
+                        <mxPoint x="825" y="870" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="25" value="" style="endArrow=none;dashed=1;strokeWidth=1;strokeColor=#9673a6;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1015" y="85" as="sourcePoint"/>
+                        <mxPoint x="1015" y="870" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="30" value="Saisit son email et son mot de passe" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="80" y="115" as="sourcePoint"/>
+                        <mxPoint x="265" y="115" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="31" value="Envoie les informations de connexion" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="265" y="150" as="sourcePoint"/>
+                        <mxPoint x="455" y="150" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="32" value="Transfère la demande au serveur" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="455" y="185" as="sourcePoint"/>
+                        <mxPoint x="640" y="185" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="33" value="Recherche l&#39;utilisateur par email" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="640" y="220" as="sourcePoint"/>
+                        <mxPoint x="1015" y="220" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="34" value="Renvoie les informations du compte (mot de passe chiffré, rôle, état)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1015" y="255" as="sourcePoint"/>
+                        <mxPoint x="640" y="255" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="35" value="alt" style="swimlane;fontStyle=1;startSize=22;fillColor=none;strokeColor=#555555;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="270" width="1070" height="510" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" value="L&#39;email n&#39;existe pas dans la base" style="text;fontStyle=2;fontSize=10;align=left;" parent="35" vertex="1">
+                    <mxGeometry x="5" y="22" width="300" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="Renvoie « Email ou mot de passe incorrect »" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="560" y="50" as="sourcePoint"/>
+                        <mxPoint x="185" y="50" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="37b" value="Affiche le message d&#39;erreur" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="185" y="70" as="sourcePoint"/>
+                        <mxPoint y="70" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="38" value="" style="line;strokeColor=#555555;" parent="35" vertex="1">
+                    <mxGeometry y="85" width="1070" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" value="Le compte existe mais est désactivé" style="text;fontStyle=2;fontSize=10;align=left;" parent="35" vertex="1">
+                    <mxGeometry x="5" y="97" width="300" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" value="Renvoie « Compte désactivé »" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="560" y="125" as="sourcePoint"/>
+                        <mxPoint x="185" y="125" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="40b" value="Affiche le message d&#39;erreur" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="185" y="145" as="sourcePoint"/>
+                        <mxPoint y="145" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="41" value="" style="line;strokeColor=#555555;" parent="35" vertex="1">
+                    <mxGeometry y="160" width="1070" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="42" value="Email et mot de passe corrects" style="text;fontStyle=2;fontSize=10;align=left;" parent="35" vertex="1">
+                    <mxGeometry x="5" y="172" width="300" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="43" value="Envoie le mot de passe pour vérification" style="endArrow=block;endFill=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="560" y="205" as="sourcePoint"/>
+                        <mxPoint x="745" y="205" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="44" value="Compare le mot de passe saisi avec celui en base" style="endArrow=block;endFill=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="745" y="235" as="sourcePoint"/>
+                        <mxPoint x="900" y="235" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="45" value="Confirmation : mot de passe identique" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="745" y="265" as="sourcePoint"/>
+                        <mxPoint x="560" y="265" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="46" value="Crée un jeton de connexion (valable 24h)" style="endArrow=block;endFill=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="560" y="298" as="sourcePoint"/>
+                        <mxPoint x="745" y="298" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="47" value="Chiffre et signe le jeton avec la clé secrète du serveur" style="endArrow=block;endFill=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="745" y="328" as="sourcePoint"/>
+                        <mxPoint x="900" y="328" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="48" value="Renvoie le jeton signé" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="745" y="358" as="sourcePoint"/>
+                        <mxPoint x="560" y="358" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="49" value="Enregistre la connexion dans les journaux" style="endArrow=block;endFill=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="560" y="390" as="sourcePoint"/>
+                        <mxPoint x="935" y="390" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="50" value="Renvoie le jeton + le rôle de l&#39;utilisateur" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="560" y="425" as="sourcePoint"/>
+                        <mxPoint x="375" y="425" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="51" value="Transfère le jeton à l&#39;interface" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="375" y="455" as="sourcePoint"/>
+                        <mxPoint x="185" y="455" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="52" value="Sauvegarde le jeton (navigateur ou mémoire du téléphone)" style="endArrow=block;endFill=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="185" y="485" as="sourcePoint"/>
+                        <mxPoint x="310" y="485" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="53" value="Redirige vers l&#39;espace correspondant au rôle" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="185" y="490" as="sourcePoint"/>
+                        <mxPoint y="490" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="60" value="Le jeton est joint automatiquement à toutes les requêtes suivantes.&#xa;Il n&#39;est plus nécessaire de se reconnecter jusqu&#39;à son expiration (24h)." style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=8;rounded=1;strokeColor=#d6b656;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="800" width="900" height="50" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>

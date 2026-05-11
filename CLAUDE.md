@@ -140,6 +140,8 @@ backend/app/
     ├── database.py      # Async SQLAlchemy session factory + pgvector init
     ├── security.py      # JWT creation/validation + bcrypt password hashing
     ├── celery_app.py    # Celery + Redis task queue config
+    ├── audit.py         # log_action() helper — writes to audit_logs table; call from any route that mutates data
+    ├── logging_config.py # Loguru structured logging: colorized stdout (dev) + JSON file rotation (prod, when LOG_TO_FILE=true)
     └── mailer.py        # SMTP email sending — send_cv_received(), send_application_received(), send_decision_notification(), send_entretien_invitation(). Controlled by MAIL_ENABLED env var (defaults to false — logs without sending)
 ```
 
@@ -149,16 +151,21 @@ Roles: `VISITOR`, `CANDIDATE`, `AGENT`, `RH`, `ADMIN`. Route-level guards are Fa
 The dependency returns a **User** object (from `users` table). For candidate routes that need the `Candidate` record, always resolve via `candidate_repository.get_by_email(db, user.email)` — do not use `user.id` as a candidate ID directly.
 
 ### Key Data Models (db_models.py)
-- `CV` — stores parsed text, `source` (`KEEJOB/AGENT/CANDIDAT`), `statut` (`UPLOADED/PARSING/INDEXED/ERROR`), a 384-dim pgvector embedding, and `cv_version` (integer, starts at 1, incremented on every upload/modification)
+- `Filiale` — branch/subsidiary entity; `User.id_filiale` FK links users to branches
+- `CV` — stores parsed text, `source` (`KEEJOB/AGENT/CANDIDAT/EMAIL/LINKEDIN`), `statut` (`UPLOADED/PARSING/INDEXED/ERROR`), a 384-dim pgvector embedding, and `cv_version` (integer, starts at 1, incremented on every upload/modification)
   - `source=KEEJOB` → bulk-imported, `id_agent=NULL`
   - `source=AGENT` → uploaded by a specific agent, `id_agent=agent.id`
   - `source=CANDIDAT` → submitted by the candidate themselves
-- `JobOffer` — has its own pgvector embedding for semantic matching
+- `JobOffer` — pgvector embedding + customizable per-offer scoring weights (`poids_semantique/competences/experience/langue`, defaulting to 40/35/15/10%); `seuil_alerte` triggers `alert_tasks.check_seuil_alerte()` when RETAINED count reaches the threshold; `OfferStatus` has 9 values: `ACTIVE/INACTIVE/ARCHIVED/BROUILLON/EN_VALIDATION/PROCHAINEMENT/DESACTIVEE/EXPIREE/REFUSEE`
 - `Resultat` — links CV ↔ JobOffer with multi-criteria scores, `Decision` (`RETAINED/PENDING/REFUSED`), and optional `feedback_rh` / `feedback_visible` / `date_decision` fields added via direct migration (not Alembic)
-- `Candidate` → `Competences` and `Experiences` (one-to-many)
+- `Candidate` — extended profile with `visibility_status` (`VISIBLE/ANONYMOUS/INVISIBLE`), `alert_frequency` (`DAILY/TWICE_WEEK/WEEKLY/NEVER`), mobility flags (`mobilite_tn`, `mobilite_intl`), `statut_pro`, and JSONB arrays `secteurs_recherche` + `metiers_recherche`; has one-to-many `Competences` and `Experiences`
+- `CoverLetter` — candidate-authored cover letters (`cover_letters` table), linked to `Candidate`
+- `CandidateDocument` — uploaded files other than CV (`candidate_documents` table): type `CV|Diplome|CIN|Autre`
+- `AuditLog` — admin action history (`audit_logs` table); populated via `core/audit.py::log_action()`; fields: `action`, `user_id`, `resource`, `resource_id`, `details` (JSONB), `ip_address`
 - `Entretien` — interview scheduling table created by n8n workflow; statuts: `PROPOSE → CONFIRME → ENVOYE`, also `ANNULE`/`PLANIFIE`
 
 ### Matching/Scoring (nlp/scorer.py)
+Default weights (overridable per-offer via `JobOffer.poids_*` columns):
 - **40%** semantic similarity (pgvector cosine distance between CV and offer embeddings)
 - **35%** competency overlap (Jaccard similarity — `score_skills=1.0` when no skills required)
 - **15%** experience match (years required vs. actual, capped at 1.0)
@@ -184,7 +191,11 @@ n8n workflow JSONs live in `n8n/workflows/` and are imported via Settings → Im
 ### Adding New Routes
 Register every new router in `main.py` with `app.include_router(...)`. Schema migrations that are low-risk (adding nullable columns) are done directly via `psql` in the running container rather than through Alembic, since there is no migration history for these columns.
 
-**Unregistered admin routes:** `routes/admin/filiates.py` and `routes/admin/roles.py` exist but are **not** wired into `main.py` — their endpoints are unreachable. Check registration before assuming an admin endpoint is live.
+**Unregistered admin routes:** `routes/admin/filiates.py`, `routes/admin/roles.py`, and `routes/admin/audit.py` exist but are **not** wired into `main.py` — their endpoints are unreachable. Check registration before assuming an admin endpoint is live.
+
+**Schemas directory note:** Two schemas directories exist — `backend/app/schemas/` (thin, mostly empty re-export stubs) and `backend/app/models/schemas/` (real Pydantic models). Always work in `models/schemas/`; the stubs in `app/schemas/` are legacy placeholders.
+
+**Special endpoints:** `/health` (liveness probe) and `/uploads` (static file serving for profile photos and CV files) are mounted directly in `main.py`. Prometheus metrics are exposed at `/metrics` when `prometheus-fastapi-instrumentator` is installed.
 
 ### NLP Embedder — critical async rule
 `nlp/embedder.py::encode()` and `encode_batch()` are **synchronous** and load a CPU-bound PyTorch model. Calling them directly inside an async route or service **blocks the entire event loop**, freezing all concurrent requests (including login) until the model finishes.

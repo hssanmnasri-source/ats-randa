@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-05-06T00:00:00.000Z" agent="Claude Code" version="24.0.0" type="device">
+  <diagram id="sprint4_classes" name="Sprint 4 — Architecture Mobile Flutter">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- TITRE -->
+        <mxCell id="title" value="Sprint 4 — Architecture Mobile Flutter" style="text;html=1;fontSize=16;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="600" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- COUCHE CORE -->
+        <!-- ═══════════════════════════════════════ -->
+
+        <!-- ─── ApiClient ─── -->
+        <mxCell id="api_h" value="ApiClient  &lt;&lt;singleton&gt;&gt;" style="swimlane;startSize=30;fillColor=#FFF2CC;strokeColor=#A80036;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="560" y="80" width="260" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="api_b" value="- _dio : Dio&#xa;- _storage : FlutterSecureStorage&#xa;+baseUrl : String&#xa;──────────────&#xa;+saveTokens(token: String)&#xa;+clearTokens()&#xa;+hasToken() : bool" style="text;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="api_h">
+          <mxGeometry x="0" y="30" width="260" height="125" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- COUCHE REPOSITORIES -->
+        <!-- ═══════════════════════════════════════ -->
+
+        <!-- ─── AuthRepository ─── -->
+        <mxCell id="auth_rep_h" value="AuthRepository" style="swimlane;startSize=30;fillColor=#FEFECE;strokeColor=#A80036;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="180" y="310" width="230" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="auth_rep_b" value="+login(email, pwd) : RhUser&#xa;+getProfile(role) : RhUser" style="text;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="auth_rep_h">
+          <mxGeometry x="0" y="30" width="230" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ─── MatchingRepository ─── -->
+        <mxCell id="match_rep_h" value="MatchingRepository" style="swimlane;startSize=30;fillColor=#FEFECE;strokeColor=#A80036;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="560" y="310" width="260" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="match_rep_b" value="+getResults(offerId) : List&lt;MatchingResult&gt;&#xa;+makeDecision(id, decision, feedback)" style="text;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="match_rep_h">
+          <mxGeometry x="0" y="30" width="260" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- COUCHE PROVIDERS -->
+        <!-- ═══════════════════════════════════════ -->
+
+        <!-- ─── AuthNotifier ─── -->
+        <mxCell id="notifier_h" value="AuthNotifier  &lt;&lt;AsyncNotifier&gt;&gt;" style="swimlane;startSize=30;fillColor=#FEFECE;strokeColor=#A80036;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="360" y="490" width="280" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="notifier_b" value="+state : AsyncValue&lt;RhUser?&gt;&#xa;──────────────&#xa;+login(email, pwd)&#xa;+logout()" style="text;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="notifier_h">
+          <mxGeometry x="0" y="30" width="280" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- COUCHE MODELS -->
+        <!-- ═══════════════════════════════════════ -->
+
+        <!-- ─── RhUser ─── -->
+        <mxCell id="rhuser_h" value="RhUser  &lt;&lt;freezed&gt;&gt;" style="swimlane;startSize=30;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="80" width="220" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="rhuser_b" value="+id : int&#xa;+email : String&#xa;+nom : String&#xa;+prenom : String&#xa;+role : String" style="text;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="rhuser_h">
+          <mxGeometry x="0" y="30" width="220" height="125" as="geometry" />
+        </mxCell>
+
+        <!-- ─── MatchingResult ─── -->
+        <mxCell id="matchres_h" value="MatchingResult  &lt;&lt;freezed&gt;&gt;" style="swimlane;startSize=30;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="280" width="240" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="matchres_b" value="+id : int&#xa;+score_final : double&#xa;+score_semantic : double&#xa;+score_skills : double&#xa;+score_experience : double&#xa;+decision : String&#xa;+feedback_rh : String?" style="text;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="matchres_h">
+          <mxGeometry x="0" y="30" width="240" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- ─── CandidateProfile ─── -->
+        <mxCell id="profile_h" value="CandidateProfile" style="swimlane;startSize=30;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="530" width="240" height="165" as="geometry" />
+        </mxCell>
+        <mxCell id="profile_b" value="+id : int&#xa;+nom : String&#xa;+prenom : String&#xa;+email : String&#xa;+ville : String&#xa;──────────────&#xa;+fromJson(json)&#xa;+copyWith()" style="text;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="profile_h">
+          <mxGeometry x="0" y="30" width="240" height="135" as="geometry" />
+        </mxCell>
+
+        <!-- ─── Application ─── -->
+        <mxCell id="app_h" value="Application" style="swimlane;startSize=30;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="750" width="240" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="app_b" value="+id : int&#xa;+statut : String&#xa;+score_final : double?&#xa;+steps : List&lt;TimelineStep&gt;&#xa;──────────────&#xa;+fromJson(json)" style="text;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="app_h">
+          <mxGeometry x="0" y="30" width="240" height="115" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- COUCHE UI -->
+        <!-- ═══════════════════════════════════════ -->
+
+        <!-- ─── AppShell ─── -->
+        <mxCell id="appshell_h" value="AppShell  &lt;&lt;widget RH&gt;&gt;" style="swimlane;startSize=30;fillColor=#FEFECE;strokeColor=#A80036;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="80" y="700" width="270" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="appshell_b" value="BottomNav RH — 4 onglets :&#xa;Tableau de bord · Offres&#xa;CVthèque · Calendrier" style="text;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="appshell_h">
+          <mxGeometry x="0" y="30" width="270" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ─── CandidateShell ─── -->
+        <mxCell id="candshell_h" value="CandidateShell  &lt;&lt;widget Candidat&gt;&gt;" style="swimlane;startSize=30;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="420" y="700" width="280" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="candshell_b" value="BottomNav Candidat — 4 onglets :&#xa;Accueil · Offres&#xa;Candidatures · Profil" style="text;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;" vertex="1" parent="candshell_h">
+          <mxGeometry x="0" y="30" width="280" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- NOTES -->
+        <!-- ═══════════════════════════════════════ -->
+
+        <!-- Note RhUser -->
+        <mxCell id="note_rh" value="Modèle partagé RH + Candidat.&#xa;Le champ role détermine le shell :&#xa;&quot;rh&quot; → AppShell&#xa;&quot;candidate&quot; → CandidateShell" style="shape=note;whiteSpace=wrap;align=left;fontSize=10;fillColor=#FFFDE7;strokeColor=#C9A84C;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1330" y="80" width="240" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Note AuthNotifier -->
+        <mxCell id="note_notif" value="Connecté à GoRouter via&#xa;_AuthChangeNotifier.&#xa;Changement d'état → redirect&#xa;automatique vers le bon shell." style="shape=note;whiteSpace=wrap;align=left;fontSize=10;fillColor=#FFFDE7;strokeColor=#C9A84C;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="700" y="505" width="240" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- ARÊTES -->
+        <!-- ═══════════════════════════════════════ -->
+
+        <!-- AuthRepository ..> ApiClient -->
+        <mxCell id="e_ar_api" value="«use»" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" source="auth_rep_h" target="api_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- MatchingRepository ..> ApiClient -->
+        <mxCell id="e_mr_api" value="«use»" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" source="match_rep_h" target="api_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- AuthNotifier --> AuthRepository -->
+        <mxCell id="e_not_ar" value="appelle" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#A80036;endArrow=block;endFill=0;fontSize=10;" edge="1" source="notifier_h" target="auth_rep_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- AuthNotifier --> RhUser (produit) -->
+        <mxCell id="e_not_ru" value="produit" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#A80036;endArrow=block;endFill=0;fontSize=10;" edge="1" source="notifier_h" target="rhuser_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- AppShell ..> MatchingResult -->
+        <mxCell id="e_as_mr" value="affiche" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" source="appshell_h" target="matchres_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- AppShell ..> RhUser -->
+        <mxCell id="e_as_ru" value="identifie" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" source="appshell_h" target="rhuser_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CandidateShell ..> CandidateProfile -->
+        <mxCell id="e_cs_cp" value="affiche" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" source="candshell_h" target="profile_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CandidateShell ..> Application -->
+        <mxCell id="e_cs_app" value="affiche" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" source="candshell_h" target="app_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Note -> RhUser -->
+        <mxCell id="e_note_ru" style="edgeStyle=none;strokeColor=#C9A84C;endArrow=none;dashed=1;" edge="1" source="note_rh" target="rhuser_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Note -> AuthNotifier -->
+        <mxCell id="e_note_notif" style="edgeStyle=none;strokeColor=#C9A84C;endArrow=none;dashed=1;" edge="1" source="note_notif" target="notifier_h" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

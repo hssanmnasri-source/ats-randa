@@ -2,11 +2,13 @@
 api/routes/candidate/profile.py
 Routes de gestion du profil candidat étendu.
 """
-from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, status
+from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.api.dependencies import require_candidate
+from app.core.security import verify_password, hash_password
 from app.models.schemas.candidate_schemas import (
     CandidateProfileOut,
     CandidateProfileUpdateIn,
@@ -21,6 +23,13 @@ from app.models.schemas.candidate_schemas import (
     FullProfileOut,
 )
 from app.services.candidate import profile_service
+from app.repositories import candidate_repository
+from app.repositories import user_repository
+
+
+class ChangePasswordIn(BaseModel):
+    current_password: str
+    new_password: str
 
 router = APIRouter(
     prefix="/api/candidate",
@@ -171,3 +180,59 @@ async def delete_skill(
     """Supprime une compétence."""
     await profile_service.delete_skill(db, candidate, skill_id)
     return {"message": "Compétence supprimée"}
+
+
+# ── Changement de mot de passe ────────────────────────────────────────────────
+
+@router.post("/change-password", status_code=200)
+async def change_password(
+    data: ChangePasswordIn,
+    user=Depends(require_candidate),
+    db: AsyncSession = Depends(get_db),
+):
+    """Change le mot de passe du candidat connecté."""
+    if not verify_password(data.current_password, user.hashed_pwd):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Mot de passe actuel incorrect",
+        )
+    if len(data.new_password) < 8:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Le nouveau mot de passe doit contenir au moins 8 caractères",
+        )
+    await user_repository.update(db, user, {"hashed_pwd": hash_password(data.new_password)})
+    return {"message": "Mot de passe mis à jour"}
+
+
+# ── Suppression du compte ─────────────────────────────────────────────────────
+
+@router.delete("/account", status_code=200)
+async def delete_account(
+    user=Depends(require_candidate),
+    db: AsyncSession = Depends(get_db),
+):
+    """Supprime définitivement le compte candidat et toutes ses données."""
+    from sqlalchemy import delete as sql_delete, select as sql_select
+    from app.models.db_models import CV, Competence, Experience, Resultat, Entretien
+
+    candidate = await candidate_repository.get_by_email(db, user.email)
+    if candidate:
+        cv_ids_r = await db.execute(sql_select(CV.id).where(CV.id_candidate == candidate.id))
+        cv_ids = cv_ids_r.scalars().all()
+
+        if cv_ids:
+            res_ids_r = await db.execute(sql_select(Resultat.id).where(Resultat.id_cv.in_(cv_ids)))
+            res_ids = res_ids_r.scalars().all()
+            if res_ids:
+                await db.execute(sql_delete(Entretien).where(Entretien.id_resultat.in_(res_ids)))
+            await db.execute(sql_delete(Resultat).where(Resultat.id_cv.in_(cv_ids)))
+            await db.execute(sql_delete(Competence).where(Competence.id_cv.in_(cv_ids)))
+            await db.execute(sql_delete(Experience).where(Experience.id_cv.in_(cv_ids)))
+            await db.execute(sql_delete(CV).where(CV.id_candidate == candidate.id))
+
+        await db.delete(candidate)  # cascades cover_letters + documents
+
+    await db.delete(user)
+    await db.commit()
+    return {"message": "Compte supprimé"}

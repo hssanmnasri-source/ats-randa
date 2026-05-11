@@ -1,0 +1,90 @@
+@startuml Sprint2_Classes
+
+skinparam classBackgroundColor #FEFECE
+skinparam classBorderColor #555555
+skinparam arrowColor #555555
+skinparam stereotypeCBackgroundColor #d5e8d4
+
+title Sprint 2 — Diagramme de Classes — Analyse intelligente & Matching
+
+class CV {
+  +id : Integer «PK»
+  +cv_text : Text
+  +cv_entities : JSONB
+  +embedding : Vector(384)
+  +statut : CVStatus
+  +source : CVSource
+  +cv_version : Integer
+  --
+  +parse() : dict
+  +embed() : Vector
+}
+
+class JobOffer {
+  +id : Integer «PK»
+  +titre : String
+  +description : Text
+  +competences_requises : JSONB
+  +experience_requise : Float
+  +embedding : Vector(384)
+  +statut : OfferStatus
+  --
+  +embed() : Vector
+}
+
+class Resultat {
+  +id : Integer «PK»
+  +id_cv : Integer «FK»
+  +id_offre : Integer «FK»
+  +score_matching : Float [40%]
+  +score_skills : Float [35%]
+  +score_experience : Float [15%]
+  +score_langue : Float [10%]
+  +score_final : Float
+  +decision : Decision
+  +feedback_rh : Text
+  +feedback_visible : Boolean
+}
+
+class Embedder <<service>> {
+  - model : SentenceTransformer
+  - dim : int = 384
+  --
+  +encode(text: str) : Vector
+  +encode_batch(texts) : List[Vector]
+}
+
+class Scorer <<service>> {
+  - W_SEMANTIC : float = 0.40
+  - W_SKILLS : float = 0.35
+  - W_EXP : float = 0.15
+  - W_LANG : float = 0.10
+  --
+  +match(cv, offer) : Resultat
+  - semantic_sim(v1, v2) : float
+  - skill_overlap(cv, offer) : float
+  - experience_match(cv, offer) : float
+}
+
+class CVParser <<service>> {
+  --
+  +parse_keejob(pdf: str) : dict
+  +parse_generic(pdf: str) : dict
+}
+
+class ProcessCVTask <<celery>> {
+  --
+  +process_cv_on_upload(cv_id)
+  +embed_cv(cv_id)
+  +match_against_offers(cv_id)
+}
+
+CV       "1" --> "*" Resultat : génère
+JobOffer "1" --> "*" Resultat : concerne
+
+ProcessCVTask ..> Embedder : <<uses>>
+ProcessCVTask ..> CVParser  : <<uses>>
+ProcessCVTask ..> Scorer    : <<uses>>
+Scorer        ..> Embedder  : <<uses>>
+
+@enduml

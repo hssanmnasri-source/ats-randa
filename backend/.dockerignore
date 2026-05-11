@@ -1,0 +1,30 @@
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.coverage
+htmlcov
+.env
+.venv
+venv
+env
+*.egg-info
+dist
+build
+.git
+tests
+.mypy_cache
+.ruff_cache
+
+# Large ML model cache — downloaded at runtime, not needed in image
+*.bin
+*.safetensors
+*.ot
+sentence_transformers_cache
+huggingface
+/root/.cache
+/home/*/.cache
+.cache
+
+# Uploads (mounted as volume at runtime)
+uploads/

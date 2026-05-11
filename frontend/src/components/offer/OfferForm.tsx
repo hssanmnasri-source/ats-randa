@@ -1,5 +1,4 @@
 import { Form, Input, Select, Button, Space, Checkbox, Radio, InputNumber, Row, Col, DatePicker, Typography } from 'antd';
-import { LockOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useAuthStore } from '../../store/authStore';
 import type { CreateOfferRequest } from '../../types/offer';
@@ -329,19 +328,6 @@ export default function OfferForm({ initialValues, onSubmit, loading, onCancel }
 
       <Form.Item label="Responsable">
         <Input value={responsableLabel} disabled />
-      </Form.Item>
-
-      <Form.Item label={<span><LockOutlined style={{ marginRight: 4 }} />URL pour postuler</span>}>
-        <Input
-          disabled
-          placeholder="URL externe pour postuler à l'offre."
-          suffix={
-            <span style={{ color: '#8B1A1A', fontSize: 12, fontWeight: 600 }}>Premium</span>
-          }
-        />
-        <div style={{ color: '#999', fontSize: 12, marginTop: 4 }}>
-          🔒 Cette fonctionnalité est uniquement disponible pour les comptes Premium.
-        </div>
       </Form.Item>
 
       <Form.Item

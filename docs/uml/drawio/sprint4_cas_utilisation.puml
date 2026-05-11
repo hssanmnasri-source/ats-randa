@@ -1,0 +1,63 @@
+@startuml Sprint4_Cas_Utilisation
+left to right direction
+skinparam actorStyle awesome
+skinparam usecaseBackgroundColor #FEFECE
+skinparam usecaseBorderColor #A80036
+skinparam arrowColor #555555
+
+title Sprint 4 — Application Mobile (RH & Candidat)
+
+actor "Responsable RH" as RH
+actor "Candidat" as CAND
+
+rectangle "ATS RANDA — Mobile" {
+  usecase "Se connecter" as UC1
+
+  ' ── Fonctionnalités RH ──
+  usecase "Consulter le tableau de bord RH" as UC_RH1
+  usecase "Gérer les offres d'emploi" as UC_RH2
+  usecase "Consulter les résultats de matching" as UC_RH3
+  usecase "Prendre une décision (RETENU/REFUSÉ)" as UC_RH4
+  usecase "Parcourir la CVthèque" as UC_RH5
+  usecase "Consulter le calendrier des entretiens" as UC_RH6
+
+  ' ── Fonctionnalités Candidat ──
+  usecase "Consulter le tableau de bord candidat" as UC_C1
+  usecase "Parcourir les offres publiques" as UC_C2
+  usecase "Postuler à une offre" as UC_C3
+  usecase "Suivre ses candidatures (timeline)" as UC_C4
+  usecase "Gérer son profil" as UC_C5
+  usecase "Gérer ses CVs et lettres de motivation" as UC_C6
+}
+
+RH   --> UC1
+RH   --> UC_RH1
+RH   --> UC_RH2
+RH   --> UC_RH3
+RH   --> UC_RH4
+RH   --> UC_RH5
+RH   --> UC_RH6
+
+CAND --> UC1
+CAND --> UC_C1
+CAND --> UC_C2
+CAND --> UC_C3
+CAND --> UC_C4
+CAND --> UC_C5
+CAND --> UC_C6
+
+UC_RH3 ..> UC_RH4 : <<extend>>
+UC_C2  ..> UC_C3  : <<include>>
+
+note right of UC_RH4
+  RETENU / REFUSÉ
+  sont immuables
+end note
+
+note right of UC_C4
+  Timeline 4 étapes :
+  POSTULÉ → ANALYSE IA
+  → EN EXAMEN → DÉCISION
+end note
+
+@enduml

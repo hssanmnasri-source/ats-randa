@@ -1,30 +1,13 @@
-import { useEffect } from 'react';
 import { Form, Input, Button, Card, Typography, Divider, Alert } from 'antd';
 import { MailOutlined, LockOutlined, GoogleOutlined } from '@ant-design/icons';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useLogin } from '../../hooks/useAuth';
-import { useAuthStore } from '../../store/authStore';
 import type { LoginRequest } from '../../types/auth';
 
 const { Title, Text } = Typography;
 
 export default function LoginPage() {
   const { mutate: login, isPending, isError } = useLogin();
-  const { isAuthenticated, user } = useAuthStore();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      const map: Record<string, string> = {
-        ADMIN: '/admin',
-        RH: '/rh',
-        AGENT: '/agent',
-        CANDIDATE: '/candidate',
-        VISITOR: '/',
-      };
-      navigate(map[user.role] ?? '/');
-    }
-  }, [isAuthenticated, user, navigate]);
 
   return (
     <Card
@@ -62,7 +45,7 @@ export default function LoginPage() {
         block
         size="large"
         icon={<GoogleOutlined />}
-        onClick={() => { window.location.href = 'http://localhost:8000/api/auth/google/login' }}
+        onClick={() => { window.location.href = '/api/auth/google/login' }}
         style={{
           marginBottom: 16,
           border: '1px solid #E8E8E8',

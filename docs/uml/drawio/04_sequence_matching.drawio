@@ -1,164 +1,530 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<mxfile host="app.diagrams.net" modified="2026-04-15T00:00:00.000Z" agent="Claude Code" version="24.0.0" type="device">
-
-  <!-- PAGE 1 — Import CV Keejob (synchrone) -->
-  <diagram id="seq_keejob" name="04a — Import Keejob">
-    <mxGraphModel dx="1600" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
-      <root>
-        <mxCell id="0"/><mxCell id="1" parent="0"/>
-        <mxCell id="2" value="Pipeline NLP — Import CV Keejob (synchrone)" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1"><mxGeometry x="200" y="10" width="800" height="25" as="geometry"/></mxCell>
-
-        <mxCell id="10" value="Agent" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="20" y="40" width="100" height="40" as="geometry"/></mxCell>
-        <mxCell id="11" value="Client React" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="190" y="40" width="110" height="40" as="geometry"/></mxCell>
-        <mxCell id="12" value="FastAPI :8000" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="370" y="40" width="110" height="40" as="geometry"/></mxCell>
-        <mxCell id="13" value="keejob_parser.py" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="550" y="40" width="130" height="40" as="geometry"/></mxCell>
-        <mxCell id="14" value="PostgreSQL" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="760" y="40" width="110" height="40" as="geometry"/></mxCell>
-
-        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="70" y="80" as="sourcePoint"/><mxPoint x="70" y="760" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="245" y="80" as="sourcePoint"/><mxPoint x="245" y="760" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="425" y="80" as="sourcePoint"/><mxPoint x="425" y="760" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="615" y="80" as="sourcePoint"/><mxPoint x="615" y="760" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="815" y="80" as="sourcePoint"/><mxPoint x="815" y="760" as="targetPoint"/></mxGeometry></mxCell>
-
-        <mxCell id="30" value="Sélectionne PDF Keejob" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="70" y="110" as="sourcePoint"/><mxPoint x="245" y="110" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="31" value="POST /api/agent/import/keejob (multipart/form-data: file.pdf)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="245" y="145" as="sourcePoint"/><mxPoint x="425" y="145" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="32" value="Validation taille ≤ 10 Mo + extract_text_from_pdf(bytes)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="425" y="180" as="sourcePoint"/><mxPoint x="505" y="180" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="33" value="parse_keejob_cv(cv_text)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="425" y="215" as="sourcePoint"/><mxPoint x="615" y="215" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="34" value="Extraction regex: id_keejob, titre, nom, prenom, age, email, tel, ville, niveau_etude, competences[], experiences[], formations[], langues[]" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="615" y="250" as="sourcePoint"/><mxPoint x="700" y="250" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="35" value="cv_entities (15+ champs)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="615" y="285" as="sourcePoint"/><mxPoint x="425" y="285" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="36" value="SELECT candidate WHERE email=cv_entities.email" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="425" y="320" as="sourcePoint"/><mxPoint x="815" y="320" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="37" value="Candidate ou NULL" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="815" y="355" as="sourcePoint"/><mxPoint x="425" y="355" as="targetPoint"/></mxGeometry></mxCell>
-
-        <mxCell id="38" value="opt [Candidat inexistant]" style="swimlane;fontStyle=1;startSize=20;fillColor=none;strokeColor=#555555;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="75" y="370" width="850" height="60" as="geometry"/>
-        </mxCell>
-        <mxCell id="39" value="INSERT INTO candidates {nom, prenom, email, ...}" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="38"><mxGeometry relative="1" as="geometry"><mxPoint x="350" y="35" as="sourcePoint"/><mxPoint x="740" y="35" as="targetPoint"/></mxGeometry></mxCell>
-
-        <mxCell id="40" value="INSERT INTO cvs {id_candidate, id_agent, source=AGENT, statut=INDEXED, cv_entities, cv_text}" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="425" y="450" as="sourcePoint"/><mxPoint x="815" y="450" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="41" value="CV créé (cv_id)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="815" y="485" as="sourcePoint"/><mxPoint x="425" y="485" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="42" value="INSERT INTO competences (batch)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="425" y="520" as="sourcePoint"/><mxPoint x="815" y="520" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="43" value="INSERT INTO experiences (batch)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="425" y="555" as="sourcePoint"/><mxPoint x="815" y="555" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="44" value="HTTP 201 {cv_id, candidate_id, candidate_created, statut: INDEXED, entities, nb_competences, nb_experiences}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="425" y="595" as="sourcePoint"/><mxPoint x="245" y="595" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="45" value="Affiche résultat du parsing" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="245" y="630" as="sourcePoint"/><mxPoint x="70" y="630" as="targetPoint"/></mxGeometry></mxCell>
-
-      </root>
-    </mxGraphModel>
-  </diagram>
-
-  <!-- PAGE 2 — Upload CV Candidat (Celery async) -->
-  <diagram id="seq_celery" name="04b — Upload CV Candidat (Celery)">
-    <mxGraphModel dx="1600" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
-      <root>
-        <mxCell id="0"/><mxCell id="1" parent="0"/>
-        <mxCell id="2" value="Pipeline NLP — Upload CV Candidat (Celery async)" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1"><mxGeometry x="100" y="10" width="1000" height="25" as="geometry"/></mxCell>
-
-        <mxCell id="10" value="Candidat" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="10" y="40" width="100" height="40" as="geometry"/></mxCell>
-        <mxCell id="11" value="Client React" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="170" y="40" width="100" height="40" as="geometry"/></mxCell>
-        <mxCell id="12" value="FastAPI :8000" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="330" y="40" width="100" height="40" as="geometry"/></mxCell>
-        <mxCell id="13" value="PostgreSQL" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="490" y="40" width="100" height="40" as="geometry"/></mxCell>
-        <mxCell id="14" value="Redis (Broker)" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="650" y="40" width="100" height="40" as="geometry"/></mxCell>
-        <mxCell id="15" value="Celery Worker" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="810" y="40" width="100" height="40" as="geometry"/></mxCell>
-        <mxCell id="16" value="ocr.py&#xa;(Tesseract)" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="970" y="40" width="100" height="40" as="geometry"/></mxCell>
-        <mxCell id="17" value="embedder.py&#xa;MiniLM-L12-v2" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="1130" y="40" width="110" height="40" as="geometry"/></mxCell>
-        <mxCell id="18" value="scorer.py" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="1300" y="40" width="100" height="40" as="geometry"/></mxCell>
-
-        <!-- LIFELINES -->
-        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="60" y="80" as="sourcePoint"/><mxPoint x="60" y="980" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="220" y="80" as="sourcePoint"/><mxPoint x="220" y="980" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="380" y="80" as="sourcePoint"/><mxPoint x="380" y="980" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="540" y="80" as="sourcePoint"/><mxPoint x="540" y="980" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="700" y="80" as="sourcePoint"/><mxPoint x="700" y="980" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="25" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="860" y="80" as="sourcePoint"/><mxPoint x="860" y="980" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="26" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1020" y="80" as="sourcePoint"/><mxPoint x="1020" y="980" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="27" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1185" y="80" as="sourcePoint"/><mxPoint x="1185" y="980" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="28" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1350" y="80" as="sourcePoint"/><mxPoint x="1350" y="980" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- Synchronous upload flow -->
-        <mxCell id="30" value="Sélectionne fichier PDF/image" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="60" y="110" as="sourcePoint"/><mxPoint x="220" y="110" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="31" value="POST /api/candidate/cvs/upload (multipart/form-data)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="220" y="145" as="sourcePoint"/><mxPoint x="380" y="145" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="32" value="Sauvegarde → /app/uploads/cvs/" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="380" y="180" as="sourcePoint"/><mxPoint x="460" y="180" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="33" value="INSERT INTO cvs {id_candidate, source=CANDIDAT, statut=UPLOADED}" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="380" y="215" as="sourcePoint"/><mxPoint x="540" y="215" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="34" value="CV {id: cv_id}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="540" y="250" as="sourcePoint"/><mxPoint x="380" y="250" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="35" value="celery.apply_async(&quot;tasks.process_cv_on_upload&quot;, args=[cv_id])" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="380" y="285" as="sourcePoint"/><mxPoint x="700" y="285" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="36" value="task_id (acknowledged)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="700" y="320" as="sourcePoint"/><mxPoint x="380" y="320" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="37" value="HTTP 201 {cv_id, statut: UPLOADED}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="380" y="355" as="sourcePoint"/><mxPoint x="220" y="355" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="38" value='&quot;CV déposé — analyse en cours...&quot;' style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="220" y="390" as="sourcePoint"/><mxPoint x="60" y="390" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- NOTE: Celery async -->
-        <mxCell id="39" value="=== Traitement asynchrone dans Celery Worker ===" style="shape=note;whiteSpace=wrap;fontSize=10;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="620" y="410" width="400" height="40" as="geometry"/>
-        </mxCell>
-
-        <!-- Async Celery flow -->
-        <mxCell id="40" value="Consomme tâche process_cv_on_upload(cv_id)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="700" y="470" as="sourcePoint"/><mxPoint x="860" y="470" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="41" value="SELECT cv WHERE cv.id=cv_id" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="860" y="505" as="sourcePoint"/><mxPoint x="540" y="505" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="42" value="CV object" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="540" y="540" as="sourcePoint"/><mxPoint x="860" y="540" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="43" value="extract_text_from_pdf(bytes)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="860" y="575" as="sourcePoint"/><mxPoint x="1020" y="575" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="44" value="cv_text (texte brut)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1020" y="610" as="sourcePoint"/><mxPoint x="860" y="610" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="45" value="parse_generic_cv(cv_text)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="860" y="645" as="sourcePoint"/><mxPoint x="1020" y="645" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="46" value="cv_entities {competences, experiences, formations, langues}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1020" y="680" as="sourcePoint"/><mxPoint x="860" y="680" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="47" value="UPDATE cvs SET cv_text=?, cv_entities=?" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="860" y="715" as="sourcePoint"/><mxPoint x="540" y="715" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="48" value="_get_model().encode(text) → embedding [float×384]" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="860" y="750" as="sourcePoint"/><mxPoint x="1185" y="750" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="49" value="embedding [float×384] normalisé" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1185" y="785" as="sourcePoint"/><mxPoint x="860" y="785" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="50" value="UPDATE cvs SET embedding=vector, statut=INDEXED, cv_version+=1" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="860" y="820" as="sourcePoint"/><mxPoint x="540" y="820" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="51" value="SELECT job_offers WHERE statut=ACTIVE → compute scores → UPSERT resultats" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="860" y="860" as="sourcePoint"/><mxPoint x="1350" y="860" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="52" value="Task result {status: ok, cv_id, created: N, updated: M}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="860" y="900" as="sourcePoint"/><mxPoint x="700" y="900" as="targetPoint"/></mxGeometry></mxCell>
-
-      </root>
-    </mxGraphModel>
-  </diagram>
-
-  <!-- PAGE 3 — Matching complet RH -->
-  <diagram id="seq_matching_rh" name="04c — Matching Sémantique RH">
-    <mxGraphModel dx="1600" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
-      <root>
-        <mxCell id="0"/><mxCell id="1" parent="0"/>
-        <mxCell id="2" value="Matching Sémantique Complet (flux RH)" style="text;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1"><mxGeometry x="200" y="10" width="800" height="25" as="geometry"/></mxCell>
-
-        <mxCell id="10" value="Responsable RH" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="10" y="40" width="120" height="40" as="geometry"/></mxCell>
-        <mxCell id="11" value="Client React" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="190" y="40" width="110" height="40" as="geometry"/></mxCell>
-        <mxCell id="12" value="FastAPI :8000&#xa;rh/matching.py" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="360" y="40" width="120" height="40" as="geometry"/></mxCell>
-        <mxCell id="13" value="PostgreSQL&#xa;+ pgvector" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="550" y="40" width="110" height="40" as="geometry"/></mxCell>
-        <mxCell id="14" value="scorer.py" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="730" y="40" width="100" height="40" as="geometry"/></mxCell>
-
-        <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="70" y="80" as="sourcePoint"/><mxPoint x="70" y="980" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="245" y="80" as="sourcePoint"/><mxPoint x="245" y="980" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="420" y="80" as="sourcePoint"/><mxPoint x="420" y="980" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="605" y="80" as="sourcePoint"/><mxPoint x="605" y="980" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="780" y="80" as="sourcePoint"/><mxPoint x="780" y="980" as="targetPoint"/></mxGeometry></mxCell>
-
-        <mxCell id="30" value='Clique "Lancer le matching"' style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="70" y="110" as="sourcePoint"/><mxPoint x="245" y="110" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="31" value="POST /api/rh/offers/{offer_id}/matching?top_n=50&amp;force=false" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="245" y="145" as="sourcePoint"/><mxPoint x="420" y="145" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="32" value="SELECT * FROM job_offers WHERE id=offer_id" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="420" y="180" as="sourcePoint"/><mxPoint x="605" y="180" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="33" value="JobOffer {embedding, competences_requises, experience_requise, poids_*}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="605" y="215" as="sourcePoint"/><mxPoint x="420" y="215" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- NOTE: pgvector KNN -->
-        <mxCell id="34" value="=== Pré-filtre pgvector KNN ===" style="shape=note;whiteSpace=wrap;fontSize=10;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
-          <mxGeometry x="380" y="230" width="300" height="30" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="35" value="SELECT cvs.id, (embedding &lt;=&gt; offer_vec) AS dist&#xa;FROM cvs WHERE statut='INDEXED' ORDER BY embedding LIMIT 200" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="420" y="280" as="sourcePoint"/><mxPoint x="605" y="280" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="36" value="Index ivfflat (100 listes) — Recherche approximative KNN" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="605" y="315" as="sourcePoint"/><mxPoint x="685" y="315" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="37" value="[(cv_id, cosine_sim) × 200]" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="605" y="350" as="sourcePoint"/><mxPoint x="420" y="350" as="targetPoint"/></mxGeometry></mxCell>
-
-        <!-- NOTE: Scoring -->
-        <mxCell id="38" value="=== Scoring multi-critères sur les 200 CVs ===" style="shape=note;whiteSpace=wrap;fontSize=10;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="380" y="365" width="380" height="30" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="39" value="[loop] Pour chacun des 200 CVs: compute_final_score()" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="420" y="415" as="sourcePoint"/><mxPoint x="780" y="415" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="40" value="s_sem=cosine_sim | s_comp=Jaccard | s_exp=ratio | s_lang=binary&#xa;final = s_sem×0.40 + s_comp×0.35 + s_exp×0.15 + s_lang×0.10" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="780" y="450" as="sourcePoint"/><mxPoint x="860" y="450" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="41" value="scores {score_matching, score_skills, score_experience, score_langue, score_final}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="780" y="490" as="sourcePoint"/><mxPoint x="420" y="490" as="targetPoint"/></mxGeometry></mxCell>
-
-        <mxCell id="42" value="Trier par score_final DESC → top 50" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="420" y="530" as="sourcePoint"/><mxPoint x="500" y="530" as="targetPoint"/></mxGeometry></mxCell>
-
-        <mxCell id="43" value="[loop] UPSERT top 50 resultats (skip RETAINED/REFUSED)" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="420" y="570" as="sourcePoint"/><mxPoint x="605" y="570" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="44" value="UPDATE job_offers SET last_matching_at=NOW()" style="endArrow=block;endFill=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="420" y="615" as="sourcePoint"/><mxPoint x="605" y="615" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="45" value="HTTP 200 {offer_id, titre, total: N, resultats: [{cv_id, score_final, rang, decision} × 50]}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="420" y="660" as="sourcePoint"/><mxPoint x="245" y="660" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="46" value="Tableau des résultats triés par score" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="245" y="700" as="sourcePoint"/><mxPoint x="70" y="700" as="targetPoint"/></mxGeometry></mxCell>
-
-      </root>
-    </mxGraphModel>
-  </diagram>
-
+<mxfile host="65bd71144e">
+    <diagram id="seq_matching_rh" name="04c — Matching Sémantique RH">
+        <mxGraphModel dx="744" dy="345" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Matching Sémantique Complet (flux RH)" style="text;fontStyle=1;fontSize=13;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="10" width="800" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Responsable RH" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="10" y="40" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Client React" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="190" y="40" width="110" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="FastAPI :8000&#xa;rh/matching.py" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="40" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="PostgreSQL&#xa;+ pgvector" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="550" y="40" width="110" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="scorer.py" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="730" y="40" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="70" y="80" as="sourcePoint"/>
+                        <mxPoint x="70" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="245" y="80" as="sourcePoint"/>
+                        <mxPoint x="245" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="420" y="80" as="sourcePoint"/>
+                        <mxPoint x="420" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="605" y="80" as="sourcePoint"/>
+                        <mxPoint x="605" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="780" y="80" as="sourcePoint"/>
+                        <mxPoint x="780" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="30" value="Clique &quot;Lancer le matching&quot;" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="70" y="110" as="sourcePoint"/>
+                        <mxPoint x="245" y="110" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="31" value="POST /api/rh/offers/{offer_id}/matching?top_n=50&amp;force=false" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="245" y="145" as="sourcePoint"/>
+                        <mxPoint x="420" y="145" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="32" value="SELECT * FROM job_offers WHERE id=offer_id" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="420" y="180" as="sourcePoint"/>
+                        <mxPoint x="605" y="180" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="33" value="JobOffer {embedding, competences_requises, experience_requise, poids_*}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="605" y="215" as="sourcePoint"/>
+                        <mxPoint x="420" y="215" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="34" value="=== Pré-filtre pgvector KNN ===" style="shape=note;whiteSpace=wrap;fontSize=10;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="230" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="SELECT cvs.id, (embedding &lt;=&gt; offer_vec) AS dist&#xa;FROM cvs WHERE statut=&#39;INDEXED&#39; ORDER BY embedding LIMIT 200" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="420" y="280" as="sourcePoint"/>
+                        <mxPoint x="605" y="280" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="36" value="Index ivfflat (100 listes) — Recherche approximative KNN" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="605" y="315" as="sourcePoint"/>
+                        <mxPoint x="685" y="315" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="37" value="[(cv_id, cosine_sim) × 200]" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="605" y="350" as="sourcePoint"/>
+                        <mxPoint x="420" y="350" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="38" value="=== Scoring multi-critères sur les 200 CVs ===" style="shape=note;whiteSpace=wrap;fontSize=10;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="365" width="380" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" value="[loop] Pour chacun des 200 CVs: compute_final_score()" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="420" y="415" as="sourcePoint"/>
+                        <mxPoint x="780" y="415" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="40" value="s_sem=cosine_sim | s_comp=Jaccard | s_exp=ratio | s_lang=binary&#xa;final = s_sem×0.40 + s_comp×0.35 + s_exp×0.15 + s_lang×0.10" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="780" y="450" as="sourcePoint"/>
+                        <mxPoint x="860" y="450" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="41" value="scores {score_matching, score_skills, score_experience, score_langue, score_final}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="780" y="490" as="sourcePoint"/>
+                        <mxPoint x="420" y="490" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="42" value="Trier par score_final DESC → top 50" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="420" y="530" as="sourcePoint"/>
+                        <mxPoint x="500" y="530" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="43" value="[loop] UPSERT top 50 resultats (skip RETAINED/REFUSED)" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="420" y="570" as="sourcePoint"/>
+                        <mxPoint x="605" y="570" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="44" value="UPDATE job_offers SET last_matching_at=NOW()" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="420" y="615" as="sourcePoint"/>
+                        <mxPoint x="605" y="615" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="45" value="HTTP 200 {offer_id, titre, total: N, resultats: [{cv_id, score_final, rang, decision} × 50]}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="420" y="660" as="sourcePoint"/>
+                        <mxPoint x="245" y="660" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="46" value="Tableau des résultats triés par score" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="245" y="700" as="sourcePoint"/>
+                        <mxPoint x="70" y="700" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="seq_keejob" name="04a — Import Keejob">
+        <mxGraphModel dx="744" dy="345" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Pipeline NLP — Import CV Keejob (synchrone)" style="text;fontStyle=1;fontSize=13;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="10" width="800" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Agent" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="40" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Client React" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="190" y="40" width="110" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="FastAPI :8000" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="370" y="40" width="110" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="keejob_parser.py" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="550" y="40" width="130" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="PostgreSQL" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="760" y="40" width="110" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="70" y="80" as="sourcePoint"/>
+                        <mxPoint x="70" y="760" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="245" y="80" as="sourcePoint"/>
+                        <mxPoint x="245" y="760" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="425" y="80" as="sourcePoint"/>
+                        <mxPoint x="425" y="760" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="615" y="80" as="sourcePoint"/>
+                        <mxPoint x="615" y="760" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="815" y="80" as="sourcePoint"/>
+                        <mxPoint x="815" y="760" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="30" value="Sélectionne PDF Keejob" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="70" y="110" as="sourcePoint"/>
+                        <mxPoint x="245" y="110" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="31" value="POST /api/agent/import/keejob (multipart/form-data: file.pdf)" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="245" y="145" as="sourcePoint"/>
+                        <mxPoint x="425" y="145" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="32" value="Validation taille ≤ 10 Mo + extract_text_from_pdf(bytes)" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="425" y="180" as="sourcePoint"/>
+                        <mxPoint x="505" y="180" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="33" value="parse_keejob_cv(cv_text)" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="425" y="215" as="sourcePoint"/>
+                        <mxPoint x="615" y="215" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="34" value="Extraction regex: id_keejob, titre, nom, prenom, age, email, tel, ville, niveau_etude, competences[], experiences[], formations[], langues[]" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="615" y="250" as="sourcePoint"/>
+                        <mxPoint x="700" y="250" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="35" value="cv_entities (15+ champs)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="615" y="285" as="sourcePoint"/>
+                        <mxPoint x="425" y="285" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="36" value="SELECT candidate WHERE email=cv_entities.email" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="425" y="320" as="sourcePoint"/>
+                        <mxPoint x="815" y="320" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="37" value="Candidate ou NULL" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="815" y="355" as="sourcePoint"/>
+                        <mxPoint x="425" y="355" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="38" value="opt [Candidat inexistant]" style="swimlane;fontStyle=1;startSize=20;fillColor=none;strokeColor=#555555;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="75" y="370" width="850" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" value="INSERT INTO candidates {nom, prenom, email, ...}" style="endArrow=block;endFill=1;fontSize=10;" parent="38" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="350" y="35" as="sourcePoint"/>
+                        <mxPoint x="740" y="35" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="40" value="INSERT INTO cvs {id_candidate, id_agent, source=AGENT, statut=INDEXED, cv_entities, cv_text}" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="425" y="450" as="sourcePoint"/>
+                        <mxPoint x="815" y="450" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="41" value="CV créé (cv_id)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="815" y="485" as="sourcePoint"/>
+                        <mxPoint x="425" y="485" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="42" value="INSERT INTO competences (batch)" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="425" y="520" as="sourcePoint"/>
+                        <mxPoint x="815" y="520" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="43" value="INSERT INTO experiences (batch)" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="425" y="555" as="sourcePoint"/>
+                        <mxPoint x="815" y="555" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="44" value="HTTP 201 {cv_id, candidate_id, candidate_created, statut: INDEXED, entities, nb_competences, nb_experiences}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="425" y="595" as="sourcePoint"/>
+                        <mxPoint x="245" y="595" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="45" value="Affiche résultat du parsing" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="245" y="630" as="sourcePoint"/>
+                        <mxPoint x="70" y="630" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="seq_celery" name="04b — Upload CV Candidat (Celery)">
+        <mxGraphModel dx="744" dy="345" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Pipeline NLP — Upload CV Candidat (Celery async)" style="text;fontStyle=1;fontSize=13;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="10" width="1000" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Candidat" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="10" y="40" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Client React" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="170" y="40" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="FastAPI :8000" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="330" y="40" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="PostgreSQL" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="490" y="40" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="Redis (Broker)" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="650" y="40" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Celery Worker" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="810" y="40" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="ocr.py&#xa;(Tesseract)" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="970" y="40" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="embedder.py&#xa;MiniLM-L12-v2" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1130" y="40" width="110" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="scorer.py" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1300" y="40" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="60" y="80" as="sourcePoint"/>
+                        <mxPoint x="60" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="21" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="220" y="80" as="sourcePoint"/>
+                        <mxPoint x="220" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="22" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="380" y="80" as="sourcePoint"/>
+                        <mxPoint x="380" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="23" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="540" y="80" as="sourcePoint"/>
+                        <mxPoint x="540" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="24" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="700" y="80" as="sourcePoint"/>
+                        <mxPoint x="700" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="25" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="860" y="80" as="sourcePoint"/>
+                        <mxPoint x="860" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="26" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1020" y="80" as="sourcePoint"/>
+                        <mxPoint x="1020" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="27" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1185" y="80" as="sourcePoint"/>
+                        <mxPoint x="1185" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="28" value="" style="endArrow=none;dashed=1;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1350" y="80" as="sourcePoint"/>
+                        <mxPoint x="1350" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="30" value="Sélectionne fichier PDF/image" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="60" y="110" as="sourcePoint"/>
+                        <mxPoint x="220" y="110" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="31" value="POST /api/candidate/cvs/upload (multipart/form-data)" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="220" y="145" as="sourcePoint"/>
+                        <mxPoint x="380" y="145" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="32" value="Sauvegarde → /app/uploads/cvs/" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="380" y="180" as="sourcePoint"/>
+                        <mxPoint x="460" y="180" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="33" value="INSERT INTO cvs {id_candidate, source=CANDIDAT, statut=UPLOADED}" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="380" y="215" as="sourcePoint"/>
+                        <mxPoint x="540" y="215" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="34" value="CV {id: cv_id}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="540" y="250" as="sourcePoint"/>
+                        <mxPoint x="380" y="250" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="35" value="celery.apply_async(&quot;tasks.process_cv_on_upload&quot;, args=[cv_id])" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="380" y="285" as="sourcePoint"/>
+                        <mxPoint x="700" y="285" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="36" value="task_id (acknowledged)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="700" y="320" as="sourcePoint"/>
+                        <mxPoint x="380" y="320" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="37" value="HTTP 201 {cv_id, statut: UPLOADED}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="380" y="355" as="sourcePoint"/>
+                        <mxPoint x="220" y="355" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="38" value="&quot;CV déposé — analyse en cours...&quot;" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="220" y="390" as="sourcePoint"/>
+                        <mxPoint x="60" y="390" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="39" value="=== Traitement asynchrone dans Celery Worker ===" style="shape=note;whiteSpace=wrap;fontSize=10;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="620" y="410" width="400" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" value="Consomme tâche process_cv_on_upload(cv_id)" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="700" y="470" as="sourcePoint"/>
+                        <mxPoint x="860" y="470" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="41" value="SELECT cv WHERE cv.id=cv_id" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="860" y="505" as="sourcePoint"/>
+                        <mxPoint x="540" y="505" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="42" value="CV object" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="540" y="540" as="sourcePoint"/>
+                        <mxPoint x="860" y="540" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="43" value="extract_text_from_pdf(bytes)" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="860" y="575" as="sourcePoint"/>
+                        <mxPoint x="1020" y="575" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="44" value="cv_text (texte brut)" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1020" y="610" as="sourcePoint"/>
+                        <mxPoint x="860" y="610" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="45" value="parse_generic_cv(cv_text)" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="860" y="645" as="sourcePoint"/>
+                        <mxPoint x="1020" y="645" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="46" value="cv_entities {competences, experiences, formations, langues}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1020" y="680" as="sourcePoint"/>
+                        <mxPoint x="860" y="680" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="47" value="UPDATE cvs SET cv_text=?, cv_entities=?" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="860" y="715" as="sourcePoint"/>
+                        <mxPoint x="540" y="715" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="48" value="_get_model().encode(text) → embedding [float×384]" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="860" y="750" as="sourcePoint"/>
+                        <mxPoint x="1185" y="750" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="49" value="embedding [float×384] normalisé" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1185" y="785" as="sourcePoint"/>
+                        <mxPoint x="860" y="785" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="50" value="UPDATE cvs SET embedding=vector, statut=INDEXED, cv_version+=1" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="860" y="820" as="sourcePoint"/>
+                        <mxPoint x="540" y="820" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="51" value="SELECT job_offers WHERE statut=ACTIVE → compute scores → UPSERT resultats" style="endArrow=block;endFill=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="860" y="860" as="sourcePoint"/>
+                        <mxPoint x="1350" y="860" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="52" value="Task result {status: ok, cv_id, created: N, updated: M}" style="endArrow=open;endFill=0;dashed=1;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="860" y="900" as="sourcePoint"/>
+                        <mxPoint x="700" y="900" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>

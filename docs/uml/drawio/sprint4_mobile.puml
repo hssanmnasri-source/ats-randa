@@ -1,0 +1,129 @@
+@startuml Sprint4_Mobile
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam classBackgroundColor #FEFECE
+skinparam classBorderColor #A80036
+skinparam arrowColor #A80036
+skinparam packageBackgroundColor #EEEEEE
+skinparam noteBackgroundColor #FFFDE7
+skinparam noteBorderColor #C9A84C
+hide empty methods
+
+title Sprint 4 — Architecture Mobile Flutter
+
+' ─────────────────────────────
+' CLASSES
+' ─────────────────────────────
+
+class ApiClient <<singleton>> {
+  - _dio : Dio
+  - _storage : FlutterSecureStorage
+  +baseUrl : String
+  --
+  +saveTokens(token: String)
+  +clearTokens()
+  +hasToken() : bool
+}
+
+class RhUser <<freezed>> {
+  +id : int
+  +email : String
+  +nom : String
+  +prenom : String
+  +role : String
+}
+
+class MatchingResult <<freezed>> {
+  +id : int
+  +score_final : double
+  +score_semantic : double
+  +score_skills : double
+  +score_experience : double
+  +decision : String
+  +feedback_rh : String?
+}
+
+class CandidateProfile {
+  +id : int
+  +nom : String
+  +prenom : String
+  +email : String
+  +ville : String
+  --
+  +fromJson(json) : CandidateProfile
+  +copyWith() : CandidateProfile
+}
+
+class Application {
+  +id : int
+  +statut : String
+  +score_final : double?
+  +steps : List<TimelineStep>
+  --
+  +fromJson(json) : Application
+}
+
+class AuthRepository {
+  +login(email, pwd) : RhUser
+  +getProfile(role) : RhUser
+}
+
+class MatchingRepository {
+  +getResults(offerId) : List<MatchingResult>
+  +makeDecision(id, decision, feedback)
+}
+
+class AuthNotifier <<AsyncNotifier>> {
+  +state : AsyncValue<RhUser?>
+  --
+  +login(email, pwd)
+  +logout()
+}
+
+class AppShell <<widget>> {
+  -- BottomNav RH (4 onglets) :
+  Tableau de bord · Offres
+  CVthèque · Calendrier
+}
+
+class CandidateShell <<widget>> {
+  -- BottomNav Candidat (4 onglets) :
+  Accueil · Offres
+  Candidatures · Profil
+}
+
+' ─────────────────────────────
+' RELATIONS
+' ─────────────────────────────
+
+AuthRepository     ..>  ApiClient        : <<use>>
+MatchingRepository ..>  ApiClient        : <<use>>
+
+AuthNotifier       -->  AuthRepository   : appelle
+AuthNotifier       -->  RhUser           : produit
+
+AppShell           ..>  MatchingResult   : affiche
+AppShell           ..>  RhUser           : identifie
+CandidateShell     ..>  CandidateProfile : affiche
+CandidateShell     ..>  Application      : affiche
+
+' ─────────────────────────────
+' NOTES
+' ─────────────────────────────
+
+note right of RhUser
+  Modèle partagé RH + Candidat.
+  Le champ role détermine le shell :
+  "rh" → AppShell
+  "candidate" → CandidateShell
+end note
+
+note bottom of AuthNotifier
+  Connecté à GoRouter via
+  _AuthChangeNotifier.
+  Changement d'état → redirect
+  automatique vers le bon shell.
+end note
+
+@enduml
