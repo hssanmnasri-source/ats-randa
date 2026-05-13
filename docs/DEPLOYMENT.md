@@ -76,7 +76,61 @@ docker compose -f docker-compose.prod.yml up -d
 
 ---
 
-## Exposition publique via Cloudflare Tunnel (gratuit, sans serveur)
+## Exposition publique via localhost.run (solution active)
+
+> ⚠️ L'URL change à chaque redémarrage du tunnel. Suivre la procédure complète ci-dessous à chaque fois.
+
+### Étape 1 — Démarrer le tunnel et noter l'URL
+
+```bash
+ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -R 80:localhost:3000 nokey@localhost.run
+```
+
+La sortie affiche votre URL dans la ligne :
+```
+tunneled with tls termination, https://XXXXXXXXXXXXXXXX.lhr.life
+```
+
+**Copier cette URL** (ex: `https://4d5a8690870f39.lhr.life`) — c'est votre `NOUVELLE_URL`.
+
+### Étape 2 — Mettre à jour `.env`
+
+Ouvrir `.env` à la racine et remplacer les 3 valeurs suivantes :
+
+```env
+CORS_ORIGINS=["http://localhost:3000","http://localhost","https://NOUVELLE_URL.lhr.life"]
+FRONTEND_URL=https://NOUVELLE_URL.lhr.life
+GOOGLE_REDIRECT_URI=https://NOUVELLE_URL.lhr.life/api/auth/google/callback
+```
+
+### Étape 3 — Recréer le conteneur backend
+
+`docker restart` ne recharge PAS le `.env` — il faut impérativement recréer :
+
+```bash
+docker compose stop backend && docker compose up -d backend
+```
+
+### Étape 4 — Mettre à jour Google Cloud Console
+
+[console.cloud.google.com](https://console.cloud.google.com) → APIs & Services → Credentials → ATS RANDA Web :
+
+| Champ | Valeur |
+|-------|--------|
+| Authorized JavaScript origins | `https://NOUVELLE_URL.lhr.life` |
+| Authorized redirect URIs | `https://NOUVELLE_URL.lhr.life/api/auth/google/callback` |
+
+Sauvegarder et attendre ~30 secondes.
+
+### Ce qui ne change PAS (déjà configuré une fois pour toutes)
+
+- `vite.config.ts` → `allowedHosts: ['.lhr.life']` ✅
+- `backend/app/main.py` → CORS regex `*.lhr.life` ✅
+- Google OAuth Client ID et Secret : voir `.env` (ne jamais commiter ces valeurs)
+
+---
+
+## Exposition publique via Cloudflare Tunnel (URL aléatoire)
 
 Cloudflare Tunnel crée une URL HTTPS publique sans ouvrir de port ni payer un hébergeur.
 
@@ -104,15 +158,6 @@ La sortie affiche l'URL publique :
 ```
 
 > Chaque démarrage génère une **nouvelle URL aléatoire**. Le tunnel reste actif tant que le processus tourne.
-
-### Installer comme service Windows (tunnel permanent)
-
-```powershell
-# En tant qu'administrateur
-cloudflared service install
-```
-
-Le tunnel démarre automatiquement au démarrage de Windows.
 
 ---
 

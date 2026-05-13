@@ -107,7 +107,7 @@ async def google_callback(code: str, db: AsyncSession = Depends(get_db)):
     import urllib.parse
     redirect_url = (
         f"{settings.FRONTEND_URL}/auth/google/success"
-        f"#access_token={urllib.parse.quote(access_token)}"
+        f"?access_token={urllib.parse.quote(access_token)}"
         f"&role={user.role.value}"
         f"&nom={urllib.parse.quote(user.nom or '')}"
         f"&prenom={urllib.parse.quote(user.prenom or '')}"

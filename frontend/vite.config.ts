@@ -11,13 +11,19 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    host: '0.0.0.0',
+    allowedHosts: ['.trycloudflare.com', '.serveousercontent.com', '.lhr.life'],
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:80',
         changeOrigin: true,
       },
       '/docs': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:80',
+        changeOrigin: true,
+      },
+      '/uploads': {
+        target: 'http://localhost:80',
         changeOrigin: true,
       },
     },

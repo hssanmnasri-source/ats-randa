@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Spin } from 'antd'
 import { useAuthStore } from '@/store/authStore'
 
 const GoogleCallbackPage: React.FC = () => {
   const navigate = useNavigate()
   const { login } = useAuthStore()
+  const [searchParams] = useSearchParams()
 
   useEffect(() => {
-    const hash = window.location.hash.substring(1)
-    const params = new URLSearchParams(hash)
+    const params = searchParams
     const access_token = params.get('access_token')
     const role = params.get('role')
     const nom = params.get('nom')
@@ -19,7 +19,9 @@ const GoogleCallbackPage: React.FC = () => {
 
     if (access_token && role) {
       try {
-        const payload = JSON.parse(atob(access_token.split('.')[1]))
+        const parts = access_token.split('.')
+        const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/')
+        const payload = JSON.parse(atob(base64))
         login(access_token, {
           id: parseInt(payload.sub),
           nom: nom || '',
@@ -40,7 +42,8 @@ const GoogleCallbackPage: React.FC = () => {
         navigate('/login?error=google_failed')
       }
     } else {
-      navigate('/login?error=google_failed')
+      const debug = encodeURIComponent(window.location.href)
+      navigate(`/login?error=google_failed&debug=${debug}`)
     }
   }, [])
 

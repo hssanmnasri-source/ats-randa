@@ -195,7 +195,7 @@ Register every new router in `main.py` with `app.include_router(...)`. Schema mi
 
 **Schemas directory note:** Two schemas directories exist — `backend/app/schemas/` (thin, mostly empty re-export stubs) and `backend/app/models/schemas/` (real Pydantic models). Always work in `models/schemas/`; the stubs in `app/schemas/` are legacy placeholders.
 
-**Special endpoints:** `/health` (liveness probe) and `/uploads` (static file serving for profile photos and CV files) are mounted directly in `main.py`. Prometheus metrics are exposed at `/metrics` when `prometheus-fastapi-instrumentator` is installed.
+**Special endpoints:** `/health` (liveness probe) and `/uploads` (static file serving for profile photos and CV files) are mounted directly in `main.py`. Prometheus metrics are exposed at `/metrics` when `prometheus-fastapi-instrumentator` is installed. `POST /api/admin/system/reindex` triggers `embed_all_cvs` Celery task to backfill embeddings for all CVs missing one.
 
 ### NLP Embedder — critical async rule
 `nlp/embedder.py::encode()` and `encode_batch()` are **synchronous** and load a CPU-bound PyTorch model. Calling them directly inside an async route or service **blocks the entire event loop**, freezing all concurrent requests (including login) until the model finishes.
@@ -243,9 +243,9 @@ frontend/src/
 ```
 
 ### API Client (`services/api.ts`)
-Axios instance with `baseURL: 'http://localhost:8000'`. All endpoint paths include the `/api/` prefix (e.g. `/api/candidate/profile`). The request interceptor auto-attaches the JWT Bearer token from Zustand. A 401 response triggers automatic logout and redirect to `/login`.
+Axios instance with `baseURL: ''` (empty — relies on Vite proxy). All endpoint paths include the `/api/` prefix (e.g. `/api/candidate/profile`). The request interceptor auto-attaches the JWT Bearer token from Zustand. A 401 response triggers automatic logout and redirect to `/login`.
 
-**Vite proxy:** `vite.config.ts` also proxies `/api` → `http://localhost:8000` as a fallback for build-time usage.
+**Vite proxy:** `vite.config.ts` proxies `/api`, `/docs`, and `/uploads` → `http://localhost:80` (the nginx container), which in turn routes to `backend:8000`. Do not bypass nginx by pointing directly at port 8000.
 
 ### Ant Design `message` API (`services/messageService.ts`)
 A singleton wrapper around Ant Design's `message` API. Components import `{ msg }` from `@/services/messageService` and call `msg.success(...)`, `msg.error(...)`, etc. The `MessageInstance` is registered once at app root via `setMessageInstance`. Always use `msg` instead of calling `message` directly from `antd` to avoid the "can only be used inside React component" warning.
@@ -285,6 +285,8 @@ Pages: `DashboardPage`, `UploadCVPage`, `BatchUploadPage`, `CVListPage`, `Histor
 
 **Single Keejob import**: `POST /api/agent/import/keejob` (`routes/agent/import_keejob.py`) — uploads one PDF, parses it synchronously with `keejob_parser`, creates Candidate + CV with `statut=INDEXED`, returns extracted entities immediately.
 
+**Batch OCR upload**: `POST /api/agent/cvs/batch` — accepts up to 10 PDFs/images in one multipart request, each processed through OCR + Celery pipeline. Returns per-file quality scores.
+
 ### RH Portal (`/rh`)
 Pages: `DashboardPage`, `OffersPage`, `OfferFormPage`, `MatchingPage`, `ResultsPage`, `CVthequePage`, `CandidaturesPage`, `CalendarPage`, `N8NCalendarPage`, `StatsPage`.
 
@@ -295,6 +297,8 @@ The `MatchResultTable` component opens a Modal on Retenir/Refuser to collect fee
 `PATCH /api/rh/offers/{offer_id}/matching/{result_id}` accepts `{ decision, feedback_rh?, feedback_visible? }`. When `feedback_visible=true`, feedback is visible to candidate. Setting RETAINED or REFUSED also fires `send_decision_notification()` (fire-and-forget) to the candidate's email.
 
 `GET /api/rh/offers/{offer_id}/export/pdf` generates and returns a PDF matching report (all ranked candidates) via `services/rh/pdf_export.py`.
+
+`GET /api/rh/cvs/search` — semantic CVthèque search: accepts a free-text query, embeds it, and returns CV matches by cosine similarity. Backs the `CVthequePage`.
 
 **CalendarPage** (`/rh/calendar`) — standalone FullCalendar for manual interview scheduling via `GET /api/rh/calendar`. Distinct from N8NCalendarPage.
 
